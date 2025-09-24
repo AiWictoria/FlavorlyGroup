@@ -7,7 +7,9 @@ backend/databases/live.sqlite3
 backend/bin
 backend/obj
 backend/appsettings.Development.json
+backend/_db.sqlite3
 backend\_db.sqlite3
+
 # Logs
 logs
 *.log
