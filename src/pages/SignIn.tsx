@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 
-SignIn.route = {
-  path: "/signIn",
-  menuLabel: "Sign In",
-  index: 1,
-};
-
 export default function SignIn() {
   const [user, setUser] = useState({ email: "", password: "" });
 
@@ -156,3 +150,9 @@ export default function SignIn() {
     </>
   );
 }
+
+SignIn.route = {
+  path: "/signIn",
+  menuLabel: "Sign In",
+  index: 1,
+};
