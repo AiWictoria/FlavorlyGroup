@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
+import { useAuth } from "../hooks/useAuth";
 
 export default function SignIn() {
-  const [user, setUser] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
+  const { login } = useAuth();
 
   const [newUser, setNewUser] = useState({
     email: "",
@@ -31,7 +33,7 @@ export default function SignIn() {
 
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
+    setForm({ ...form, [name]: value });
   }
 
   function setNewUserProperty(e: React.ChangeEvent<HTMLInputElement>) {
@@ -41,19 +43,15 @@ export default function SignIn() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
 
-    if (res.ok) {
-      alert("INLOGGAD");
+    const result = await login(form.email, form.password);
+
+    if (result.success) {
+      alert("inloggad");
     } else {
-      alert("Något gick fel!");
+      alert("något gick fel");
+      console.log(result.error);
     }
-    const data = await res.json();
-    console.log(data);
   }
   return (
     <>
@@ -119,7 +117,7 @@ export default function SignIn() {
               <Form.Control
                 type="email"
                 name="email"
-                value={user.email}
+                value={form.email}
                 onChange={setProperty}
                 placeholder="Enter email"
                 required
@@ -131,7 +129,7 @@ export default function SignIn() {
               <Form.Control
                 type="password"
                 name="password"
-                value={user.password}
+                value={form.password}
                 onChange={setProperty}
                 placeholder="Enter password"
                 required
