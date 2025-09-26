@@ -19,14 +19,20 @@ export function useAuth() {
     });
     
     const data = await res.json();
+
     if (res.ok) {
-      alert("Användare skapad");
       setUser(data)
+      return {success: true, data}
     } else {
-      alert("Något gick fel");
+       return {success: false, error: data.error || "Login failed"}
     }
-    console.log(data);
-    return data
   }
-  return {user, login}
+  async function logout() {
+    await fetch("/api/login", {
+      method: "DELETE",
+      credentials: "include",
+    })
+    setUser(null)
+  }
+  return {user, login, logout}
 }

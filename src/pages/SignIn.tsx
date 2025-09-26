@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 
 export default function SignIn() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
 
   const [newUser, setNewUser] = useState({
     email: "",
@@ -144,6 +144,7 @@ export default function SignIn() {
             <a href="/">Sign up!</a>
           </div>
         </Col>
+        <button onClick={logout}>Logout</button>
       </Row>
     </>
   );
