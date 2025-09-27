@@ -1,59 +1,64 @@
 import { useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
+import { useAuth } from "../hooks/useAuth";
+
+SignIn.route = {
+  path: "/signIn",
+  menuLabel: "Sign In",
+  index: 1,
+};
 
 export default function SignIn() {
-  const [user, setUser] = useState({ email: "", password: "" });
-
-  const [newUser, setNewUser] = useState({
+  const [form, setForm] = useState({
     email: "",
     password: "",
     firstName: "",
     lastName: "",
   });
+  const { user, loading, login, logout, createUser } = useAuth();
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
-
-    const res = await fetch("/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newUser),
-    });
-
-    if (res.ok) {
+    const result = await createUser(
+      form.email,
+      form.password,
+      form.firstName,
+      form.lastName
+    );
+    if (result.success) {
       alert("Användare skapad");
     } else {
-      alert("Något gick fel");
+      alert("något gick fel");
+      console.log(result.error);
     }
-    const data = await res.json();
-    console.log(data);
   }
 
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-  }
-
-  function setNewUserProperty(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setNewUser({ ...newUser, [name]: value });
+    setForm({ ...form, [name]: value });
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
 
-    if (res.ok) {
-      alert("INLOGGAD");
+    const result = await login(form.email, form.password);
+
+    if (result.success) {
+      alert("Inloggad");
     } else {
-      alert("Något gick fel!");
+      alert("något gick fel");
+      console.log(result.error);
     }
-    const data = await res.json();
-    console.log(data);
+  }
+
+  if (loading) return <p>Loading session...</p>;
+  if (user) {
+    return (
+      <>
+        <p>Hello {user.firstName}</p>
+        <button onClick={logout}>Logout</button>
+      </>
+    );
   }
   return (
     <>
@@ -65,8 +70,8 @@ export default function SignIn() {
               <Form.Control
                 type="email"
                 name="email"
-                value={newUser.email}
-                onChange={setNewUserProperty}
+                value={form.email}
+                onChange={setProperty}
                 placeholder="Enter email"
                 required
               />
@@ -77,8 +82,8 @@ export default function SignIn() {
               <Form.Control
                 type="password"
                 name="password"
-                value={newUser.password}
-                onChange={setNewUserProperty}
+                value={form.password}
+                onChange={setProperty}
                 placeholder="Enter password"
                 required
               />
@@ -88,8 +93,8 @@ export default function SignIn() {
               <Form.Control
                 type="text"
                 name="firstName"
-                value={newUser.firstName}
-                onChange={setNewUserProperty}
+                value={form.firstName}
+                onChange={setProperty}
                 placeholder="First Name"
                 required
               />
@@ -99,8 +104,8 @@ export default function SignIn() {
               <Form.Control
                 type="text"
                 name="lastName"
-                value={newUser.lastName}
-                onChange={setNewUserProperty}
+                value={form.lastName}
+                onChange={setProperty}
                 placeholder="Last Name"
                 required
               />
@@ -119,7 +124,7 @@ export default function SignIn() {
               <Form.Control
                 type="email"
                 name="email"
-                value={user.email}
+                value={form.email}
                 onChange={setProperty}
                 placeholder="Enter email"
                 required
@@ -131,7 +136,7 @@ export default function SignIn() {
               <Form.Control
                 type="password"
                 name="password"
-                value={user.password}
+                value={form.password}
                 onChange={setProperty}
                 placeholder="Enter password"
                 required
@@ -150,9 +155,3 @@ export default function SignIn() {
     </>
   );
 }
-
-SignIn.route = {
-  path: "/signIn",
-  menuLabel: "Sign In",
-  index: 1,
-};
