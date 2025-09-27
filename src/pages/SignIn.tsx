@@ -2,9 +2,15 @@ import { useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 
+SignIn.route = {
+  path: "/signIn",
+  menuLabel: "Sign In",
+  index: 1,
+};
+
 export default function SignIn() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const { login, logout } = useAuth();
+  const { user, loading, login, logout } = useAuth();
 
   const [newUser, setNewUser] = useState({
     email: "",
@@ -52,6 +58,16 @@ export default function SignIn() {
       alert("något gick fel");
       console.log(result.error);
     }
+  }
+
+  if (loading) return <p>Loading session...</p>;
+  if (user) {
+    return (
+      <>
+        <p>Hello {user.firstName}</p>
+        <button onClick={logout}>Logout</button>
+      </>
+    );
   }
   return (
     <>
@@ -144,14 +160,7 @@ export default function SignIn() {
             <a href="/">Sign up!</a>
           </div>
         </Col>
-        <button onClick={logout}>Logout</button>
       </Row>
     </>
   );
 }
-
-SignIn.route = {
-  path: "/signIn",
-  menuLabel: "Sign In",
-  index: 1,
-};

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export interface User {
   id: number
@@ -9,7 +9,15 @@ export interface User {
 }
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    fetch("/api/login", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => { if (!data.error) setUser(data) })
+      .finally(() => setLoading(false))
+  }, [])
+  
   async function login(email: string, password: string) {
     const res = await fetch("/api/login", {
       method: "POST",
@@ -27,6 +35,7 @@ export function useAuth() {
        return {success: false, error: data.error || "Login failed"}
     }
   }
+
   async function logout() {
     await fetch("/api/login", {
       method: "DELETE",
@@ -34,5 +43,6 @@ export function useAuth() {
     })
     setUser(null)
   }
-  return {user, login, logout}
+
+  return {user, loading, login, logout}
 }
