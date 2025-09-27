@@ -26,10 +26,28 @@ export function useRecipes() {
       alert("Något gick fel");
     }
   }
+
+  async function createRecipe(recipe: Omit<Recipe, "id" | "userId">) {
+    try {
+      const res = await fetch("/api/recipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recipe)
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setRecipes((prev) => [...prev, data])
+        return {success: true, data}
+      }
+    }
+      catch (error) {
+      return alert("Något gick fel");
+    }
+  }
   
   useEffect(() => {
     fetchRecipes();
   }, []);
   
-  return {recipes, fetchRecipes}
+  return {recipes, fetchRecipes, createRecipe}
 }
