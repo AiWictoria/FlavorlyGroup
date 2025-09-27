@@ -3,7 +3,7 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 
 SignIn.route = {
-  path: "/signIn",
+  path: "signIn",
   menuLabel: "Sign In",
   index: 1,
 };
