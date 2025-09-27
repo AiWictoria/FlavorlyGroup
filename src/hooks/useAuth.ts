@@ -44,6 +44,7 @@ export function useAuth() {
     })
     setUser(null)
   }
+
   async function createUser(email: string, password: string, firstName: string, lastName: string) {
 
     const res = await fetch("/api/users", {
@@ -54,10 +55,10 @@ export function useAuth() {
     const data = await res.json();
 
     if (res.ok) {
-      setUser(data)
-      return {success: true, data}
+      const loginRes = await login(email, password)
+      return {success: true, loginRes}
     } else {
-       return {success: false, error: data.error || "Login failed"}
+       return {success: false, error: data.error || "Something went wrong"}
     }
   }
 
