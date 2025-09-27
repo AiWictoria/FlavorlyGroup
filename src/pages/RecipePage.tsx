@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { Card, CardText, Col, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
+import { useRecipes } from "../hooks/useRecipes";
+
 RecipePage.route = {
   path: "/recipes",
   menuLabel: "Recipes",
@@ -7,25 +8,7 @@ RecipePage.route = {
 };
 
 export default function RecipePage() {
-  const [recipes, setRecipes] = useState<any[]>([]);
-
-  async function fetchRecipes() {
-    const res = await fetch("/api/recipes", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setRecipes(data);
-      console.log(data);
-    } else {
-      alert("Något gick fel");
-    }
-  }
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
+  const { recipes } = useRecipes();
 
   return (
     <>
