@@ -9,42 +9,33 @@ SignIn.route = {
 };
 
 export default function SignIn() {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const { user, loading, login, logout } = useAuth();
-
-  const [newUser, setNewUser] = useState({
+  const [form, setForm] = useState({
     email: "",
     password: "",
     firstName: "",
     lastName: "",
   });
+  const { user, loading, login, logout, createUser } = useAuth();
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
-
-    const res = await fetch("/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newUser),
-    });
-
-    if (res.ok) {
+    const result = await createUser(
+      form.email,
+      form.password,
+      form.firstName,
+      form.lastName
+    );
+    if (result.success) {
       alert("Användare skapad");
     } else {
-      alert("Något gick fel");
+      alert("något gick fel");
+      console.log(result.error);
     }
-    const data = await res.json();
-    console.log(data);
   }
 
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-  }
-
-  function setNewUserProperty(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setNewUser({ ...newUser, [name]: value });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -53,7 +44,7 @@ export default function SignIn() {
     const result = await login(form.email, form.password);
 
     if (result.success) {
-      alert("inloggad");
+      alert("Inloggad");
     } else {
       alert("något gick fel");
       console.log(result.error);
@@ -79,8 +70,8 @@ export default function SignIn() {
               <Form.Control
                 type="email"
                 name="email"
-                value={newUser.email}
-                onChange={setNewUserProperty}
+                value={form.email}
+                onChange={setProperty}
                 placeholder="Enter email"
                 required
               />
@@ -91,8 +82,8 @@ export default function SignIn() {
               <Form.Control
                 type="password"
                 name="password"
-                value={newUser.password}
-                onChange={setNewUserProperty}
+                value={form.password}
+                onChange={setProperty}
                 placeholder="Enter password"
                 required
               />
@@ -102,8 +93,8 @@ export default function SignIn() {
               <Form.Control
                 type="text"
                 name="firstName"
-                value={newUser.firstName}
-                onChange={setNewUserProperty}
+                value={form.firstName}
+                onChange={setProperty}
                 placeholder="First Name"
                 required
               />
@@ -113,8 +104,8 @@ export default function SignIn() {
               <Form.Control
                 type="text"
                 name="lastName"
-                value={newUser.lastName}
-                onChange={setNewUserProperty}
+                value={form.lastName}
+                onChange={setProperty}
                 placeholder="Last Name"
                 required
               />
