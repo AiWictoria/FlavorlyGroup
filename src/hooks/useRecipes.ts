@@ -48,7 +48,7 @@ export function useRecipes() {
       }
     }
       catch (error) {
-      return alert("Något gick fel");
+      return { success: false, error: "Något gick fel"}
     }
   }
   

@@ -9,7 +9,7 @@ RecipePage.route = {
 };
 
 export default function RecipePage() {
-  const { recipes } = useRecipes();
+  const { recipes, createRecipe } = useRecipes();
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -20,6 +20,19 @@ export default function RecipePage() {
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+  }
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const result = await createRecipe(form);
+
+    if (result?.success) {
+      alert("Recept skapat");
+      setForm({ title: "", category: "", ingredients: "", instructions: "" });
+    } else {
+      alert("Något gick fel");
+      console.log(result?.error);
+    }
   }
   return (
     <>
@@ -52,7 +65,7 @@ export default function RecipePage() {
         </Dropdown.Menu>
       </Dropdown>
 
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <Form.Group>
           <Form.Label>Title</Form.Label>
           <Form.Control
