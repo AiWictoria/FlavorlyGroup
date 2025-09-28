@@ -1,4 +1,5 @@
-import { Card, Col, Dropdown, Row, Form } from "react-bootstrap";
+import { useState } from "react";
+import { Card, Col, Dropdown, Row, Form, Button } from "react-bootstrap";
 import { useRecipes } from "../hooks/useRecipes";
 
 RecipePage.route = {
@@ -9,7 +10,17 @@ RecipePage.route = {
 
 export default function RecipePage() {
   const { recipes } = useRecipes();
+  const [form, setForm] = useState({
+    title: "",
+    category: "",
+    ingredients: "",
+    instructions: "",
+  });
 
+  function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  }
   return (
     <>
       <Dropdown>
@@ -41,7 +52,56 @@ export default function RecipePage() {
         </Dropdown.Menu>
       </Dropdown>
 
-      <Form></Form>
+      <Form>
+        <Form.Group>
+          <Form.Label>Title</Form.Label>
+          <Form.Control
+            type="title"
+            name="title"
+            value={form.title}
+            onChange={setProperty}
+            placeholder="Title"
+            required
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Category</Form.Label>
+          <Form.Control
+            type="category"
+            name="category"
+            value={form.category}
+            onChange={setProperty}
+            placeholder="Category"
+            required
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Ingredients</Form.Label>
+          <Form.Control
+            type="ingredients"
+            name="ingredients"
+            value={form.ingredients}
+            onChange={setProperty}
+            placeholder="Ingredients"
+            required
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Instructions</Form.Label>
+          <Form.Control
+            type="instructions"
+            name="instructions"
+            value={form.instructions}
+            onChange={setProperty}
+            placeholder="Instructions"
+            required
+          />
+        </Form.Group>
+        <Button type="submit">Save recipe</Button>
+      </Form>
     </>
   );
 }
