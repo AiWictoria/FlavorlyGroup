@@ -2,7 +2,7 @@ import { Card, Col, Row } from "react-bootstrap";
 import { useRecipes } from "../hooks/useRecipes";
 
 RecipePage.route = {
-  path: "recipes",
+  path: "/recipes",
   menuLabel: "Recipes",
   index: 2,
 };
