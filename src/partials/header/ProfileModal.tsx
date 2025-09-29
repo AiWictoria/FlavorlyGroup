@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import LoginForm from "./LoginForm";
+import SignupForm from "./SignupForm";
 
 interface ProfileModalProps {
   show: boolean;
@@ -68,6 +69,12 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
           )}
           {view === "login" && (
             <LoginForm
+              onBack={() => setView("default")}
+              onSuccess={() => onHide()}
+            />
+          )}
+          {view === "signup" && (
+            <SignupForm
               onBack={() => setView("default")}
               onSuccess={() => onHide()}
             />
