@@ -23,3 +23,12 @@ h1{
   max-width: 500px; 
   width: 100%;
 }
+
+.recipe-card {
+  height: 24rem;
+
+  .card-img-top {
+    height: 12rem;
+    object-fit: cover;
+  }
+}
