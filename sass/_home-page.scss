@@ -10,7 +10,8 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: rgba(27, 19, 19, 0.589);
+      background: linear-gradient(rgba(60, 30, 20, 0.55), rgba(30, 15, 10, 0.55));
+      mix-blend-mode: multiply;
       z-index: 0;
     }
 }
