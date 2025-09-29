@@ -1,0 +1,16 @@
+.home-bg {
+  background: url("/images/start.jpg") center / cover;
+  min-height: 100vh;
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+
+  &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(27, 19, 19, 0.589);
+      z-index: 0;
+    }
+}
