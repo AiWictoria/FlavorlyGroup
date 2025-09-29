@@ -9,7 +9,7 @@ import App from "./App";
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
-    path: "/*",
+    path: "/",
     element: <App />,
     children: routes as RouteObject[],
     HydrateFallback: App,
