@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
+import LoginForm from "./LoginForm";
 
 interface ProfileModalProps {
   show: boolean;
@@ -53,17 +54,23 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
                 </p>
               </div>
               <div className="d-flex justify-content-center gap-2 gap-sm-5 mb-sm-4">
-                <Button variant="primary" onClick={() => setView("login")}>
-                  Sign In
-                </Button>
                 <Button
                   variant="outline-primary"
                   onClick={() => setView("signup")}
                 >
                   Sign Up
                 </Button>
+                <Button variant="primary" onClick={() => setView("login")}>
+                  Sign in
+                </Button>
               </div>
             </>
+          )}
+          {view === "login" && (
+            <LoginForm
+              onBack={() => setView("default")}
+              onSuccess={() => onHide()}
+            />
           )}
         </Modal.Body>
       </Modal>

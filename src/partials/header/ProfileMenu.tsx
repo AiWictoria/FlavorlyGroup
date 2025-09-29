@@ -14,7 +14,6 @@ export default function ProfileMenu() {
   return (
     <>
       {user ? (
-        // 🔹 Om inloggad: Dropdown på ikonen
         <Dropdown align="end">
           <Dropdown.Toggle
             id="profile-menu"
@@ -37,14 +36,12 @@ export default function ProfileMenu() {
           </Dropdown.Menu>
         </Dropdown>
       ) : (
-        // 🔹 Om inte inloggad: öppna modal vid klick
         <>
           <i
             className="bi bi-person-circle fs-3 text-light"
             role="button"
             onClick={handleIconClick}
           ></i>
-
           <ProfileModal show={showModal} onHide={() => setShowModal(false)} />
         </>
       )}
