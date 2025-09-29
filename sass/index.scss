@@ -18,3 +18,8 @@ h1{
 .profile-toggle::after {
   display: none;
 }
+
+.profile-modal .modal-dialog {
+  max-width: 500px; 
+  width: 100%;
+}

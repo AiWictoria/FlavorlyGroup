@@ -20,7 +20,7 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
       <Modal
         show={show}
         onHide={handleClose}
-        className="d-flex justify-content-center align-items-center"
+        className="d-flex justify-content-center align-items-center profile-modal"
       >
         <Modal.Header
           closeButton
@@ -34,7 +34,7 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body className="">
+        <Modal.Body className="w-100">
           {view === "default" && (
             <>
               <h5 className="p-2 p-sm-0 m-sm-4">
@@ -54,7 +54,7 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
                   Comment, rate and discuss
                 </p>
               </div>
-              <div className="d-flex justify-content-center gap-2 gap-sm-5 mb-sm-4">
+              <div className="d-flex gap-2 gap-sm-5 mb-sm-4 justify-content-evenly">
                 <Button
                   variant="outline-primary"
                   onClick={() => setView("signup")}

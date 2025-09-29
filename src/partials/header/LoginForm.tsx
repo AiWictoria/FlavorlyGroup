@@ -33,7 +33,7 @@ export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
 
   return (
     <Form onSubmit={handleSubmit} className="m-2">
-      <Form.Group className="m-2 p-2">
+      <Form.Group className="p-2">
         <Form.Label>Email</Form.Label>
         <Form.Control
           type="email"
@@ -45,7 +45,7 @@ export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
         />
       </Form.Group>
 
-      <Form.Group className="m-2 p-2">
+      <Form.Group className="p-2">
         <Form.Label>Password</Form.Label>
         <Form.Control
           type="password"
