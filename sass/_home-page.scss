@@ -1,0 +1,17 @@
+.home-bg {
+  background: url("/images/start.jpg") center / cover;
+  min-height: 100vh;
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+
+  &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(24, 17, 15, 0.918), rgba(24, 17, 15, 0.644));
+      mix-blend-mode: multiply;
+      z-index: 0;
+    }
+}

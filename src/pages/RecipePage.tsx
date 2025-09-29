@@ -1,35 +1,28 @@
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { useRecipes } from "../hooks/useRecipes";
+import RecipeCard from "../components/RecipeCard";
 
 RecipePage.route = {
-  path: "recipes",
+  path: "/recipes",
   menuLabel: "Recipes",
-  index: 2,
+  index: 1,
 };
 
 export default function RecipePage() {
   const { recipes } = useRecipes();
-
   return (
     <>
-      <h2>Recipes</h2>
-      <Row xs="1" md="2" lg="4">
+      <h2 className="mt-3">Recipes</h2>
+      <Row xs={1} md={2} lg={3} xxl={4} className="mt-2 g-4">
         {recipes.map((recipe) => (
           <Col key={recipe.id}>
-            <Card>
-              <Card.Body>
-                <Card.Title>{recipe.title}</Card.Title>
-                <Card.Subtitle>{recipe.category}</Card.Subtitle>
-                <Card.Text>
-                  <strong>Ingredients: </strong>
-                  {recipe.ingredients}
-                </Card.Text>
-                <Card.Text>
-                  <strong>Instructions: </strong>
-                  {recipe.instructions}
-                </Card.Text>
-              </Card.Body>
-            </Card>
+            <RecipeCard
+              title={recipe.title}
+              category={recipe.category}
+              imageUrl={recipe.imageUrl}
+              averageRating={recipe.averageRating}
+              commentsCount={recipe.commentsCount}
+            />
           </Col>
         ))}
       </Row>

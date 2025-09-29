@@ -10,8 +10,8 @@ export default function Main() {
     }))
   );
   return (
-    <main className="mt-5">
-      <Container className="mt-5 mb-4">{element}</Container>
+    <main className="d-flex flex-fill justify-content-center align-items-center pt-5 mt-5">
+      <Container>{element}</Container>
     </main>
   );
 }

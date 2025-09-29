@@ -1,20 +1,18 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import routes from "../routes";
+import routes from "../../routes";
+import ProfileMenu from "./ProfileMenu";
 
 export default function Header() {
-  // whether the navbar is expanded or not
-  // (we use this to close it after a click/selection)
   const [expanded, setExpanded] = useState(false);
 
-  //  get the current route
   const pathName = useLocation().pathname;
   const currentRoute = routes
     .slice()
     .sort((a, b) => (a.path.length > b.path.length ? -1 : 1))
     .find((x) => pathName.indexOf(x.path.split(":")[0]) === 0);
-  // function that returns true if a menu item is 'active'
+
   const isActive = (path: string) =>
     path === currentRoute?.path || path === currentRoute?.parent;
 
@@ -23,17 +21,28 @@ export default function Header() {
       <Navbar
         expanded={expanded}
         expand="md"
-        className="bg-primary"
+        className="bg-primary text-light"
         data-bs-theme="dark"
         fixed="top"
       >
         <Container fluid>
-          <Navbar.Brand className="me-5" as={Link} to="/">
+          <Navbar.Toggle
+            className="order-1"
+            onClick={() => setExpanded(!expanded)}
+          />
+
+          <Navbar.Brand
+            className="text-light fs-2 p-2 order-2 order-md-1"
+            href="/"
+          >
             Flavorly
           </Navbar.Brand>
-          <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
+
+          <Navbar.Collapse
+            className="order-4 order-md-2 p-2"
+            id="basic-navbar-nav"
+          >
+            <Nav>
               {routes
                 .filter((x) => x.menuLabel)
                 .map(({ menuLabel, path }, i) => (
@@ -50,6 +59,9 @@ export default function Header() {
                 ))}
             </Nav>
           </Navbar.Collapse>
+          <div className="order-3">
+            <ProfileMenu />
+          </div>
         </Container>
       </Navbar>
     </header>
