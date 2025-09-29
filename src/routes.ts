@@ -4,7 +4,6 @@ import{createElement} from 'react';
 import HomePage from './pages/HomePage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import RecipePage from './pages/RecipePage.tsx';
-import SignIn from './pages/SignIn.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -18,8 +17,7 @@ interface Route {
 export default [
   HomePage,
   NotFoundPage,
-  RecipePage,
-  SignIn
+  RecipePage
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))
