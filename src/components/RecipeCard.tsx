@@ -16,13 +16,13 @@ export default function RecipeCard({
   commentsCount = 0,
 }: RecipeCardProps) {
   return (
-    <Card className="shadow-sm recipe-card">
+    <Card className="shadow-sm mx-2 recipe-card">
       <div className="position-relative">
         <Card.Img variant="top" src={imageUrl} alt={title} />
       </div>
 
       <Card.Header>
-        <Card.Title className="fw-bold">{title}</Card.Title>
+        <Card.Title className="fw-bold overflow-hidden">{title}</Card.Title>
       </Card.Header>
 
       <Card.Body>

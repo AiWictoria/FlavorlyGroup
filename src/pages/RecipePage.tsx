@@ -37,8 +37,8 @@ export default function RecipePage() {
   }
   return (
     <>
-      <h2>Recipes</h2>
-      <Row xs={1} md={2} lg={4} className="g-4">
+      <h2 className="mt-3">Recipes</h2>
+      <Row xs={1} md={2} lg={3} xxl={4} className="mt-2 g-4">
         {recipes.map((recipe) => (
           <Col key={recipe.id}>
             <RecipeCard
