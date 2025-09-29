@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Card, Col, Dropdown, Row, Form, Button } from "react-bootstrap";
+import { Col, Row, Form, Button } from "react-bootstrap";
 import { useRecipes } from "../hooks/useRecipes";
+import RecipeCard from "../components/RecipeCard";
 
 RecipePage.route = {
   path: "/recipes",
@@ -36,34 +37,20 @@ export default function RecipePage() {
   }
   return (
     <>
-      <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
-          Recipes
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Row xs="1" md="2" lg="4">
-            {recipes.map((recipe) => (
-              <Col key={recipe.id}>
-                <Card>
-                  <Card.Body>
-                    <Card.Title>{recipe.title}</Card.Title>
-                    <Card.Subtitle>{recipe.category}</Card.Subtitle>
-                    <Card.Text>
-                      <strong>Ingredients: </strong>
-                      {recipe.ingredients}
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Instructions: </strong>
-                      {recipe.instructions}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </Dropdown.Menu>
-      </Dropdown>
+      <h2>Recipes</h2>
+      <Row xs={1} md={2} lg={4} className="g-4">
+        {recipes.map((recipe) => (
+          <Col key={recipe.id}>
+            <RecipeCard
+              title={recipe.title}
+              category={recipe.category}
+              imageUrl="/images/start.jpg"
+              rating={4}
+              commentsCount={3}
+            />
+          </Col>
+        ))}
+      </Row>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group>
