@@ -4,17 +4,18 @@ interface RecipeCardProps {
   title: string;
   category: string;
   imageUrl?: string;
-  rating?: number;
+  averageRating?: number;
   commentsCount?: number;
 }
 
 export default function RecipeCard({
   title,
   category,
-  imageUrl = "/images/placeholder.png",
-  rating = 0,
+  imageUrl = "/images/recipes/placeholder.png",
+  averageRating = 0,
   commentsCount = 0,
 }: RecipeCardProps) {
+  const roundedRating = Math.round(averageRating);
   return (
     <Card className="shadow-sm mx-2 recipe-card">
       <div className="position-relative">
@@ -34,7 +35,7 @@ export default function RecipeCard({
             <i
               key={star}
               className={`bi ${
-                star <= rating ? "bi-star-fill text-warning" : "bi-star"
+                star <= roundedRating ? "bi-star-fill text-warning" : "bi-star"
               }`}
             />
           ))}

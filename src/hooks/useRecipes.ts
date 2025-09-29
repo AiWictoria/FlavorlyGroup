@@ -8,6 +8,10 @@ export interface Recipe {
   category: string
   ingredients: string
   instructions: string
+  imageUrl?: string
+  author?: string
+  averageRating?: number
+  commentsCount?: number
 }
 
 export function useRecipes() {
@@ -17,7 +21,7 @@ export function useRecipes() {
 
   async function fetchRecipes() {
     try {
-      const res = await fetch("/api/recipes", {
+      const res = await fetch("/api/recipeSummary", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
