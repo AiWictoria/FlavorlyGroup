@@ -23,17 +23,17 @@ export default function Header() {
       <Navbar
         expanded={expanded}
         expand="md"
-        className="bg-primary"
+        className="bg-primary text-light"
         data-bs-theme="dark"
         fixed="top"
       >
         <Container fluid>
-          <Navbar.Brand className="me-5" as={Link} to="/">
+          <Navbar.Brand className="text-light fs-2" href="/">
             Flavorly
           </Navbar.Brand>
           <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
+            <Nav className="">
               {routes
                 .filter((x) => x.menuLabel)
                 .map(({ menuLabel, path }, i) => (

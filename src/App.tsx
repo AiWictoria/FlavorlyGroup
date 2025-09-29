@@ -14,10 +14,12 @@ export default function App() {
 
   return (
     <>
-      <Header />
-      <Main />
-      <Footer />
-      {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
+      <div className="d-flex flex-column min-vh-100">
+        <Header />
+        <Main />
+        <Footer />
+        {showBootstrapBreakpoints ? <BootstrapBreakpoints /> : null}
+      </div>
     </>
   );
 }

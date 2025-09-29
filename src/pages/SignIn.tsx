@@ -62,7 +62,7 @@ export default function SignIn() {
   }
   return (
     <>
-      <Row>
+      <Row className="align-items-top">
         <Col>
           <Form onSubmit={handleSignUp}>
             <Form.Group>

@@ -1,21 +1,19 @@
 // Override bootstrap variables
 $font-size-base: 1.1rem;
 $line-height-base: 1.4;
-$navbar-dark-color: rgba(white, .8) !default;
-$navbar-dark-hover-color: rgba(white, .9) !default;
-$primary: rgb(80,
-68,
-60);
+$navbar-dark-color: #fcf1e7 !default;
+$navbar-dark-hover-color: #fcf1e7 default;
+$primary: #18110f;
 $enable-negative-margins: true;
+$light: #fcf1e7;
+$font-sizes:(
+  1: 4.5rem,
+  2: 2.5rem,
+  3: 2rem,
+  4: 1.5rem,
+  5: 1.25rem,
+  6: 1rem
+);
 
 // Import bootstrap
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
-
-// Override some Bootstrap defaults
-.navbar-brand {
-  font-size: 30px;
-}
-
-.container {
-  max-width: 970px;
-}
