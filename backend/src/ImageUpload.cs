@@ -4,14 +4,17 @@ public static class ImageUpload
 {
   public static void Start()
   {
+
     App.MapPost("/api/imageUpload", async (HttpContext context) =>
+
     {
+      Console.WriteLine($"Incoming content-type: {context.Request.ContentType}");
       var form = await context.Request.ReadFormAsync();
       var img = form.Files.GetFile("image");
       var recipeId = form["id"].ToString();
 
       string relativeUrl;
-
+      Console.WriteLine($"Files count: {form.Files.Count}, id: {recipeId}");
       if (string.IsNullOrWhiteSpace(recipeId))
         return RestResult.Parse(context, new { error = "Recipe ID is required" });
 
@@ -26,7 +29,7 @@ public static class ImageUpload
         if (string.IsNullOrWhiteSpace(ext) || !allowedTypes.Contains(ext))
           return RestResult.Parse(context, new { error = "Only .jpeg, .png, .jpg and .webp types are allowed" });
 
-        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "public", "images", "recipes");
+        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "public", "images", "recipes");
 
         if (!Directory.Exists(uploadPath))
           Directory.CreateDirectory(uploadPath);

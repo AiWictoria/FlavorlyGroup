@@ -15,6 +15,7 @@ export default function CreateRecipe() {
     category: "",
     ingredients: "",
     instructions: "",
+    image: null as File | null,
   });
 
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
@@ -26,13 +27,43 @@ export default function CreateRecipe() {
 
     const result = await createRecipe(form);
 
-    if (result?.success) {
-      alert("Recept skapat");
-      setForm({ title: "", category: "", ingredients: "", instructions: "" });
-    } else {
-      alert("Något gick fel");
+    if (!result?.success) {
+      alert("Something went wrong");
       console.log(result?.error);
+      return;
     }
+    alert("Recept skapat!");
+
+    const recipeId = result.insertId;
+
+    if (form.image) {
+      const formData = new FormData();
+      formData.append("id", recipeId);
+      formData.append("image", form.image);
+
+      console.log("Uploading...", formData.get("image"));
+
+      const uploadRes = await fetch("/api/imageUpload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const uploadResult = await uploadRes.json();
+      if (!uploadRes.ok) {
+        alert("Något gick fel vid uppladdning av bild");
+        console.log(uploadResult?.error);
+        return;
+      }
+      console.log("image uploaded", uploadResult.imageUrl);
+    }
+
+    setForm({
+      title: "",
+      category: "",
+      ingredients: "",
+      instructions: "",
+      image: null,
+    });
   }
   return (
     <>
@@ -86,6 +117,21 @@ export default function CreateRecipe() {
             required
           />
         </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Image</Form.Label>
+          <Form.Control
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={(e) => {
+              const fileInput = e.target as HTMLInputElement;
+              const file = fileInput.files?.[0] || null;
+              setForm({ ...form, image: file });
+            }}
+          />
+        </Form.Group>
+
         <Button type="submit">Save recipe</Button>
       </Form>
     </>

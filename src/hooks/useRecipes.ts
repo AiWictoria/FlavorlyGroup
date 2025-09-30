@@ -33,22 +33,26 @@ export function useRecipes() {
     }
   }
 
-  async function createRecipe(recipe: Omit<Recipe, "id" | "userId">) {
+  async function createRecipe(recipe: Omit<Recipe, "id" | "userId"> & {image?: File | null}){
     if (user === null) {
       alert("Logga in för att skapa recept")
       return { success: false }
     }
     try {
-      const recipeWithUserId = {... recipe, userId: user.id}
+      const { image, ...recipeData } = recipe
+      const recipeWithUserId = { ...recipeData, userId: user.id }
+      
       const res = await fetch("/api/recipes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(recipeWithUserId)
       })
       const data = await res.json()
+
       if (res.ok) {
         setRecipes((prev) => [...prev, data])
-        return {success: true, data}
+        const insertId = data.insertId
+        return {success: true, insertId}
       }
     }
       catch (error) {
