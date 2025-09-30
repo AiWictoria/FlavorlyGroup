@@ -27,7 +27,6 @@ export function useRecipes() {
       });
       const data = await res.json();
       if (res.ok) setRecipes(data)
-      console.log("RecipeSummary data:", data);
     }
     catch (error) {
       alert("Något gick fel");

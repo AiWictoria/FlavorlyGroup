@@ -6,7 +6,7 @@ interface RecipeLayoutProps {
   recipe?: Recipe;
 }
 
-export default function RecipeLayout({ mode }: RecipeLayoutProps) {
+export default function RecipeLayout({ mode, recipe }: RecipeLayoutProps) {
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isCreate = mode === "create";
@@ -17,8 +17,8 @@ export default function RecipeLayout({ mode }: RecipeLayoutProps) {
         <Col md={4}>
           {/* Replace with actual image for recipe when view */}
           <img
-            src="/images/recipes/placeholder.png"
-            alt="Preview"
+            src={recipe?.imageUrl || "/images/recipes/placeholder.png"}
+            alt={recipe?.title || "Recipe image"}
             className="w-100 rounded"
           />
           {!isView && (
@@ -37,7 +37,7 @@ export default function RecipeLayout({ mode }: RecipeLayoutProps) {
         </Col>
 
         <Col md={8}>
-          {isView && <h1 className="fs-1">Title</h1>}
+          {isView && <h1 className="fs-1">{recipe?.title || "Title"}</h1>}
           {!isView && (
             <Form.Group>
               <Form.Label className="fs-1"> Title </Form.Label>
@@ -45,7 +45,7 @@ export default function RecipeLayout({ mode }: RecipeLayoutProps) {
             </Form.Group>
           )}
 
-          {isView && <h4>Category</h4>}
+          {isView && <h4>{recipe?.category || "Category"}</h4>}
           {!isView && (
             <Form.Group>
               <Form.Label className="fs-2"> Category </Form.Label>
@@ -56,10 +56,18 @@ export default function RecipeLayout({ mode }: RecipeLayoutProps) {
           <h2>Ingredients</h2>
           {/* Checkbox for creating shoppinglist in future */}
           {isView && (
-            <Form.Group className="d-flex align-items-center">
-              <Form.Check />
-              <Form.Control placeholder="Ingredient" />
-            </Form.Group>
+            <ul>
+              {recipe?.ingredients?.split(",").map((ingredient, i) => (
+                <li key={i} className="d-flex align-items-center">
+                  <Form.Check
+                    type="checkbox"
+                    id={`ingredient-${i}`}
+                    className="me-2"
+                  />
+                  {ingredient.trim()}
+                </li>
+              ))}
+            </ul>
           )}
 
           {!isView && (
@@ -78,10 +86,18 @@ export default function RecipeLayout({ mode }: RecipeLayoutProps) {
 
           <h2>Instructions</h2>
           {isView && (
-            <Form.Group className="d-flex align-items-center">
-              <Form.Check />
-              <Form.Control placeholder="Step" />
-            </Form.Group>
+            <ul>
+              {recipe?.instructions?.split(",").map((instructions, i) => (
+                <li key={i} className="d-flex align-items-center">
+                  <Form.Check
+                    type="checkbox"
+                    id={`ingredient-${i}`}
+                    className="me-2"
+                  />
+                  {instructions.trim()}
+                </li>
+              ))}
+            </ul>
           )}
 
           {!isView && (
