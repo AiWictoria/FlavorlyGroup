@@ -40,6 +40,10 @@ public static class ImageUpload
         }
 
         relativeUrl = $"/images/recipes/{fileName}";
+        var sql = "UPDATE recipes SET imageUrl = $imageUrl WHERE id = $id";
+        var parameters = new { imageUrl = relativeUrl, id = recipeId };
+        SQLQueryOne(sql, parameters, context);
+
         return RestResult.Parse(context, new { imageUrl = relativeUrl });
       }
     });
