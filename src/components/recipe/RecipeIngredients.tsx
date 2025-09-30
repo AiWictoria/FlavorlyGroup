@@ -93,6 +93,7 @@ export function RecipeIngredients({
           {ingredientList.map((ingredient, i) => (
             <Form.Group key={i} className="d-flex align-items-center mb-2">
               <Form.Control
+                required
                 placeholder={"Add ingredient"}
                 value={ingredient}
                 onChange={(e) => handleIngredientChange(i, e.target.value)}

@@ -30,6 +30,7 @@ export function RecipeTitleSection({
       <Form.Group>
         <Form.Label className="fs-1">Title</Form.Label>
         <Form.Control
+          required
           type="text"
           placeholder={isCreate ? "Enter new title" : "Update title"}
           value={recipe?.title || ""}
@@ -40,6 +41,7 @@ export function RecipeTitleSection({
       <Form.Group className="mt-3">
         <Form.Label className="fs-2">Category</Form.Label>
         <Form.Control
+          required
           type="text"
           placeholder={isCreate ? "Enter category" : "Update category"}
           value={recipe?.category || ""}

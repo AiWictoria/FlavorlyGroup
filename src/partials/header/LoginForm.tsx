@@ -25,6 +25,7 @@ export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
 
     if (result.success) {
       navigate("/recipes");
+      window.location.reload();
       if (onSuccess) onSuccess();
     } else {
       alert("Something went wrong");

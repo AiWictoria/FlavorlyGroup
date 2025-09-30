@@ -2,13 +2,21 @@ import { Dropdown } from "react-bootstrap";
 import { useAuth } from "../../hooks/useAuth";
 import ProfileModal from "./ProfileModal";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileMenu() {
   const { user, logout } = useAuth();
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleIconClick = () => {
     if (!user) setShowModal(true);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+    window.location.reload();
   };
 
   return (
@@ -30,7 +38,7 @@ export default function ProfileMenu() {
               Hello {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
-            <Dropdown.Item className="text-light" onClick={logout}>
+            <Dropdown.Item className="text-light" onClick={handleLogout}>
               Logout
             </Dropdown.Item>
           </Dropdown.Menu>
