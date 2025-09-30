@@ -11,115 +11,157 @@ export default function RecipeLayout({ mode, recipe }: RecipeLayoutProps) {
   const isEdit = mode === "edit";
   const isCreate = mode === "create";
 
+  const roundedRating = Math.round(recipe?.averageRating ?? 0);
+
   return (
     <>
-      <Row className="mt-5">
-        <Col md={4}>
-          {/* Replace with actual image for recipe when view */}
-          <img
-            src={recipe?.imageUrl || "/images/recipes/placeholder.png"}
-            alt={recipe?.title || "Recipe image"}
-            className="w-100 rounded"
-          />
-          {!isView && (
-            <Form.Group>
-              <Form.Control
-                type="file"
-                name="image"
-                accept="image/*"
-                onChange={(e) => {
-                  const fileInput = e.target as HTMLInputElement;
-                  const file = fileInput.files?.[0] || null;
-                }}
+      <div className="mt-4 pt-4 mt-lg-4 pt-lg-5">
+        <Row>
+          <Col lg={6} className="p-0">
+            <div className="ratio ratio-16x9 rounded">
+              <img
+                src={recipe?.imageUrl || "/images/recipes/placeholder.png"}
+                alt={recipe?.title || "Recipe image"}
+                className="object-fit-cover"
               />
-            </Form.Group>
-          )}
-        </Col>
+            </div>
+            {isView && (
+              <>
+                <div className="d-flex align-items-center justify-content-between">
+                  <div className="mx-4 fs-3">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <i
+                        key={star}
+                        className={`bi ${
+                          star <= roundedRating
+                            ? "bi-star-fill text-warning"
+                            : "bi-star"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <Button variant="danger" className="mx-2 mx-sm-4 mx-lg-1 m-1">
+                    <i className="bi bi-heart"> Save</i>
+                  </Button>
+                </div>
+              </>
+            )}
+            {!isView && (
+              <Form.Group>
+                <Form.Control
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const fileInput = e.target as HTMLInputElement;
+                    const file = fileInput.files?.[0] || null;
+                  }}
+                />
+              </Form.Group>
+            )}
+          </Col>
 
-        <Col md={8}>
-          {isView && <h1 className="fs-1">{recipe?.title || "Title"}</h1>}
-          {!isView && (
-            <Form.Group>
-              <Form.Label className="fs-1"> Title </Form.Label>
-              <Form.Control placeholder="Enter Title" />
-            </Form.Group>
-          )}
+          <Col md={6} className=" mt-5 pt-5 px-5">
+            {isView && <h1 className="fs-1">{recipe?.title || "Title"}</h1>}
+            {!isView && (
+              <Form.Group>
+                <Form.Label className="fs-1"> Title </Form.Label>
+                <Form.Control placeholder="Enter Title" />
+              </Form.Group>
+            )}
 
-          {isView && <h4>{recipe?.category || "Category"}</h4>}
-          {!isView && (
-            <Form.Group>
-              <Form.Label className="fs-2"> Category </Form.Label>
-              <Form.Control placeholder="Enter Category" />
-            </Form.Group>
-          )}
-
-          <h2>Ingredients</h2>
-          {/* Checkbox for creating shoppinglist in future */}
-          {isView && (
-            <ul>
-              {recipe?.ingredients?.split(",").map((ingredient, i) => (
-                <li key={i} className="d-flex align-items-center">
-                  <Form.Check
-                    type="checkbox"
-                    id={`ingredient-${i}`}
-                    className="me-2"
-                  />
-                  {ingredient.trim()}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {!isView && (
-            <>
-              <Form.Group className="d-flex align-items-center">
+            {isView && <h4>{recipe?.category || "Category"}</h4>}
+            {!isView && (
+              <Form.Group>
+                <Form.Label className="fs-2"> Category </Form.Label>
                 <Form.Control placeholder="Enter Category" />
-                <Button variant="outline-danger" size="sm" className="ms-2">
-                  -
-                </Button>
               </Form.Group>
-              <Button variant="outline-primary" size="sm">
-                + Add ingredient
-              </Button>
-            </>
-          )}
+            )}
+            <div className="pt-4">
+              <h2>Ingredients</h2>
+              {/* Checkbox for creating shoppinglist in future */}
+              {isView && (
+                <>
+                  <ul className="list-unstyled">
+                    {recipe?.ingredients?.split(",").map((ingredient, i) => (
+                      <li key={i} className="d-flex align-items-center">
+                        <Form.Check
+                          type="checkbox"
+                          id={`ingredient-${i}`}
+                          className="m-2 fs-4"
+                        />
+                        {ingredient.trim()}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button variant="outline-primary">
+                    Add to shopping list
+                  </Button>
+                </>
+              )}
 
-          <h2>Instructions</h2>
-          {isView && (
-            <ul>
-              {recipe?.instructions?.split(",").map((instructions, i) => (
-                <li key={i} className="d-flex align-items-center">
-                  <Form.Check
-                    type="checkbox"
-                    id={`ingredient-${i}`}
-                    className="me-2"
-                  />
-                  {instructions.trim()}
-                </li>
-              ))}
-            </ul>
-          )}
+              {!isView && (
+                <>
+                  <Form.Group className="d-flex align-items-center">
+                    <Form.Control placeholder="Enter Category" />
+                    <Button variant="outline-danger" size="sm" className="ms-2">
+                      -
+                    </Button>
+                  </Form.Group>
+                  <Button variant="outline-primary" size="sm">
+                    + Add ingredient
+                  </Button>
+                </>
+              )}
+            </div>
+          </Col>
+        </Row>
+        <Row className="mx-4 pb-5">
+          <div className="pt-4">
+            <h2>Instructions</h2>
+            {isView && (
+              <ul className="list-unstyled">
+                {recipe?.instructions?.split(",").map((instructions, i) => (
+                  <li key={i} className="d-flex align-items-center unstyled">
+                    <Form.Check
+                      type="checkbox"
+                      id={`ingredient-${i}`}
+                      className="m-2 fs-4"
+                    />
+                    {instructions.trim()}
+                  </li>
+                ))}
+              </ul>
+            )}
 
-          {!isView && (
-            <>
-              <Form.Group className="d-flex align-items-center">
-                <Form.Control placeholder="Step" />
-                <Button variant="outline-danger" size="sm" className="ms-2">
-                  -
+            {!isView && (
+              <>
+                <Form.Group className="d-flex align-items-center">
+                  <Form.Control placeholder="Step" />
+                  <Button variant="outline-danger" size="sm" className="ms-2">
+                    -
+                  </Button>
+                </Form.Group>
+                <Button variant="outline-primary" size="sm">
+                  + Add step
                 </Button>
-              </Form.Group>
-              <Button variant="outline-primary" size="sm">
-                + Add step
-              </Button>
-            </>
-          )}
-        </Col>
-      </Row>
-      {!isView && (
-        <Button type="submit" className="bg-success">
-          Save Recipe
-        </Button>
-      )}
+              </>
+            )}
+          </div>
+        </Row>
+
+        {!isView && (
+          <Button type="submit" className="bg-success">
+            Save Recipe
+          </Button>
+        )}
+
+        {isView && (
+          <Row>
+            <Col></Col>
+          </Row>
+        )}
+      </div>
     </>
   );
 }
