@@ -14,14 +14,13 @@ export function RecipeInstructions({
   onChange,
 }: RecipeInstructionsProps) {
   const isView = mode === "view";
-  const isEdit = mode === "edit";
-  const isCreate = mode === "create";
+  const isEditOrCreate = mode === "edit" || mode === "create";
 
   const [instructionsList, setInstructionsList] = useState<string[]>([]);
 
   useEffect(() => {
     if (recipe?.instructions) {
-      setInstructionsList(recipe.instructions.split(",").map((i) => i.trim()));
+      setInstructionsList(recipe.instructions.split("\n"));
     } else {
       setInstructionsList([""]);
     }
@@ -31,7 +30,7 @@ export function RecipeInstructions({
     const updated = [...instructionsList];
     updated[index] = value;
     setInstructionsList(updated);
-    onChange?.("instructions", updated.join(","));
+    onChange?.("instructions", updated.join("\n"));
   };
 
   const addInstruction = () => {
@@ -41,7 +40,7 @@ export function RecipeInstructions({
   const removeInstruction = (index: number) => {
     const updated = instructionsList.filter((_, i) => i !== index);
     setInstructionsList(updated);
-    onChange?.("instructions", updated.join(","));
+    onChange?.("instructions", updated.join("\n"));
   };
 
   return (
@@ -63,12 +62,12 @@ export function RecipeInstructions({
         </ul>
       )}
 
-      {(isEdit || isCreate) && (
+      {isEditOrCreate && (
         <>
           {instructionsList.map((instr, i) => (
             <Form.Group key={i} className="d-flex align-items-center mb-2">
               <Form.Control
-                placeholder={"Add step"}
+                placeholder="Add step"
                 value={instr}
                 onChange={(e) => handleInstructionChange(i, e.target.value)}
               />

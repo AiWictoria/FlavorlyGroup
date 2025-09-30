@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth"
 
 export interface Recipe {
-  recipeId: number
+  id: number
   userId: number
   title: string
   category: string
@@ -72,28 +72,56 @@ export function useRecipes() {
       return { success: false, error: "Något gick fel"}
     }
   }
-  async function updateRecipe(id: number, recipe: Partial<Recipe>) {
-    if (user === null) {
-      alert("Logga in för att uppdatera recept");
-      return { success: false };
+  async function updateRecipe(id: number, recipe: Partial<Recipe>): Promise<{ success: boolean }> {
+  if (user === null) {
+    alert("Sign it to create recipes");
+    return { success: false };
+  }
+
+  try {
+    const res = await fetch(`/api/recipes/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(recipe),
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      setRecipes((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, ...data } : r))
+      );
+      return { success: true };
     }
+
+    return { success: false };
+  } catch (error) {
+    console.error("Something went wrong:", error);
+    return { success: false };
+  }
+  }
+  async function uploadImage(recipeId: number, image: File) {
     try {
-      const res = await fetch(`/api/recipes/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(recipe),
+      const formData = new FormData();
+      formData.append("id", recipeId.toString());
+      formData.append("image", image);
+
+      const res = await fetch("/api/imageUpload", {
+        method: "POST",
+        body: formData,
       });
+
       const data = await res.json();
 
-      if (res.ok) {
-        setRecipes((prev) =>
-          prev.map((r) => (r.recipeId === id ? { ...r, ...data } : r))
-        );
-        return { success: true };
+      if (!res.ok) {
+        console.error("Upload failed:", data.error);
+        return { success: false, error: data.error };
       }
+
+      console.log("Image uploaded:", data.imageUrl);
+      return { success: true, imageUrl: data.imageUrl };
     } catch (error) {
-      console.error("Fel vid uppdatering av recept:", error);
-      return { success: false };
+      console.error("Upload error:", error);
+      return { success: false, error: "Unexpected error" };
     }
   }
   
@@ -101,5 +129,5 @@ export function useRecipes() {
     fetchRecipes();
   }, []);
   
-  return {recipes, fetchRecipes, createRecipe, fetchRecipeById, updateRecipe}
+  return {recipes, fetchRecipes, createRecipe, fetchRecipeById, updateRecipe, uploadImage}
 }
