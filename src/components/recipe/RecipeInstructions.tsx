@@ -67,6 +67,7 @@ export function RecipeInstructions({
           {instructionsList.map((instr, i) => (
             <Form.Group key={i} className="d-flex align-items-center mb-2">
               <Form.Control
+                required
                 placeholder="Add step"
                 value={instr}
                 onChange={(e) => handleInstructionChange(i, e.target.value)}

@@ -2,13 +2,21 @@ import { Dropdown } from "react-bootstrap";
 import { useAuth } from "../../hooks/useAuth";
 import ProfileModal from "./ProfileModal";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileMenu() {
   const { user, logout } = useAuth();
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleIconClick = () => {
     if (!user) setShowModal(true);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+    window.location.reload();
   };
 
   return (
@@ -20,17 +28,17 @@ export default function ProfileMenu() {
             className="border-0 bg-transparent p-0 profile-toggle"
           >
             <i
-              className="bi bi-person-circle fs-3 text-light"
+              className="bi bi-person-circle fs-3 text-light p-4 mx-2 mx-md-5"
               role="button"
             ></i>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu className="bg-primary text-light">
+          <Dropdown.Menu className="bg-primary text-light mx-md-4 p-3">
             <Dropdown.Header className="text-light">
-              You are logged in as {user.firstName}
+              Hello {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
-            <Dropdown.Item className="text-light" onClick={logout}>
+            <Dropdown.Item className="text-light" onClick={handleLogout}>
               Logout
             </Dropdown.Item>
           </Dropdown.Menu>
@@ -38,7 +46,7 @@ export default function ProfileMenu() {
       ) : (
         <>
           <i
-            className="bi bi-person-circle fs-3 text-light"
+            className="bi bi-person-circle fs-3 text-light p-4 mx-2 mx-md-5"
             role="button"
             onClick={handleIconClick}
           ></i>

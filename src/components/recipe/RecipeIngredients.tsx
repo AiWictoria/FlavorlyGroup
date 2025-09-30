@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
+import { useShoppingList } from "../../hooks/useShoppingList";
 
 interface RecipeIngredientsProps {
   mode: "view" | "edit" | "create";
@@ -18,12 +19,17 @@ export function RecipeIngredients({
   const isCreate = mode === "create";
 
   const [ingredientList, setIngredientList] = useState<string[]>([]);
+  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
+  const { addItem } = useShoppingList();
 
   useEffect(() => {
     if (recipe?.ingredients) {
-      setIngredientList(recipe.ingredients.split(",").map((i) => i.trim()));
+      const parts = recipe.ingredients.split(",").map((i) => i.trim());
+      setIngredientList(parts);
+      setCheckedItems(new Array(parts.length).fill(false));
     } else {
       setIngredientList([""]);
+      setCheckedItems([false]);
     }
   }, [recipe]);
 
@@ -33,6 +39,14 @@ export function RecipeIngredients({
     setIngredientList(updated);
     onChange?.("ingredients", updated.join(","));
   };
+
+  async function handleAddToList() {
+    const selected = ingredientList.filter((_, i) => checkedItems[i]);
+    for (const ingredient of selected) {
+      await addItem(ingredient);
+    }
+    alert(`${selected.length} items added to shopping list`);
+  }
 
   const addIngredient = () => {
     setIngredientList([...ingredientList, ""]);
@@ -57,12 +71,20 @@ export function RecipeIngredients({
                   type="checkbox"
                   id={`ingredient-${i}`}
                   className="m-2 fs-4"
+                  checked={checkedItems[i] || false}
+                  onChange={(e) => {
+                    const updated = [...checkedItems];
+                    updated[i] = e.target.checked;
+                    setCheckedItems(updated);
+                  }}
                 />
                 {ingredient}
               </li>
             ))}
           </ul>
-          <Button variant="outline-primary">Add to shopping list</Button>
+          <Button variant="outline-primary" onClick={handleAddToList}>
+            Add selected items to shopping list
+          </Button>
         </>
       )}
 
@@ -71,6 +93,7 @@ export function RecipeIngredients({
           {ingredientList.map((ingredient, i) => (
             <Form.Group key={i} className="d-flex align-items-center mb-2">
               <Form.Control
+                required
                 placeholder={"Add ingredient"}
                 value={ingredient}
                 onChange={(e) => handleIngredientChange(i, e.target.value)}
