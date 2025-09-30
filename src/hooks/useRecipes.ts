@@ -20,31 +20,37 @@ export function useRecipes() {
   const {user} = useAuth()
 
   async function fetchRecipes() {
-    try {
-      const res = await fetch("/api/recipeSummary", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
-      if (res.ok) setRecipes(data)
+  try {
+    const res = await fetch("/api/recipeSummary", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      const mapped = data.map((r: any) => ({
+        ...r,
+        id: r.recipeId,
+      }));
+      setRecipes(mapped);
     }
-    catch (error) {
-      alert("Något gick fel");
-    }
+  } catch (error) {
+    alert("Något gick fel");
   }
+}
 
   async function fetchRecipeById(id: number) {
-    try {
-      const res = await fetch(`/api/recipes/${id}`)
-      const data = await res.json()
+  try {
+    const res = await fetch(`/api/recipes/${id}`);
+    const data = await res.json();
 
-      if (res.ok) return data
-      else return null
-    }
-    catch (error) {
-      console.log("Something went wrong")
-    }
+    if (res.ok) {
+      return { ...data, id: data.recipeId };
+    } else return null;
+  } catch (error) {
+    console.log("Something went wrong");
   }
+}
 
   async function createRecipe(recipe: Omit<Recipe, "recipeId" | "userId"> & {image?: File | null}){
     if (user === null) {
