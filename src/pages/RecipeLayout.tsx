@@ -11,67 +11,97 @@ export default function RecipeLayout({ mode }: RecipeLayoutProps) {
 
   return (
     <>
-      <Row>
+      <Row className="mt-5">
         <Col md={4}>
+          {/* Replace with actual image for recipe when view */}
           <img
             src="/images/recipes/placeholder.png"
             alt="Preview"
             className="w-100 rounded"
           />
-          <div>
-            <div>Image</div>
-            <Form.Control type="file" accept="image/*" />
-          </div>
+          {!isView && (
+            <Form.Group>
+              <Form.Control
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={(e) => {
+                  const fileInput = e.target as HTMLInputElement;
+                  const file = fileInput.files?.[0] || null;
+                }}
+              />
+            </Form.Group>
+          )}
         </Col>
 
         <Col md={8}>
-          <div>
-            <div>Title</div>
-            <Form.Control placeholder="Title" />
-          </div>
+          {isView && <h1 className="fs-1">Title</h1>}
+          {!isView && (
+            <Form.Group>
+              <Form.Label className="fs-1"> Title </Form.Label>
+              <Form.Control placeholder="Enter Title" />
+            </Form.Group>
+          )}
 
-          <div>
-            <div>Category</div>
-            <Form.Control placeholder="Category" />
-          </div>
+          {isView && <h4>Category</h4>}
+          {!isView && (
+            <Form.Group>
+              <Form.Label className="fs-2"> Category </Form.Label>
+              <Form.Control placeholder="Enter Category" />
+            </Form.Group>
+          )}
 
-          <h5>Ingredients</h5>
-          <div className="d-flex align-items-center">
-            <Form.Check />
-            <Form.Control placeholder="Ingredient" />
+          <h2>Ingredients</h2>
+          {/* Checkbox for creating shoppinglist in future */}
+          {isView && (
+            <Form.Group className="d-flex align-items-center">
+              <Form.Check />
+              <Form.Control placeholder="Ingredient" />
+            </Form.Group>
+          )}
 
-            {/* Should only be applied when creating or when editing a recipe
-            <Button variant="outline-danger" size="sm" className="ms-2">
-              -
-            </Button> */}
-          </div>
+          {!isView && (
+            <>
+              <Form.Group className="d-flex align-items-center">
+                <Form.Control placeholder="Enter Category" />
+                <Button variant="outline-danger" size="sm" className="ms-2">
+                  -
+                </Button>
+              </Form.Group>
+              <Button variant="outline-primary" size="sm">
+                + Add ingredient
+              </Button>
+            </>
+          )}
 
-          {/* Should only be applied when creating or when editing a recipe
-          <Button variant="outline-primary" size="sm">
-            + Add ingredient
-          </Button> */}
+          <h2>Instructions</h2>
+          {isView && (
+            <Form.Group className="d-flex align-items-center">
+              <Form.Check />
+              <Form.Control placeholder="Step" />
+            </Form.Group>
+          )}
 
-          <h5 className="mt-4">Instructions</h5>
-          <div className="d-flex align-items-center">
-            <Form.Check />
-            <Form.Control placeholder="Step" />
-
-            {/* Should only be applied when creating or when editing a recipe
-            <Button variant="outline-danger" size="sm" className="ms-2">
-              -
-            </Button> */}
-          </div>
-
-          {/* Should only be applied when creating or when editing a recipe
-          <Button variant="outline-primary" size="sm">
-            + Add step
-          </Button> */}
+          {!isView && (
+            <>
+              <Form.Group className="d-flex align-items-center">
+                <Form.Control placeholder="Step" />
+                <Button variant="outline-danger" size="sm" className="ms-2">
+                  -
+                </Button>
+              </Form.Group>
+              <Button variant="outline-primary" size="sm">
+                + Add step
+              </Button>
+            </>
+          )}
         </Col>
       </Row>
-
-      <Button type="submit" className="bg-success">
-        Save Recipe
-      </Button>
+      {!isView && (
+        <Button type="submit" className="bg-success">
+          Save Recipe
+        </Button>
+      )}
     </>
   );
 }

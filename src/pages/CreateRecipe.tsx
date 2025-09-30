@@ -68,7 +68,7 @@ export default function CreateRecipe() {
   }
   return (
     <>
-      <RecipeLayout></RecipeLayout>
+      <RecipeLayout mode="view"></RecipeLayout>
 
       <h3>Create</h3>
 
