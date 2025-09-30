@@ -1,6 +1,8 @@
 import { Col, Row } from "react-bootstrap";
+import { useState } from "react";
 import { useRecipes } from "../hooks/useRecipes";
 import RecipeCard from "../components/RecipeCard";
+import RecipeSearchBar from "../components/RecipeSearchBar";
 
 RecipePage.route = {
   path: "/recipes",
@@ -10,15 +12,31 @@ RecipePage.route = {
 
 export default function RecipePage() {
   const { recipes } = useRecipes();
+
+  const [search, setSearch] = useState("");
+
+  const filtered = recipes.filter((r) =>
+    [r.title, r.category, r.ingredients, r.instructions].some((field) =>
+      field?.toLowerCase().includes(search.toLowerCase())
+    )
+  );
+
   return (
     <>
       <div className="mt-5 pt-5">
-        <h2 className="mx-4 m-md-5 fs-1">Recipes</h2>
+        <Row className="align-items-center justify-content-between mx-4 m-md-2">
+          <Col xs={12} md={4} lg={3}>
+            <h2 className="fs-1">Recipes</h2>
+          </Col>
+          <Col xs={12} md={8} lg={9} className="mt-2 mt-md-5">
+            <RecipeSearchBar onSearch={setSearch} />
+          </Col>
+        </Row>
         <Row xs={1} md={2} lg={3} xxl={4} className="m-3 g-4">
-          {recipes.map((recipe) => (
-            <Col key={recipe.recipeId}>
+          {filtered.map((recipe) => (
+            <Col key={recipe.id}>
               <RecipeCard
-                recipeId={recipe.recipeId}
+                recipeId={recipe.id}
                 title={recipe.title}
                 category={recipe.category}
                 imageUrl={recipe.imageUrl}
