@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useRecipes } from "../hooks/useRecipes";
+import RecipeLayout from "./RecipeLayout";
 
 CreateRecipe.route = {
   path: "/createRecipe",
@@ -67,6 +68,8 @@ export default function CreateRecipe() {
   }
   return (
     <>
+      <RecipeLayout></RecipeLayout>
+
       <h3>Create</h3>
 
       <Form onSubmit={handleSubmit}>
