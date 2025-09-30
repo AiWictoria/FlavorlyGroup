@@ -1,7 +1,9 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
+import type { Recipe } from "../hooks/useRecipes";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
+  recipe?: Recipe;
 }
 
 export default function RecipeLayout({ mode }: RecipeLayoutProps) {

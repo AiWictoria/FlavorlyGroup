@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth"
 
 export interface Recipe {
-  id: number
+  recipeId: number
   userId: number
   title: string
   category: string
@@ -26,14 +26,28 @@ export function useRecipes() {
         headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
-      if(res.ok) setRecipes(data)
+      if (res.ok) setRecipes(data)
+      console.log("RecipeSummary data:", data);
     }
     catch (error) {
       alert("Något gick fel");
     }
   }
 
-  async function createRecipe(recipe: Omit<Recipe, "id" | "userId"> & {image?: File | null}){
+  async function fetchRecipeById(id: number) {
+    try {
+      const res = await fetch(`/api/recipes/${id}`)
+      const data = await res.json()
+
+      if (res.ok) return data
+      else return null
+    }
+    catch (error) {
+      console.log("Something went wrong")
+    }
+  }
+
+  async function createRecipe(recipe: Omit<Recipe, "recipeId" | "userId"> & {image?: File | null}){
     if (user === null) {
       alert("Logga in för att skapa recept")
       return { success: false }
@@ -59,10 +73,34 @@ export function useRecipes() {
       return { success: false, error: "Något gick fel"}
     }
   }
+  async function updateRecipe(id: number, recipe: Partial<Recipe>) {
+    if (user === null) {
+      alert("Logga in för att uppdatera recept");
+      return { success: false };
+    }
+    try {
+      const res = await fetch(`/api/recipes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recipe),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setRecipes((prev) =>
+          prev.map((r) => (r.recipeId === id ? { ...r, ...data } : r))
+        );
+        return { success: true };
+      }
+    } catch (error) {
+      console.error("Fel vid uppdatering av recept:", error);
+      return { success: false };
+    }
+  }
   
   useEffect(() => {
     fetchRecipes();
   }, []);
   
-  return {recipes, fetchRecipes, createRecipe}
+  return {recipes, fetchRecipes, createRecipe, fetchRecipeById, updateRecipe}
 }
