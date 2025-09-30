@@ -21,7 +21,7 @@ export default function RecipeCard({
   const roundedRating = Math.round(averageRating);
 
   return (
-    <Link to={`/recipes/${recipeId}`}>
+    <Link to={`/recipes/${recipeId}`} className="text-decoration-none">
       <Card className="shadow-sm mx-2 recipe-card">
         <div className="position-relative">
           <Card.Img variant="top" src={imageUrl} alt={title} />
