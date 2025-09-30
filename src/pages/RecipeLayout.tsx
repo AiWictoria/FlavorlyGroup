@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import type { Recipe } from "../hooks/useRecipes";
 
@@ -17,7 +18,7 @@ export default function RecipeLayout({ mode, recipe }: RecipeLayoutProps) {
     <>
       <div className="mt-4 pt-4 mt-lg-4 pt-lg-5">
         <Row>
-          <Col lg={6} className="p-0">
+          <Col lg={6} className="p-0 order-lg-2">
             <div className="ratio ratio-16x9 rounded">
               <img
                 src={recipe?.imageUrl || "/images/recipes/placeholder.png"}
@@ -40,7 +41,7 @@ export default function RecipeLayout({ mode, recipe }: RecipeLayoutProps) {
                       />
                     ))}
                   </div>
-                  <Button variant="danger" className="mx-2 mx-sm-4 mx-lg-1 m-1">
+                  <Button variant="danger" className="mx-2 mx-sm-4 mx-lg-4 m-1">
                     <i className="bi bi-heart"> Save</i>
                   </Button>
                 </div>
@@ -61,7 +62,7 @@ export default function RecipeLayout({ mode, recipe }: RecipeLayoutProps) {
             )}
           </Col>
 
-          <Col md={6} className=" mt-5 pt-5 px-5">
+          <Col md={6} className=" mt-3 pt-4 px-5">
             {isView && <h1 className="fs-1">{recipe?.title || "Title"}</h1>}
             {!isView && (
               <Form.Group>
@@ -117,49 +118,45 @@ export default function RecipeLayout({ mode, recipe }: RecipeLayoutProps) {
           </Col>
         </Row>
         <Row className="mx-4 pb-5">
-          <div className="pt-4">
-            <h2>Instructions</h2>
-            {isView && (
-              <ul className="list-unstyled">
-                {recipe?.instructions?.split(",").map((instructions, i) => (
-                  <li key={i} className="d-flex align-items-center unstyled">
-                    <Form.Check
-                      type="checkbox"
-                      id={`ingredient-${i}`}
-                      className="m-2 fs-4"
-                    />
-                    {instructions.trim()}
-                  </li>
-                ))}
-              </ul>
-            )}
+          <Col lg={8} className="mx-auto text-lg-center">
+            <div className="pt-4">
+              <h2>Instructions</h2>
+              {isView && (
+                <ul className="list-unstyled">
+                  {recipe?.instructions?.split(",").map((instructions, i) => (
+                    <li key={i} className="d-flex align-items-center unstyled">
+                      <Form.Check
+                        type="checkbox"
+                        id={`ingredient-${i}`}
+                        className="m-2 fs-4"
+                      />
+                      {instructions.trim()}
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-            {!isView && (
-              <>
-                <Form.Group className="d-flex align-items-center">
-                  <Form.Control placeholder="Step" />
-                  <Button variant="outline-danger" size="sm" className="ms-2">
-                    -
+              {!isView && (
+                <>
+                  <Form.Group className="d-flex align-items-center">
+                    <Form.Control placeholder="Step" />
+                    <Button variant="outline-danger" size="sm" className="ms-2">
+                      -
+                    </Button>
+                  </Form.Group>
+                  <Button variant="outline-primary" size="sm">
+                    + Add step
                   </Button>
-                </Form.Group>
-                <Button variant="outline-primary" size="sm">
-                  + Add step
-                </Button>
-              </>
-            )}
-          </div>
+                </>
+              )}
+            </div>
+          </Col>
         </Row>
 
         {!isView && (
           <Button type="submit" className="bg-success">
             Save Recipe
           </Button>
-        )}
-
-        {isView && (
-          <Row>
-            <Col></Col>
-          </Row>
         )}
       </div>
     </>
