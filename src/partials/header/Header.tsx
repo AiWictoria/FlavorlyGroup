@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import routes from "../../routes";
 import ProfileMenu from "./ProfileMenu";
+import SearchIcon from "./SearchIcon";
 
 export default function Header() {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ export default function Header() {
           </Navbar.Brand>
 
           <Navbar.Collapse
-            className="order-4 order-md-2 p-2"
+            className="order-5 order-md-2 p-2"
             id="basic-navbar-nav"
           >
             <Nav>
@@ -66,8 +67,12 @@ export default function Header() {
                 ))}
             </Nav>
           </Navbar.Collapse>
-          <div className="order-3">
+
+          <div className="order-4">
             <ProfileMenu />
+          </div>
+          <div className="order-3">
+            <SearchIcon />
           </div>
         </Container>
       </Navbar>

@@ -28,7 +28,7 @@ export default function ProfileMenu() {
             className="border-0 bg-transparent p-0 profile-toggle"
           >
             <i
-              className="bi bi-person-circle fs-3 text-light p-4 mx-2 mx-md-5"
+              className="bi bi-person-circle fs-3 text-light mx-2 "
               role="button"
             ></i>
           </Dropdown.Toggle>
