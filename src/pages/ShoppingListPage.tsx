@@ -1,11 +1,13 @@
 import { useShoppingList } from "../hooks/useShoppingList";
 import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
 import { useState } from "react";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
   menuLabel: "Shopping List",
   index: 4,
+  protected: true,
 };
 
 export default function ShoppingListPage() {
@@ -20,44 +22,46 @@ export default function ShoppingListPage() {
   }
 
   return (
-    <Row className="mt-5 p-5">
-      <Col>
-        <h2>Shopping List</h2>
+    <ProtectedRoute>
+      <Row className="mt-5 p-5">
+        <Col>
+          <h2>Shopping List</h2>
 
-        <Form onSubmit={handleAdd} className="d-flex mt-3">
-          <Form.Control
-            placeholder="Add ingredient..."
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-          />
-          <Button variant="success" type="submit" className="ms-2">
-            Add
-          </Button>
-        </Form>
+          <Form onSubmit={handleAdd} className="d-flex my-3">
+            <Form.Control
+              placeholder="Add ingredient..."
+              value={newItem}
+              onChange={(e) => setNewItem(e.target.value)}
+            />
+            <Button variant="success" type="submit" className="ms-2">
+              Add
+            </Button>
+          </Form>
 
-        <ListGroup>
-          {items.map((item) => (
-            <ListGroup.Item
-              key={item.id}
-              className="d-flex align-items-center justify-content-between"
-            >
-              <Form.Check
-                type="checkbox"
-                checked={item.checked}
-                onChange={(e) => editItem(item.id, e.target.checked)}
-                label={item.ingredient}
-              />
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={() => removeItem(item.id)}
+          <ListGroup>
+            {items.map((item) => (
+              <ListGroup.Item
+                key={item.id}
+                className="d-flex align-items-center justify-content-between"
               >
-                -
-              </Button>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      </Col>
-    </Row>
+                <Form.Check
+                  type="checkbox"
+                  checked={item.checked}
+                  onChange={(e) => editItem(item.id, e.target.checked)}
+                  label={item.ingredient}
+                />
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => removeItem(item.id)}
+                >
+                  -
+                </Button>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Col>
+      </Row>
+    </ProtectedRoute>
   );
 }

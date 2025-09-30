@@ -14,9 +14,13 @@ export function useShoppingList() {
 
   async function fetchList() {
     if (!user) return;
-    const res = await fetch(`/api/shoppingList?where=userId=${user.id}`);
-    const data = await res.json();
-    if (res.ok) setItems(data);
+    try {
+      const res = await fetch(`/api/shoppingList?where=userId=${user.id}`);
+      const data = await res.json();
+      if (res.ok) setItems(data);
+    } catch (error) {
+      console.error("Failed to fetch list:", error);
+    }
   }
 
   async function addItem(ingredient: string) {

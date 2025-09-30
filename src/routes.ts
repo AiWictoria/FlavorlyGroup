@@ -1,6 +1,5 @@
 import type {JSX} from 'react';
 import{createElement} from 'react';
-// page components
 import CreateRecipe from './pages/CreateRecipe.tsx';
 import EditRecipeDetails from './pages/EditRecipeDetails.tsx';
 import HomePage from './pages/HomePage.tsx';
@@ -16,6 +15,7 @@ interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
+  protected?: boolean
 }
 
 export default [

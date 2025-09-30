@@ -7,4 +7,5 @@ export default interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
+  protected?: boolean;
 }
