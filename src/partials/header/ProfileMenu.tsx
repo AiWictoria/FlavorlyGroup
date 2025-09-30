@@ -20,14 +20,14 @@ export default function ProfileMenu() {
             className="border-0 bg-transparent p-0 profile-toggle"
           >
             <i
-              className="bi bi-person-circle fs-3 text-light"
+              className="bi bi-person-circle fs-3 text-light p-4 mx-2 mx-md-5"
               role="button"
             ></i>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu className="bg-primary text-light">
+          <Dropdown.Menu className="bg-primary text-light mx-md-4 p-3">
             <Dropdown.Header className="text-light">
-              You are logged in as {user.firstName}
+              Hello {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
             <Dropdown.Item className="text-light" onClick={logout}>
@@ -38,7 +38,7 @@ export default function ProfileMenu() {
       ) : (
         <>
           <i
-            className="bi bi-person-circle fs-3 text-light"
+            className="bi bi-person-circle fs-3 text-light p-4 mx-2 mx-md-5"
             role="button"
             onClick={handleIconClick}
           ></i>
