@@ -2,6 +2,7 @@ import type {JSX} from 'react';
 import{createElement} from 'react';
 // page components
 import CreateRecipe from './pages/CreateRecipe.tsx';
+import EditRecipeDetails from './pages/EditRecipeDetails.tsx';
 import HomePage from './pages/HomePage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import RecipePage from './pages/RecipePage.tsx';
@@ -18,6 +19,7 @@ interface Route {
 
 export default [
   CreateRecipe,
+  EditRecipeDetails,
   HomePage,
   NotFoundPage,
   RecipePage,
