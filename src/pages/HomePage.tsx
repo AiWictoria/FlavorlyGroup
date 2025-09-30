@@ -17,7 +17,7 @@ export default function HomePage() {
               <Button variant="light" href="/recipes">
                 Browse Recipes
               </Button>
-              <Button variant="outline-light" href="/">
+              <Button variant="outline-light" href="/createRecipe">
                 Share a Recipe
               </Button>
             </div>

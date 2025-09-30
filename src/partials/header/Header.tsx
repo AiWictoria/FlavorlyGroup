@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import { Link, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import routes from "../../routes";
 import ProfileMenu from "./ProfileMenu";
 
 export default function Header() {
+  const { user } = useAuth();
+
   const [expanded, setExpanded] = useState(false);
 
   const pathName = useLocation().pathname;
@@ -44,7 +47,11 @@ export default function Header() {
           >
             <Nav>
               {routes
-                .filter((x) => x.menuLabel)
+                .filter((x) => {
+                  if (!x.menuLabel) return false;
+                  if (x.protected && !user) return false;
+                  return true;
+                })
                 .map(({ menuLabel, path }, i) => (
                   <Nav.Link
                     as={Link}
