@@ -2,9 +2,11 @@ import type {JSX} from 'react';
 import{createElement} from 'react';
 // page components
 import CreateRecipe from './pages/CreateRecipe.tsx';
+import EditRecipeDetails from './pages/EditRecipeDetails.tsx';
 import HomePage from './pages/HomePage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import RecipePage from './pages/RecipePage.tsx';
+import ViewRecipeDetails from './pages/ViewRecipeDetails.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -17,9 +19,11 @@ interface Route {
 
 export default [
   CreateRecipe,
+  EditRecipeDetails,
   HomePage,
   NotFoundPage,
-  RecipePage
+  RecipePage,
+  ViewRecipeDetails
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))
