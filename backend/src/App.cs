@@ -3,7 +3,7 @@ Globals = Obj(new
 {
     debugOn = true,
     detailedAclDebug = false,
-    aclOn = true,
+    aclOn = false,
     isSpa = true,
     port = args[0],
     serverName = "Minimal API Backend",
