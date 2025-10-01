@@ -36,9 +36,9 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
 
           <div className="mb-3">
             {comments.map((c) => (
-              <div key={c.id} className="border-bottom py-2">
-                <div className="fw-semibold">{c.author}</div>
-                <div className="text-secondary">{c.content}</div>
+              <div key={c.id} className="border-bottom border-primary">
+                <div className="fw-bold my-2">{c.author}</div>
+                <div className=" my-2">{c.content}</div>
               </div>
             ))}
           </div>

@@ -44,8 +44,8 @@ export function RecipeInstructions({
   };
 
   return (
-    <div className="pt-4 text-lg-center">
-      <h2>Instructions</h2>
+    <div className="py-4 text-lg-center">
+      <h2 className="py-4 text-lg-center">Instructions</h2>
 
       {isView && instructionsList.length > 0 && (
         <ul className="list-unstyled">

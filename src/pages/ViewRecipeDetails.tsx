@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import RecipeLayout from "./RecipeLayout";
 import { useAuth } from "../hooks/useAuth";
 import { RecipeComments } from "../components/recipe/RecipeComments";
+import { Row, Col } from "react-bootstrap";
 
 ViewRecipeDetails.route = {
   path: "/recipes/:id",
@@ -58,7 +59,9 @@ export default function ViewRecipeDetails() {
           </button>
         </div>
       )}
-      {recipe && <RecipeComments recipeId={recipe.id} />}
+      <Row className="bg-secondary border-top border-primary">
+        <Col>{recipe && <RecipeComments recipeId={recipe.id} />}</Col>
+      </Row>
     </>
   );
 }

@@ -5,6 +5,7 @@ import RecipeLayout from "../pages/RecipeLayout";
 
 EditRecipeDetails.route = {
   path: "/recipes/:id/edit",
+  protected: true,
 };
 
 export default function EditRecipeDetails() {
