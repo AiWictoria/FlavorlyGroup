@@ -1,0 +1,67 @@
+import { useState, useEffect } from "react";
+import { Form, Button, Row, Col } from "react-bootstrap";
+import { useComments } from "../../hooks/useComments";
+import { useAuth } from "../../hooks/useAuth";
+
+interface RecipeCommentsProps {
+  recipeId: number;
+}
+
+export function RecipeComments({ recipeId }: RecipeCommentsProps) {
+  const { user } = useAuth();
+  const { comments, fetchComments, addComment } = useComments();
+  const [newComment, setNewComment] = useState("");
+
+  useEffect(() => {
+    if (recipeId) fetchComments(recipeId);
+  }, [recipeId]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newComment.trim() || !user) return;
+
+    await addComment(recipeId, newComment, user.id);
+    setNewComment("");
+  }
+
+  return (
+    <>
+      <Row className="mx-4 my-5 d-flex justify-content-center">
+        <Col md={8}>
+          <h3 className="mb-3 text-start">Comments</h3>
+
+          {comments.length === 0 && (
+            <p className="text-center text-muted">No comments yet.</p>
+          )}
+
+          <div className="mb-3">
+            {comments.map((c) => (
+              <div key={c.id} className="border-bottom py-2">
+                <div className="fw-semibold">{c.author}</div>
+                <div className="text-secondary">{c.content}</div>
+              </div>
+            ))}
+          </div>
+
+          {user && (
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-2">
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  placeholder="Write a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  required
+                />
+              </Form.Group>
+              <Button type="submit" variant="primary" className="w-100">
+                Post Comment
+              </Button>
+            </Form>
+          )}
+        </Col>
+      </Row>
+    </>
+  );
+}

@@ -4,6 +4,7 @@ import type { Recipe } from "../hooks/useRecipes";
 import { useEffect, useState } from "react";
 import RecipeLayout from "./RecipeLayout";
 import { useAuth } from "../hooks/useAuth";
+import { RecipeComments } from "../components/recipe/RecipeComments";
 
 ViewRecipeDetails.route = {
   path: "/recipes/:id",
@@ -57,6 +58,7 @@ export default function ViewRecipeDetails() {
           </button>
         </div>
       )}
+      {recipe && <RecipeComments recipeId={recipe.id} />}
     </>
   );
 }
