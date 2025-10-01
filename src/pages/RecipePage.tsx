@@ -4,6 +4,8 @@ import { useRecipes } from "../hooks/useRecipes";
 import RecipeCard from "../components/RecipeCard";
 import RecipeSearchBar from "../components/RecipeSearchBar";
 import { sortRecipes } from "../utils/sortRecipes";
+import { useAuth } from "../hooks/useAuth";
+import { useSavedRecipes } from "../hooks/useSavedRecipes";
 
 RecipePage.route = {
   path: "/recipes",
@@ -13,19 +15,37 @@ RecipePage.route = {
 
 export default function RecipePage() {
   const { recipes } = useRecipes();
+  const { user } = useAuth();
+  const { savedRecipes } = useSavedRecipes();
 
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<"title" | "averageRating">(
     "title"
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [filterType, setFilterType] = useState<"all" | "saved" | "mine">("all");
 
-  const filtered = recipes.filter((r) =>
-    [r.title, r.category, r.ingredients, r.instructions].some((field) =>
-      field?.toLowerCase().includes(search.toLowerCase())
+  const filtered = recipes
+    .filter((r) =>
+      [r.title, r.category, r.ingredients, r.instructions].some((field) =>
+        field?.toLowerCase().includes(search.toLowerCase())
+      )
     )
-  );
-
+    .filter((r) => {
+      if (filterType === "saved") {
+        return savedRecipes.some((s) => s.recipeId === r.id);
+      }
+      if (filterType === "mine") {
+        return user && r.userId === user.id;
+      }
+      return true;
+    });
+  function handleClear() {
+    setSearch("");
+    setSortField("title");
+    setSortOrder("asc");
+    setFilterType("all");
+  }
   const sorted = sortRecipes(filtered, sortField, sortOrder);
 
   return (
@@ -41,7 +61,7 @@ export default function RecipePage() {
         </Row>
 
         <Row className="g-2 mx-4">
-          <Col xs={6} md={3}>
+          <Col xs={5}>
             <Dropdown>
               <Dropdown.Toggle className="w-100" variant="primary">
                 Sort
@@ -80,14 +100,46 @@ export default function RecipePage() {
               </Dropdown.Menu>
             </Dropdown>
           </Col>
-          <Col xs={6} md={3}>
-            <Button className="w-100">Filter</Button>
+          <Col xs={5}>
+            <Dropdown>
+              <Dropdown.Toggle className="w-100" variant="primary">
+                {filterType === "all"
+                  ? "Filter"
+                  : filterType === "saved"
+                  ? "My Saved Recipes"
+                  : "My Recipes"}
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="w-100">
+                <Dropdown.Item
+                  active={filterType === "all"}
+                  onClick={() => setFilterType("all")}
+                >
+                  All Recipes
+                </Dropdown.Item>
+                <Dropdown.Item
+                  active={filterType === "saved"}
+                  onClick={() => setFilterType("saved")}
+                >
+                  My Saved Recipes
+                </Dropdown.Item>
+                <Dropdown.Item
+                  active={filterType === "mine"}
+                  onClick={() => setFilterType("mine")}
+                >
+                  My Recipes
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Col>
-          <Col xs={6} md={3}>
-            <Button className="w-100">Saved recipes</Button>
-          </Col>
-          <Col xs={6} md={3}>
-            <Button className="w-100">My recipes</Button>
+          <Col xs={2}>
+            <Button
+              className="w-100"
+              variant="outline-primary"
+              onClick={handleClear}
+            >
+              Clear ✕
+            </Button>
           </Col>
         </Row>
 

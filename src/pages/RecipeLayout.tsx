@@ -54,7 +54,7 @@ export default function RecipeLayout({
           </Col>
         </Row>
 
-        <Row className="mx-4 pb-5">
+        <Row className="mx-4 pb-3">
           <Col lg={8} className="mx-auto">
             <RecipeInstructions
               mode={mode}

@@ -45,7 +45,7 @@ export default function ViewRecipeDetails() {
     <>
       <RecipeLayout mode="view" recipe={recipe} />
       {isOwner && (
-        <div className="text-center my-3">
+        <div className="text-center my-3 pb-3">
           <Link
             to={`/recipes/${recipe.id}/edit`}
             className="btn btn-outline-primary me-2"

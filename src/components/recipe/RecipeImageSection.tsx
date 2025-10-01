@@ -1,5 +1,7 @@
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
+import { useSavedRecipes } from "../../hooks/useSavedRecipes";
+import { useAuth } from "../../hooks/useAuth";
 
 interface RecipeImageSectionProps {
   mode: "view" | "edit" | "create";
@@ -15,6 +17,13 @@ export function RecipeImageSection({
   onFileSelect,
 }: RecipeImageSectionProps) {
   const isView = mode === "view";
+
+  const { user } = useAuth();
+  const { savedRecipes, saveRecipe, removeSaved } = useSavedRecipes();
+
+  const isSaved = recipe
+    ? savedRecipes.some((r) => r.recipeId === recipe.id)
+    : false;
 
   return (
     <div>
@@ -41,8 +50,26 @@ export function RecipeImageSection({
             ))}
           </div>
 
-          <Button variant="danger" className="mx-4 m-1">
-            <i className="bi bi-heart"> Save</i>
+          <Button
+            variant={isSaved ? "danger" : "outline-danger"}
+            className="mx-3 mx-lg-5 m-1"
+            disabled={!user}
+            onClick={() => {
+              if (!recipe) return;
+
+              if (isSaved) {
+                const saved = savedRecipes.find(
+                  (r) => r.recipeId === recipe.id
+                );
+                if (saved) removeSaved(saved.id);
+              } else {
+                saveRecipe(recipe.id);
+              }
+            }}
+          >
+            <i className={`bi ${isSaved ? "bi-heart-fill" : "bi-heart-fill"}`}>
+              {isSaved ? " Saved" : " Save"}
+            </i>
           </Button>
         </div>
       )}

@@ -59,32 +59,34 @@ export function RecipeIngredients({
   };
 
   return (
-    <div className="pt-4">
+    <div className="pt-4 pt-md-5">
       <h2>Ingredients</h2>
 
       {isView && ingredientList.length > 0 && (
         <>
-          <ul className="list-unstyled">
-            {ingredientList.map((ingredient, i) => (
-              <li key={i} className="d-flex align-items-center">
-                <Form.Check
-                  type="checkbox"
-                  id={`ingredient-${i}`}
-                  className="m-2 fs-4"
-                  checked={checkedItems[i] || false}
-                  onChange={(e) => {
-                    const updated = [...checkedItems];
-                    updated[i] = e.target.checked;
-                    setCheckedItems(updated);
-                  }}
-                />
-                {ingredient}
-              </li>
-            ))}
-          </ul>
-          <Button variant="outline-primary" onClick={handleAddToList}>
-            Add selected items to shopping list
-          </Button>
+          <div className="m-3">
+            <ul className="list-unstyled">
+              {ingredientList.map((ingredient, i) => (
+                <li key={i} className="d-flex align-items-center">
+                  <Form.Check
+                    type="checkbox"
+                    id={`ingredient-${i}`}
+                    className="m-2 fs-4"
+                    checked={checkedItems[i] || false}
+                    onChange={(e) => {
+                      const updated = [...checkedItems];
+                      updated[i] = e.target.checked;
+                      setCheckedItems(updated);
+                    }}
+                  />
+                  {ingredient}
+                </li>
+              ))}
+            </ul>
+            <Button variant="outline-success" onClick={handleAddToList}>
+              Add to shopping list
+            </Button>
+          </div>
         </>
       )}
 
@@ -109,7 +111,7 @@ export function RecipeIngredients({
             </Form.Group>
           ))}
 
-          <Button variant="outline-primary" size="sm" onClick={addIngredient}>
+          <Button variant="outline-success" size="sm" onClick={addIngredient}>
             + Add ingredient
           </Button>
         </>

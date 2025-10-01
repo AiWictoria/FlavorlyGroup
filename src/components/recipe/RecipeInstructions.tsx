@@ -83,7 +83,7 @@ export function RecipeInstructions({
             </Form.Group>
           ))}
 
-          <Button variant="outline-primary" size="sm" onClick={addInstruction}>
+          <Button variant="outline-success" size="sm" onClick={addInstruction}>
             + Add step
           </Button>
         </>
