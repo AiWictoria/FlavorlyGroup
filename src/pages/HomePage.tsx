@@ -9,15 +9,19 @@ export default function HomePage() {
       <div className="position-relative">
         <div className="home-bg"></div>
 
-        <Row className="text-center position-absolute top-50 start-50 translate-middle">
+        <Row className="mx-1 text-center position-absolute top-50 start-50 translate-middle w-100">
           <Col>
             <h1 className="fs-1 text-light">Share, Cook, Enjoy</h1>
-            <h3 className="text-light">Find your new favorite recipes now</h3>
+            <h3 className="fs-4 text-light">Find new favorite recipes now</h3>
             <div className="d-flex justify-content-center gap-3 mt-4">
-              <Button variant="light" href="/recipes">
+              <Button className="fs-6" variant="light" href="/recipes">
                 Browse Recipes
               </Button>
-              <Button variant="outline-light" href="/createRecipe">
+              <Button
+                className="fs-6"
+                variant="outline-light"
+                href="/createRecipe"
+              >
                 Share a Recipe
               </Button>
             </div>

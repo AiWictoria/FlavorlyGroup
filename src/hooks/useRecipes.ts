@@ -35,7 +35,7 @@ export function useRecipes() {
       setRecipes(mapped);
     }
   } catch (error) {
-    alert("Något gick fel");
+    alert("Something went wrong");
   }
 }
 
@@ -45,7 +45,7 @@ export function useRecipes() {
     const data = await res.json();
 
     if (res.ok) {
-      return { ...data, id: data.recipeId };
+      return { ...data, id: data.recipeId ?? data.id };
     } else return null;
   } catch (error) {
     console.log("Something went wrong");
@@ -54,7 +54,7 @@ export function useRecipes() {
 
   async function createRecipe(recipe: Omit<Recipe, "recipeId" | "userId"> & {image?: File | null}){
     if (user === null) {
-      alert("Logga in för att skapa recept")
+      alert("Sign in to create recipe")
       return { success: false }
     }
     try {
@@ -75,7 +75,7 @@ export function useRecipes() {
       }
     }
       catch (error) {
-      return { success: false, error: "Något gick fel"}
+      return { success: false, error: "Something went wrong"}
     }
   }
   async function updateRecipe(id: number, recipe: Partial<Recipe>): Promise<{ success: boolean }> {
@@ -130,10 +130,33 @@ export function useRecipes() {
       return { success: false, error: "Unexpected error" };
     }
   }
+
+  async function deleteRecipe(id: number): Promise<{ success: boolean }> {
+  if (user === null) {
+    alert("Sign in to continue");
+    return { success: false };
+  }
+
+  try {
+    const res = await fetch(`/api/recipes/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      setRecipes((prev) => prev.filter((r) => r.id !== id));
+      return { success: true };
+    }
+
+    return { success: false };
+  } catch (error) {
+    console.error("Delete error:", error);
+    return { success: false };
+  }
+}
   
   useEffect(() => {
     fetchRecipes();
   }, []);
   
-  return {recipes, fetchRecipes, createRecipe, fetchRecipeById, updateRecipe, uploadImage}
+  return {recipes, fetchRecipes, createRecipe, fetchRecipeById, updateRecipe, uploadImage, deleteRecipe}
 }
