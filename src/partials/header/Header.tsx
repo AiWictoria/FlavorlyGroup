@@ -31,19 +31,22 @@ export default function Header() {
       >
         <Container fluid>
           <Navbar.Toggle
-            className="order-1"
+            className="mx-1"
             onClick={() => setExpanded(!expanded)}
-          />
-
-          <Navbar.Brand
-            className="text-light fs-2 p-2 order-2 order-md-1"
-            href="/"
           >
+            <i
+              className={`bi ${
+                expanded ? "bi-x-lg" : "bi-list"
+              } fs-1 text-light`}
+            ></i>
+          </Navbar.Toggle>
+
+          <Navbar.Brand className="fs-2 text-light p-1" href="/">
             Flavorly
           </Navbar.Brand>
 
           <Navbar.Collapse
-            className="order-5 order-md-2 p-2"
+            className="order-5 order-md-4 p-2"
             id="basic-navbar-nav"
           >
             <Nav>
@@ -67,12 +70,9 @@ export default function Header() {
                 ))}
             </Nav>
           </Navbar.Collapse>
-
-          <div className="order-4">
-            <ProfileMenu />
-          </div>
-          <div className="order-3">
+          <div className="d-flex align-items-center order-md-5 gap-2">
             <SearchIcon />
+            <ProfileMenu />
           </div>
         </Container>
       </Navbar>

@@ -13,14 +13,15 @@ export function RecipeTitleSection({
   onChange,
 }: RecipeTitleSectionProps) {
   const isView = mode === "view";
-  const isEdit = mode === "edit";
   const isCreate = mode === "create";
 
   if (isView) {
     return (
       <>
-        <h1 className="fs-1">{recipe?.title || "Title"}</h1>
-        <h4>{recipe?.category || "Category"}</h4>
+        <div className="my-1 my-md-4">
+          <h1 className="fs-1">{recipe?.title || "Title"}</h1>
+          <h4>{recipe?.category || "Category"}</h4>
+        </div>
       </>
     );
   }

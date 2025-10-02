@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useRecipes } from "../hooks/useRecipes";
-import RecipeLayout from "./RecipeLayout";
+import RecipeLayout from "../components/recipe/RecipeLayout";
 import { useAuth } from "../hooks/useAuth";
-import ProtectedRoute from "../components/ProtectedRoute";
 
 CreateRecipe.route = {
   path: "/createRecipe",
@@ -65,15 +64,13 @@ export default function CreateRecipe() {
 
   return (
     <>
-      <ProtectedRoute>
-        <RecipeLayout
-          mode="create"
-          recipe={recipe}
-          onChange={handleChange}
-          onFileSelect={handleFileSelect}
-          onSubmit={handleSubmit}
-        />
-      </ProtectedRoute>
+      <RecipeLayout
+        mode="create"
+        recipe={recipe}
+        onChange={handleChange}
+        onFileSelect={handleFileSelect}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }

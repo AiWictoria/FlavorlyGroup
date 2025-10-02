@@ -11,6 +11,7 @@ export interface User {
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  
 
   useEffect(() => {
     fetch("/api/login", { credentials: "include" })

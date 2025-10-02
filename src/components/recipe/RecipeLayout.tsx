@@ -1,9 +1,9 @@
-import { RecipeImageSection } from "../components/recipe/RecipeImageSection";
-import { RecipeTitleSection } from "../components/recipe/RecipeTitleSection";
-import { RecipeIngredients } from "../components/recipe/RecipeIngredients";
-import { RecipeInstructions } from "../components/recipe/RecipeInstructions";
+import { RecipeImageSection } from "./RecipeImageSection";
+import { RecipeTitleSection } from "./RecipeTitleSection";
+import { RecipeIngredients } from "./RecipeIngredients";
+import { RecipeInstructions } from "./RecipeInstructions";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import type { Recipe } from "../hooks/useRecipes";
+import type { Recipe } from "../../hooks/useRecipes";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
@@ -30,8 +30,8 @@ export default function RecipeLayout({
   return (
     <>
       <Form onSubmit={handleSubmit} className="mt-4 pt-4">
-        <Row>
-          <Col lg={6} xxl={7} className="p-0 order-lg-2">
+        <Row className="bg-secondary border-top border-primary">
+          <Col lg={6} className="p-0 order-lg-2">
             <RecipeImageSection
               mode={mode}
               recipe={recipe}
@@ -40,7 +40,7 @@ export default function RecipeLayout({
             />
           </Col>
 
-          <Col md={6} xxl={5} className="mt-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
+          <Col md={6} className="mt-3 mb-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
             <RecipeTitleSection
               mode={mode}
               recipe={recipe}
@@ -53,9 +53,12 @@ export default function RecipeLayout({
             />
           </Col>
         </Row>
-
-        <Row className="mx-4 pb-5">
-          <Col lg={8} className="mx-auto">
+        <Row className="mx-4 pb-3">
+          <Col
+            lg={8}
+            className="mx-auto d-flex justify-content-center align-items-center"
+            style={{ minHeight: "300px", overflowY: "auto" }}
+          >
             <RecipeInstructions
               mode={mode}
               recipe={recipe}

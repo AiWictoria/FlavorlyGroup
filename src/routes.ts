@@ -1,8 +1,10 @@
 import type {JSX} from 'react';
 import{createElement} from 'react';
+// page components
 import CreateRecipe from './pages/CreateRecipe.tsx';
 import EditRecipeDetails from './pages/EditRecipeDetails.tsx';
 import HomePage from './pages/HomePage.tsx';
+import NotAuthorizedPage from './pages/NotAuthorizedPage.tsx';
 import NotFoundPage from './pages/NotFoundPage.tsx';
 import RecipePage from './pages/RecipePage.tsx';
 import ShoppingListPage from './pages/ShoppingListPage.tsx';
@@ -15,13 +17,14 @@ interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
-  protected?: boolean
+  protected?:boolean
 }
 
 export default [
   CreateRecipe,
   EditRecipeDetails,
   HomePage,
+  NotAuthorizedPage,
   NotFoundPage,
   RecipePage,
   ShoppingListPage,

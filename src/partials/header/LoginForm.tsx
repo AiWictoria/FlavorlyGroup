@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onBack: () => void;
@@ -10,7 +9,6 @@ interface LoginFormProps {
 
 export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
   const { login } = useAuth();
-  const navigate = useNavigate();
 
   const [form, setForm] = useState({ email: "", password: "" });
 
@@ -24,7 +22,6 @@ export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
     const result = await login(form.email, form.password);
 
     if (result.success) {
-      navigate("/recipes");
       window.location.reload();
       if (onSuccess) onSuccess();
     } else {

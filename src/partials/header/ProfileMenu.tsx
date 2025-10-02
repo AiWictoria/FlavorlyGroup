@@ -46,7 +46,7 @@ export default function ProfileMenu() {
       ) : (
         <>
           <i
-            className="bi bi-person-circle fs-3 text-light p-4 mx-2 mx-md-5"
+            className="bi bi-person-circle fs-3 text-light mx-2"
             role="button"
             onClick={handleIconClick}
           ></i>

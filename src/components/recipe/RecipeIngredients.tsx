@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useShoppingList } from "../../hooks/useShoppingList";
+import { useAuth } from "../../hooks/useAuth";
 
 interface RecipeIngredientsProps {
   mode: "view" | "edit" | "create";
@@ -21,6 +22,7 @@ export function RecipeIngredients({
   const [ingredientList, setIngredientList] = useState<string[]>([]);
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const { addItem } = useShoppingList();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (recipe?.ingredients) {
@@ -59,32 +61,36 @@ export function RecipeIngredients({
   };
 
   return (
-    <div className="pt-4">
+    <div className="pt-4 pt-md-5">
       <h2>Ingredients</h2>
 
       {isView && ingredientList.length > 0 && (
         <>
-          <ul className="list-unstyled">
-            {ingredientList.map((ingredient, i) => (
-              <li key={i} className="d-flex align-items-center">
-                <Form.Check
-                  type="checkbox"
-                  id={`ingredient-${i}`}
-                  className="m-2 fs-4"
-                  checked={checkedItems[i] || false}
-                  onChange={(e) => {
-                    const updated = [...checkedItems];
-                    updated[i] = e.target.checked;
-                    setCheckedItems(updated);
-                  }}
-                />
-                {ingredient}
-              </li>
-            ))}
-          </ul>
-          <Button variant="outline-primary" onClick={handleAddToList}>
-            Add selected items to shopping list
-          </Button>
+          <div className="m-3">
+            <ul className="list-unstyled">
+              {ingredientList.map((ingredient, i) => (
+                <li key={i} className="d-flex align-items-center">
+                  <Form.Check
+                    type="checkbox"
+                    id={`ingredient-${i}`}
+                    className="m-2 fs-4"
+                    checked={checkedItems[i] || false}
+                    onChange={(e) => {
+                      const updated = [...checkedItems];
+                      updated[i] = e.target.checked;
+                      setCheckedItems(updated);
+                    }}
+                  />
+                  {ingredient}
+                </li>
+              ))}
+            </ul>
+            {user && (
+              <Button variant="success" onClick={handleAddToList}>
+                Add to shopping list
+              </Button>
+            )}
+          </div>
         </>
       )}
 
@@ -99,7 +105,7 @@ export function RecipeIngredients({
                 onChange={(e) => handleIngredientChange(i, e.target.value)}
               />
               <Button
-                variant="outline-danger"
+                variant="danger"
                 size="sm"
                 className="ms-2"
                 onClick={() => removeIngredient(i)}
@@ -109,7 +115,12 @@ export function RecipeIngredients({
             </Form.Group>
           ))}
 
-          <Button variant="outline-primary" size="sm" onClick={addIngredient}>
+          <Button
+            className="mt-2"
+            variant="success"
+            size="sm"
+            onClick={addIngredient}
+          >
             + Add ingredient
           </Button>
         </>
