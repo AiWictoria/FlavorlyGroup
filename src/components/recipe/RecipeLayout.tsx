@@ -40,7 +40,7 @@ export default function RecipeLayout({
             />
           </Col>
 
-          <Col md={6} className="mt-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
+          <Col md={6} className="mt-3 mb-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
             <RecipeTitleSection
               mode={mode}
               recipe={recipe}

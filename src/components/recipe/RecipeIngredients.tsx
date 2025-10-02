@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useShoppingList } from "../../hooks/useShoppingList";
+import { useAuth } from "../../hooks/useAuth";
 
 interface RecipeIngredientsProps {
   mode: "view" | "edit" | "create";
@@ -21,6 +22,7 @@ export function RecipeIngredients({
   const [ingredientList, setIngredientList] = useState<string[]>([]);
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const { addItem } = useShoppingList();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (recipe?.ingredients) {
@@ -83,9 +85,11 @@ export function RecipeIngredients({
                 </li>
               ))}
             </ul>
-            <Button variant="outline-success" onClick={handleAddToList}>
-              Add to shopping list
-            </Button>
+            {user && (
+              <Button variant="outline-success" onClick={handleAddToList}>
+                Add to shopping list
+              </Button>
+            )}
           </div>
         </>
       )}

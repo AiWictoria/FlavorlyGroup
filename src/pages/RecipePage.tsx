@@ -50,7 +50,7 @@ export default function RecipePage() {
 
   return (
     <>
-      <div className="mt-5 pt-5">
+      <div className="mt-5 pt-5 mb-5">
         <Row className="d-flex align-items-center mx-4 m-md-2 pe-2">
           <Col xs={12} md={4} lg={3}>
             <h2 className="fs-1 ps-0 ps-md-3">Search</h2>
@@ -60,10 +60,13 @@ export default function RecipePage() {
           </Col>
         </Row>
 
-        <Row className="g-2 mx-4">
+        <Row className="g-1 mx-4">
           <Col xs={5}>
             <Dropdown>
-              <Dropdown.Toggle className="w-100" variant="primary">
+              <Dropdown.Toggle
+                className="w-100 overflow-hidden p-1"
+                variant="secondary"
+              >
                 Sort
               </Dropdown.Toggle>
 
@@ -102,12 +105,11 @@ export default function RecipePage() {
           </Col>
           <Col xs={5}>
             <Dropdown>
-              <Dropdown.Toggle className="w-100" variant="primary">
-                {filterType === "all"
-                  ? "Filter"
-                  : filterType === "saved"
-                  ? "My Saved Recipes"
-                  : "My Recipes"}
+              <Dropdown.Toggle
+                className="w-100 overflow-hidden p-1"
+                variant="secondary"
+              >
+                Filter
               </Dropdown.Toggle>
 
               <Dropdown.Menu className="w-100">
@@ -117,28 +119,33 @@ export default function RecipePage() {
                 >
                   All Recipes
                 </Dropdown.Item>
-                <Dropdown.Item
-                  active={filterType === "saved"}
-                  onClick={() => setFilterType("saved")}
-                >
-                  My Saved Recipes
-                </Dropdown.Item>
-                <Dropdown.Item
-                  active={filterType === "mine"}
-                  onClick={() => setFilterType("mine")}
-                >
-                  My Recipes
-                </Dropdown.Item>
+
+                {user && (
+                  <>
+                    <Dropdown.Item
+                      active={filterType === "saved"}
+                      onClick={() => setFilterType("saved")}
+                    >
+                      Saved
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      active={filterType === "mine"}
+                      onClick={() => setFilterType("mine")}
+                    >
+                      My Recipes
+                    </Dropdown.Item>
+                  </>
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </Col>
           <Col xs={2}>
             <Button
-              className="w-100"
-              variant="outline-primary"
+              className="w-100 overflow-hidden p-1 text-primary"
+              variant="outline-secondary"
               onClick={handleClear}
             >
-              Clear ✕
+              ✕
             </Button>
           </Col>
         </Row>

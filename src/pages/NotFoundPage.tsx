@@ -19,7 +19,7 @@ export default function NotFoundPage() {
             <strong>{useLocation().pathname.slice(1)}</strong>
           </p>
           <Button as={Link as any} to="/" className="p-2 mt-3">
-            Home
+            Back to start page
           </Button>
         </Col>
       </Row>

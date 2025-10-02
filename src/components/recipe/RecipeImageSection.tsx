@@ -35,8 +35,8 @@ export function RecipeImageSection({
         />
       </div>
 
-      {isView && (
-        <div className="d-flex align-items-center justify-content-between mt-3">
+      {isView && user && (
+        <div className="d-flex align-items-center justify-content-between mt-3 mx-3">
           <div className="mx-4 fs-3">
             {[1, 2, 3, 4, 5].map((star) => (
               <i

@@ -31,6 +31,7 @@ export function useRecipes() {
       const mapped = data.map((r: any) => ({
         ...r,
         id: r.recipeId,
+        userId: Number(r.userId)
       }));
       setRecipes(mapped);
     }
