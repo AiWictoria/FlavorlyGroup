@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 export interface Comment {
   id: number;
@@ -16,33 +17,39 @@ export function useComments() {
       const res = await fetch(`/api/commentsView?where=recipeId=${recipeId}`);
       const data = await res.json();
 
-      if (res.ok) setComments(data);
+      if (res.ok) {
+        setComments(data);
+        return { success: true, data };
+      } else {
+        toast.error("Could not load comments, try again later");
+      }
     } catch {
+      toast.error("Network error, please try again later");
+      return { success: false };
     }
   }
-
-
 
   async function addComment(recipeId: number, content: string, userId: number) {
-  try {
-    const res = await fetch("/api/comments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ recipeId, userId, content }),
-    });
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipeId, userId, content }),
+      });
 
-    if (res.ok) {
-      await fetchComments(recipeId);
-      return { success: true };
-
-    } else {
-      const errorData = await res.json().catch(() => ({}));
-      return { success: false, errorData };
+      if (res.ok) {
+        await fetchComments(recipeId);
+        toast.success("Comment has been saved");
+        return { success: true };
+      } else {
+        toast.error("Could not save comment, try again later");
+        return { success: false };
+      }
+    } catch (err) {
+      toast.error("Network error, please try again later");
+      return { success: false };
     }
-  } catch (err) {
-    return { success: false };
   }
-}
 
   return { comments, fetchComments, addComment };
 }

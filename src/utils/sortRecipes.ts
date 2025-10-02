@@ -3,25 +3,39 @@ import type { Recipe } from "../hooks/useRecipes";
 export type SortField = "title" | "averageRating";
 export type SortOrder = "asc" | "desc";
 
+function getComparableValue(recipe: Recipe, field: SortField): string | number {
+  if (field === "title") {
+    return recipe.title?.toLowerCase() ?? "";
+  }
+
+  if (field === "averageRating") {
+    return recipe.averageRating ?? 0;
+  }
+
+  return "";
+}
+
+function compareValues(
+  a: string | number,
+  b: string | number,
+  order: SortOrder
+): number {
+  if (a < b) return order === "asc" ? -1 : 1;
+  if (a > b) return order === "asc" ? 1 : -1;
+  return 0;
+}
+
 export function sortRecipes(
   recipes: Recipe[],
   field: SortField,
   order: SortOrder
 ): Recipe[] {
-  return [...recipes].sort((a, b) => {
-    let aVal: string | number = "";
-    let bVal: string | number = "";
+  const sortedRecipes = [...recipes];
 
-    if (field === "title") {
-      aVal = a.title?.toLowerCase?.() ?? "";
-      bVal = b.title?.toLowerCase?.() ?? "";
-    } else if (field === "averageRating") {
-      aVal = a.averageRating ?? 0;
-      bVal = b.averageRating ?? 0;
-    }
+  return sortedRecipes.sort((a, b) => {
+    const valueA = getComparableValue(a, field);
+    const valueB = getComparableValue(b, field);
 
-    if (aVal < bVal) return order === "asc" ? -1 : 1;
-    if (aVal > bVal) return order === "asc" ? 1 : -1;
-    return 0;
+    return compareValues(valueA, valueB, order);
   });
 }

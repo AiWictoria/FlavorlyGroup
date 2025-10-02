@@ -1,4 +1,5 @@
 namespace WebApp;
+
 public static class LoginRoutes
 {
     private static Obj GetUser(HttpContext context)
@@ -51,8 +52,11 @@ public static class LoginRoutes
         App.MapGet("/api/login", (HttpContext context) =>
         {
             var user = GetUser(context);
-            return RestResult.Parse(context, user != null ?
-                user : new { error = "No user is logged in." });
+            if (user == null)
+            {
+                return Results.Json(new { error = "No user is logged in." }, statusCode: 200);
+            }
+            return RestResult.Parse(context, user);
         });
 
         App.MapDelete("/api/login", (HttpContext context) =>
