@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import RecipeLayout from "../components/recipe/RecipeLayout";
 import { useAuth } from "../hooks/useAuth";
 import { RecipeComments } from "../components/recipe/RecipeComments";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
+import toast from "react-hot-toast";
 
 ViewRecipeDetails.route = {
   path: "/recipes/:id",
@@ -16,7 +17,6 @@ export default function ViewRecipeDetails() {
   const { fetchRecipeById, deleteRecipe } = useRecipes();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -28,16 +28,33 @@ export default function ViewRecipeDetails() {
 
   async function handleDelete() {
     if (!recipe) return;
-    const confirmDelete = confirm("You sure you want to delete this recipe?");
-    if (!confirmDelete) return;
 
-    const result = await deleteRecipe(recipe.id);
-    if (result.success) {
-      alert("Recipe deleted");
-      navigate("/recipes");
-    } else {
-      alert("Something went wrong");
-    }
+    toast.custom((t) => (
+      <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2">
+        <Col>
+          <p>Are you sure you want to delete this recipe?</p>
+          <div className="d-flex justify-content-end gap-2">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              className="btn btn-danger"
+              onClick={async () => {
+                toast.dismiss(t.id);
+                await deleteRecipe(recipe.id);
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        </Col>
+      </Row>
+    ));
   }
 
   if (!recipe) return;

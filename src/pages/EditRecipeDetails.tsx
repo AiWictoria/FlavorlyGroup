@@ -36,8 +36,9 @@ export default function EditRecipeDetails() {
 
   async function handleSubmit() {
     if (!recipe) return;
-    const result = await updateRecipe(recipe.id, recipe);
-    if (result.success) alert("Recipe updated!");
+    else {
+      await updateRecipe(recipe.id, recipe);
+    }
   }
 
   if (!recipe) return <p>Loading...</p>;

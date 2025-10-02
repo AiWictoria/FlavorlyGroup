@@ -25,6 +25,7 @@ export default function RecipeSearchBar({ onSearch }: RecipeSearchBarProps) {
         <div className="position-relative">
           <Form.Control
             type="text"
+            aria-label="Search recipes"
             placeholder="Search recipes, ingredients, categories..."
             value={value}
             onChange={handleChange}

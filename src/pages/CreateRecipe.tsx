@@ -33,33 +33,21 @@ export default function CreateRecipe() {
 
   async function handleSubmit() {
     const result = await createRecipe(recipe);
-    if (!result?.success) {
-      alert("Något gick fel");
-      return;
+
+    if (result?.success && recipe.image) {
+      await uploadImage(result.insertId, recipe.image);
     }
-
-    alert("Recept skapat!");
-
-    if (recipe.image) {
-      const uploadResult = await uploadImage(result.insertId, recipe.image);
-
-      if (!uploadResult.success) {
-        alert("Något gick fel vid uppladdning av bilden");
-        console.error(uploadResult.error);
-      } else {
-        console.log("Bild uppladdad:", uploadResult.imageUrl);
-      }
+    if (result.success) {
+      setRecipe({
+        id: 0,
+        userId: 0,
+        title: "",
+        category: "",
+        ingredients: "",
+        instructions: "",
+        image: null,
+      });
     }
-
-    setRecipe({
-      id: 0,
-      userId: 0,
-      title: "",
-      category: "",
-      ingredients: "",
-      instructions: "",
-      image: null,
-    });
   }
 
   return (

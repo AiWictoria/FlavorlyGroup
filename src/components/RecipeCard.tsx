@@ -24,7 +24,7 @@ export default function RecipeCard({
     <Link to={`/recipes/${recipeId}`} className="text-decoration-none">
       <Card className="shadow-sm recipe-card mx-0 mx-sm-2">
         <div className="position-relative">
-          <Card.Img variant="top" src={imageUrl} alt={title} />
+          <Card.Img variant="top" src={imageUrl} alt={title} loading="lazy" />
         </div>
 
         <Card.Header>
