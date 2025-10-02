@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import Header from "./partials/header/Header";
 import Main from "./partials/Main";
 import Footer from "./partials/Footer";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   // scroll to top when the route changes
@@ -12,6 +13,7 @@ export default function App() {
     <>
       <div className="d-flex flex-column min-vh-100">
         <Header />
+        <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
         <Main />
         <Footer />
       </div>

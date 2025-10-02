@@ -1,111 +1,136 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth"
+import { useAuth } from "./useAuth";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export interface Recipe {
-  id: number
-  userId: number
-  title: string
-  category: string
-  ingredients: string
-  instructions: string
-  imageUrl?: string
-  author?: string
-  averageRating?: number
-  commentsCount?: number
+  id: number;
+  userId: number;
+  title: string;
+  category: string;
+  ingredients: string;
+  instructions: string;
+  imageUrl?: string;
+  author?: string;
+  averageRating?: number;
+  commentsCount?: number;
 }
 
 export function useRecipes() {
-
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const {user} = useAuth()
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   async function fetchRecipes() {
-  try {
-    const res = await fetch("/api/recipeSummary", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch("/api/recipeSummary", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
 
-    if (res.ok) {
-      const mapped = data.map((r: any) => ({
-        ...r,
-        id: r.recipeId,
-        userId: Number(r.userId)
-      }));
-      setRecipes(mapped);
+      if (res.ok) {
+        const mapped = data.map((r: any) => ({
+          ...r,
+          id: r.recipeId,
+          userId: Number(r.userId),
+        }));
+        setRecipes(mapped);
+        return { success: true };
+      } else {
+        toast.error("Failed loading recipes");
+        return { success: false };
+      }
+    } catch (error) {
+      toast.error("Network error, please try again later");
+      return { success: false };
     }
-  } catch (error) {
-    alert("Something went wrong");
   }
-}
 
   async function fetchRecipeById(id: number) {
-  try {
-    const res = await fetch(`/api/recipes/${id}`);
-    const data = await res.json();
+    try {
+      const res = await fetch(`/api/recipes/${id}`);
+      const data = await res.json();
 
-    if (res.ok) {
-      return { ...data, id: data.recipeId ?? data.id };
-    } else return null;
-  } catch (error) {
-    console.log("Something went wrong");
+      if (res.ok) {
+        return { ...data, id: data.recipeId ?? data.id };
+      } else {
+        toast.error("We couldn't find that recipe");
+        navigate("/recipes");
+        return { success: false };
+      }
+    } catch (error) {
+      toast.error("Network error, please try again later");
+      return { success: false };
+    }
   }
-}
 
-  async function createRecipe(recipe: Omit<Recipe, "recipeId" | "userId"> & {image?: File | null}){
+  async function createRecipe(
+    recipe: Omit<Recipe, "recipeId" | "userId"> & { image?: File | null }
+  ) {
     if (user === null) {
-      alert("Sign in to create recipe")
-      return { success: false }
+      toast.error("Please sign in to create recipes");
+      return { success: false };
     }
     try {
-      const { image, ...recipeData } = recipe
-      const recipeWithUserId = { ...recipeData, userId: user.id }
-      
+      const { image, ...recipeData } = recipe;
+      const recipeWithUserId = { ...recipeData, userId: user.id };
+
       const res = await fetch("/api/recipes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(recipeWithUserId)
-      })
-      const data = await res.json()
+        body: JSON.stringify(recipeWithUserId),
+      });
+      const data = await res.json();
 
       if (res.ok) {
-        setRecipes((prev) => [...prev, data])
-        const insertId = data.insertId
-        return {success: true, insertId}
+        setRecipes((prev) => [...prev, data]);
+        const insertId = data.insertId;
+        toast.success("Recipe created");
+        navigate(`/recipes/${insertId}`);
+        return { success: true, insertId };
+      } else {
+        toast.error("Could not create recipe, try again later");
+        return { success: false };
       }
-    }
-      catch (error) {
-      return { success: false, error: "Something went wrong"}
+    } catch (error) {
+      toast.error("Network error, please try again later");
+      return { success: false };
     }
   }
-  async function updateRecipe(id: number, recipe: Partial<Recipe>): Promise<{ success: boolean }> {
-  if (user === null) {
-    alert("Sign it to create recipes");
-    return { success: false };
-  }
-
-  try {
-    const res = await fetch(`/api/recipes/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(recipe),
-    });
-    const data = await res.json();
-
-    if (res.ok) {
-      setRecipes((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, ...data } : r))
-      );
-      return { success: true };
+  async function updateRecipe(
+    id: number,
+    recipe: Partial<Recipe>
+  ): Promise<{ success: boolean }> {
+    if (user === null) {
+      toast.error("Please sign it to update recipe");
+      return { success: false };
     }
 
-    return { success: false };
-  } catch (error) {
-    console.error("Something went wrong:", error);
-    return { success: false };
+    try {
+      const res = await fetch(`/api/recipes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recipe),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setRecipes((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, ...data } : r))
+        );
+        toast.success("The recipe has been updated");
+        navigate(`/recipes/${id}`);
+        return { success: true };
+      }
+      toast.error("Could not update recipe, try again");
+      return { success: false };
+    } catch (error) {
+      toast.error("Network error, please try again later");
+      return { success: false };
+    }
   }
-  }
+
   async function uploadImage(recipeId: number, image: File) {
     try {
       const formData = new FormData();
@@ -117,47 +142,53 @@ export function useRecipes() {
         body: formData,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error("Upload failed:", data.error);
-        return { success: false, error: data.error };
+      if (res.ok) {
+        return { success: true };
+      } else {
+        toast.error("Could not upload image, try again later");
+        return { success: false };
       }
-
-      console.log("Image uploaded:", data.imageUrl);
-      return { success: true, imageUrl: data.imageUrl };
-    } catch (error) {
-      console.error("Upload error:", error);
-      return { success: false, error: "Unexpected error" };
+    } catch {
+      toast.error("Network error, please try again later");
+      return { success: false };
     }
   }
 
   async function deleteRecipe(id: number): Promise<{ success: boolean }> {
-  if (user === null) {
-    alert("Sign in to continue");
-    return { success: false };
-  }
-
-  try {
-    const res = await fetch(`/api/recipes/${id}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      setRecipes((prev) => prev.filter((r) => r.id !== id));
-      return { success: true };
+    if (user === null) {
+      toast.error("Sign it to delete recipe");
+      return { success: false };
     }
 
-    return { success: false };
-  } catch (error) {
-    console.error("Delete error:", error);
-    return { success: false };
+    try {
+      const res = await fetch(`/api/recipes/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setRecipes((prev) => prev.filter((r) => r.id !== id));
+        toast.success("Recipe has been deleted");
+        return { success: true };
+      }
+      toast.error("Failed to delete recipe, try again");
+      return { success: false };
+    } catch {
+      toast.error("Network error, please try again later");
+      return { success: false };
+    }
   }
-}
-  
+
   useEffect(() => {
     fetchRecipes();
   }, []);
-  
-  return {recipes, fetchRecipes, createRecipe, fetchRecipeById, updateRecipe, uploadImage, deleteRecipe}
+
+  return {
+    recipes,
+    fetchRecipes,
+    createRecipe,
+    fetchRecipeById,
+    updateRecipe,
+    uploadImage,
+    deleteRecipe,
+  };
 }
