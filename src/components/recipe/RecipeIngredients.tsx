@@ -86,7 +86,7 @@ export function RecipeIngredients({
               ))}
             </ul>
             {user && (
-              <Button variant="outline-success" onClick={handleAddToList}>
+              <Button variant="success" onClick={handleAddToList}>
                 Add to shopping list
               </Button>
             )}
@@ -105,7 +105,7 @@ export function RecipeIngredients({
                 onChange={(e) => handleIngredientChange(i, e.target.value)}
               />
               <Button
-                variant="outline-danger"
+                variant="danger"
                 size="sm"
                 className="ms-2"
                 onClick={() => removeIngredient(i)}
@@ -115,7 +115,12 @@ export function RecipeIngredients({
             </Form.Group>
           ))}
 
-          <Button variant="outline-success" size="sm" onClick={addIngredient}>
+          <Button
+            className="mt-2"
+            variant="success"
+            size="sm"
+            onClick={addIngredient}
+          >
             + Add ingredient
           </Button>
         </>

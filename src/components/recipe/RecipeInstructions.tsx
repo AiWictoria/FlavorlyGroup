@@ -73,7 +73,7 @@ export function RecipeInstructions({
                 onChange={(e) => handleInstructionChange(i, e.target.value)}
               />
               <Button
-                variant="outline-danger"
+                variant="danger"
                 size="sm"
                 className="ms-2"
                 onClick={() => removeInstruction(i)}
@@ -83,7 +83,12 @@ export function RecipeInstructions({
             </Form.Group>
           ))}
 
-          <Button variant="outline-success" size="sm" onClick={addInstruction}>
+          <Button
+            className="mt-2"
+            variant="success"
+            size="sm"
+            onClick={addInstruction}
+          >
             + Add step
           </Button>
         </>

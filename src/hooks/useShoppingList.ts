@@ -30,8 +30,7 @@ export function useShoppingList() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id, ingredient }),
     });
-    const data = await res.json();
-    if (res.ok) setItems((prev) => [...prev, data]);
+    if (res.ok) await fetchList()
   }
 
   async function editItem(id: number, checked: boolean) {
@@ -55,5 +54,5 @@ export function useShoppingList() {
     fetchList();
   }, [user]);
 
-  return { items, addItem, editItem, removeItem };
+  return { items, addItem, editItem, removeItem, fetchList };
 }

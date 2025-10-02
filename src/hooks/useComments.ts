@@ -18,26 +18,31 @@ export function useComments() {
 
       if (res.ok) setComments(data);
     } catch {
-      alert("Something went wrong");
     }
   }
+
+
 
   async function addComment(recipeId: number, content: string, userId: number) {
-    try {
-      const res = await fetch("/api/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipeId, userId, content }),
-      });
+  try {
+    const res = await fetch("/api/comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recipeId, userId, content }),
+    });
 
-      if (res.ok) {
-        await fetchComments(recipeId);
-        return { success: true };
-      }
-    } catch {
-      return { success: false };
+    if (res.ok) {
+      await fetchComments(recipeId);
+      return { success: true };
+
+    } else {
+      const errorData = await res.json().catch(() => ({}));
+      return { success: false, errorData };
     }
+  } catch (err) {
+    return { success: false };
   }
+}
 
   return { comments, fetchComments, addComment };
 }

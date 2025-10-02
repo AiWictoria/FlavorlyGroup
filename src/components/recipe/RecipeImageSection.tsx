@@ -51,7 +51,7 @@ export function RecipeImageSection({
           </div>
 
           <Button
-            variant={isSaved ? "danger" : "outline-danger"}
+            variant={isSaved ? "outline-danger" : "danger"}
             className="mx-3 mx-lg-5 m-1"
             disabled={!user}
             onClick={() => {

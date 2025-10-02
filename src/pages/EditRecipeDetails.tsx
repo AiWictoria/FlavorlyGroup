@@ -18,15 +18,16 @@ export default function EditRecipeDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      fetchRecipeById(Number(id)).then((data) => {
-        if (data.userId !== user?.id) {
-          navigate("/notAuthorized");
-        } else {
-          setRecipe(data);
-        }
-      });
-    }
+    if (!id || !user) return;
+
+    fetchRecipeById(Number(id)).then((data) => {
+      if (!data) return;
+      if (data.userId !== user.id) {
+        navigate("/notAuthorized");
+      } else {
+        setRecipe(data);
+      }
+    });
   }, [id, user]);
 
   function handleChange(field: string, value: string) {
