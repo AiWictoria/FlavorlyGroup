@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useRecipes } from "../hooks/useRecipes";
 import type { Recipe } from "../hooks/useRecipes";
 import { useEffect, useState } from "react";
-import RecipeLayout from "./RecipeLayout";
+import RecipeLayout from "../components/recipe/RecipeLayout";
 import { useAuth } from "../hooks/useAuth";
 import { RecipeComments } from "../components/recipe/RecipeComments";
 import { Row, Col } from "react-bootstrap";

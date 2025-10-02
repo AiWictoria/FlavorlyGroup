@@ -1,9 +1,9 @@
-import { RecipeImageSection } from "../components/recipe/RecipeImageSection";
-import { RecipeTitleSection } from "../components/recipe/RecipeTitleSection";
-import { RecipeIngredients } from "../components/recipe/RecipeIngredients";
-import { RecipeInstructions } from "../components/recipe/RecipeInstructions";
+import { RecipeImageSection } from "./RecipeImageSection";
+import { RecipeTitleSection } from "./RecipeTitleSection";
+import { RecipeIngredients } from "./RecipeIngredients";
+import { RecipeInstructions } from "./RecipeInstructions";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import type { Recipe } from "../hooks/useRecipes";
+import type { Recipe } from "../../hooks/useRecipes";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
