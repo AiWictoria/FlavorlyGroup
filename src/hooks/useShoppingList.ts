@@ -54,6 +54,28 @@ export function useShoppingList() {
     }
   }
 
+  async function toggleItemChecked(id: number, checked: boolean) {
+    try {
+      const res = await fetch(`/api/shoppingList/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checked }),
+      });
+      if (res.ok) {
+        setItems((prev) =>
+          prev.map((i) => (i.id === id ? { ...i, checked } : i))
+        );
+        return { success: true };
+      } else {
+        toast.error("Failed to update item status");
+        return { success: false };
+      }
+    } catch {
+      toast.error("Network error, please try again later");
+      return { success: false };
+    }
+  }
+
   async function removeItem(id: number) {
     try {
       const res = await fetch(`/api/shoppingList/${id}`, { method: "DELETE" });
@@ -75,5 +97,5 @@ export function useShoppingList() {
     fetchList();
   }, [user]);
 
-  return { items, addItem, removeItem, fetchList };
+  return { items, addItem, removeItem, toggleItemChecked, fetchList };
 }

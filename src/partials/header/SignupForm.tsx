@@ -26,18 +26,7 @@ export default function SignupForm({ onBack, onSuccess }: SignupFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const result = await createUser(
-      form.email,
-      form.password,
-      form.firstName,
-      form.lastName
-    );
-    if (result.success) {
-      navigate("/recipes");
-      if (onSuccess) onSuccess();
-    } else {
-      alert("Something went wrong");
-    }
+    await createUser(form.email, form.password, form.firstName, form.lastName);
   }
 
   return (

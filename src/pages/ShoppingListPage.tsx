@@ -10,7 +10,8 @@ ShoppingListPage.route = {
 };
 
 export default function ShoppingListPage() {
-  const { items, addItem, editItem, removeItem, fetchList } = useShoppingList();
+  const { items, addItem, removeItem, toggleItemChecked, fetchList } =
+    useShoppingList();
   const [newItem, setNewItem] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
@@ -46,7 +47,7 @@ export default function ShoppingListPage() {
               <Form.Check
                 type="checkbox"
                 checked={item.checked}
-                onChange={(e) => editItem(item.id, e.target.checked)}
+                onChange={(e) => toggleItemChecked(item.id, e.target.checked)}
                 label={item.ingredient}
               />
               <Button

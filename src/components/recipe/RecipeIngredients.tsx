@@ -3,6 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useShoppingList } from "../../hooks/useShoppingList";
 import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 interface RecipeIngredientsProps {
   mode: "view" | "edit" | "create";
@@ -47,7 +48,7 @@ export function RecipeIngredients({
     for (const ingredient of selected) {
       await addItem(ingredient);
     }
-    alert(`${selected.length} items added to shopping list`);
+    setCheckedItems(new Array(ingredientList.length).fill(false));
   }
 
   const addIngredient = () => {

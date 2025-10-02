@@ -49,6 +49,7 @@ export function useAuth() {
       if (res.ok) {
         setUser(data);
         toast.success("Logged in successfully");
+        window.location.reload();
         return { success: true, data };
       } else {
         toast.error("Login failed, try again");

@@ -34,19 +34,20 @@ export default function CreateRecipe() {
   async function handleSubmit() {
     const result = await createRecipe(recipe);
 
-    if (recipe.image) {
+    if (result?.success && recipe.image) {
       await uploadImage(result.insertId, recipe.image);
     }
-
-    setRecipe({
-      id: 0,
-      userId: 0,
-      title: "",
-      category: "",
-      ingredients: "",
-      instructions: "",
-      image: null,
-    });
+    if (result.success) {
+      setRecipe({
+        id: 0,
+        userId: 0,
+        title: "",
+        category: "",
+        ingredients: "",
+        instructions: "",
+        image: null,
+      });
+    }
   }
 
   return (

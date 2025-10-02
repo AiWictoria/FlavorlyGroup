@@ -7,7 +7,7 @@ interface LoginFormProps {
   onSuccess?: () => void;
 }
 
-export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
+export default function LoginForm({ onBack }: LoginFormProps) {
   const { login } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -19,14 +19,7 @@ export default function LoginForm({ onBack, onSuccess }: LoginFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const result = await login(form.email, form.password);
-
-    if (result.success) {
-      window.location.reload();
-      if (onSuccess) onSuccess();
-    } else {
-      alert("Something went wrong");
-    }
+    await login(form.email, form.password);
   }
 
   return (

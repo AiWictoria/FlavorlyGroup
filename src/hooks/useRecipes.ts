@@ -168,6 +168,7 @@ export function useRecipes() {
       if (res.ok) {
         setRecipes((prev) => prev.filter((r) => r.id !== id));
         toast.success("Recipe has been deleted");
+        navigate("/recipes");
         return { success: true };
       }
       toast.error("Failed to delete recipe, try again");
