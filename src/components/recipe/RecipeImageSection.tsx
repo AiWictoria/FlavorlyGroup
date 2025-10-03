@@ -2,7 +2,6 @@ import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useSavedRecipes } from "../../hooks/useSavedRecipes";
 import { useAuth } from "../../hooks/useAuth";
-import RatingStars from "./StarsRating";
 import StarsRating from "./StarsRating";
 
 interface RecipeImageSectionProps {
@@ -25,8 +24,6 @@ export function RecipeImageSection({
     ? savedRecipes.some((r) => r.recipeId === recipe.id)
     : false;
 
-  const roundedRating = Math.round(recipe?.averageRating ?? 0);
-
   return (
     <div>
       <div className="ratio ratio-16x9 rounded">
@@ -39,7 +36,7 @@ export function RecipeImageSection({
 
       {isView && user && (
         <div className="d-flex align-items-center justify-content-between mt-3 mx-3 px-2">
-          <StarsRating recipeId={recipe!.id} size="fs-3" />
+          <StarsRating recipeId={recipe!.id} size="fs-3" mode="view" />
 
           <Button
             variant={isSaved ? "outline-danger" : "danger"}
