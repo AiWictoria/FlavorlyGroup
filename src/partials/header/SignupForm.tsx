@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 interface SignupFormProps {
   onBack: () => void;
   onSuccess?: () => void;
 }
 
-export default function SignupForm({ onBack, onSuccess }: SignupFormProps) {
+export default function SignupForm({ onBack }: SignupFormProps) {
   const { createUser } = useAuth();
-  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: "",

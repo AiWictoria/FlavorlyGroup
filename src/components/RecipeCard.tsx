@@ -1,12 +1,12 @@
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import RatingStars from "./recipe/StarsRating";
 
 interface RecipeCardProps {
   recipeId: number;
   title: string;
   category: string;
   imageUrl?: string;
-  averageRating?: number;
   commentsCount?: number;
 }
 
@@ -15,11 +15,8 @@ export default function RecipeCard({
   title,
   category,
   imageUrl = "/images/recipes/placeholder.png",
-  averageRating = 0,
   commentsCount = 0,
 }: RecipeCardProps) {
-  const roundedRating = Math.round(averageRating);
-
   return (
     <Link to={`/recipes/${recipeId}`} className="text-decoration-none">
       <Card className="shadow-sm recipe-card mx-0 mx-sm-2">
@@ -35,18 +32,7 @@ export default function RecipeCard({
           <Card.Subtitle className="text-muted">{category}</Card.Subtitle>
         </Card.Body>
         <Card.Footer className="d-flex justify-content-between align-items-baseline mt-2">
-          <div>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <i
-                key={star}
-                className={`bi ${
-                  star <= roundedRating
-                    ? "bi-star-fill text-warning"
-                    : "bi-star"
-                }`}
-              />
-            ))}
-          </div>
+          <RatingStars recipeId={recipeId} size="fs-5" />
 
           <div className="d-flex align-items-center">
             <i className="bi bi-chat-dots me-1" />

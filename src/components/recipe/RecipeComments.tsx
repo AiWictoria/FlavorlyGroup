@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useComments } from "../../hooks/useComments";
 import { useAuth } from "../../hooks/useAuth";
+import StarsRating from "./StarsRating";
 
 interface RecipeCommentsProps {
   recipeId: number;
@@ -36,7 +37,7 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
 
           <div className="mb-3">
             {comments.map((c) => (
-              <div key={c.id} className="border-bottom border-primary">
+              <div key={c.id} className="border-bottom border-primary p-3">
                 <div className="fw-bold my-2">{c.author}</div>
                 <div className=" my-2">{c.content}</div>
               </div>
@@ -45,13 +46,15 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
 
           {user && (
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-2">
+              <Form.Group className="my-2 p-1">
+                <StarsRating recipeId={recipeId} size="fs-5" mode="rate" />
                 <Form.Control
                   as="textarea"
                   rows={2}
                   placeholder="Write a comment..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
+                  className="mt-3"
                   required
                 />
               </Form.Group>
