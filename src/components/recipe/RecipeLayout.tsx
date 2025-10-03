@@ -20,8 +20,6 @@ export default function RecipeLayout({
   onChange,
   onFileSelect,
 }: RecipeLayoutProps) {
-  const roundedRating = Math.round(recipe?.averageRating ?? 0);
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (onSubmit) onSubmit(recipe!);
@@ -31,11 +29,10 @@ export default function RecipeLayout({
     <>
       <Form onSubmit={handleSubmit} className="mt-4 pt-4">
         <Row className="bg-secondary border-top border-primary">
-          <Col lg={6} className="p-0 order-lg-2">
+          <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4">
             <RecipeImageSection
               mode={mode}
               recipe={recipe}
-              roundedRating={roundedRating}
               onFileSelect={onFileSelect}
             />
           </Col>
