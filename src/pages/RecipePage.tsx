@@ -158,7 +158,6 @@ export default function RecipePage() {
                 title={recipe.title}
                 category={recipe.category}
                 imageUrl={recipe.imageUrl}
-                averageRating={recipe.averageRating}
                 commentsCount={recipe.commentsCount}
               />
             </Col>

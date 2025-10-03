@@ -2,18 +2,17 @@ import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useSavedRecipes } from "../../hooks/useSavedRecipes";
 import { useAuth } from "../../hooks/useAuth";
+import StarsRating from "./StarsRating";
 
 interface RecipeImageSectionProps {
   mode: "view" | "edit" | "create";
   recipe?: Recipe;
-  roundedRating: number;
   onFileSelect?: (file: File | null) => void;
 }
 
 export function RecipeImageSection({
   mode,
   recipe,
-  roundedRating,
   onFileSelect,
 }: RecipeImageSectionProps) {
   const isView = mode === "view";
@@ -36,23 +35,12 @@ export function RecipeImageSection({
       </div>
 
       {isView && user && (
-        <div className="d-flex align-items-center justify-content-between mt-3 mx-3">
-          <div className="mx-4 fs-3">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <i
-                key={star}
-                className={`bi ${
-                  star <= roundedRating
-                    ? "bi-star-fill text-warning"
-                    : "bi-star"
-                }`}
-              />
-            ))}
-          </div>
+        <div className="d-flex align-items-center justify-content-between mt-3 mx-3 px-2">
+          <StarsRating recipeId={recipe!.id} size="fs-3" mode="view" />
 
           <Button
             variant={isSaved ? "outline-danger" : "danger"}
-            className="mx-3 mx-lg-5 m-1"
+            className="mx-3 mx-lg-4 m-1"
             disabled={!user}
             onClick={() => {
               if (!recipe) return;

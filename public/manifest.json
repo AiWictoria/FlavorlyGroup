@@ -1,0 +1,28 @@
+{
+  "short_name": "Flavorly",
+  "name": "Flavorly",
+  "description": "Share, save, enjoy new recipes",
+  "orientation": "portrait",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/flavorly-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/flavorly-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
