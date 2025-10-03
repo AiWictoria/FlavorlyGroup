@@ -26,7 +26,7 @@ export function RecipeIngredients({
 
   useEffect(() => {
     if (recipe?.ingredients) {
-      const parts = recipe.ingredients.split(",").map((i) => i.trim());
+      const parts = recipe.ingredients.split(",");
       setIngredientList(parts);
       setCheckedItems(new Array(parts.length).fill(false));
     } else {
