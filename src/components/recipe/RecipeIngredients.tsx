@@ -3,7 +3,6 @@ import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useShoppingList } from "../../hooks/useShoppingList";
 import { useAuth } from "../../hooks/useAuth";
-import toast from "react-hot-toast";
 
 interface RecipeIngredientsProps {
   mode: "view" | "edit" | "create";

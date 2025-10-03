@@ -16,6 +16,15 @@ const router = createBrowserRouter([
   },
 ]);
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch((err) => console.log("SW registration failed:", err));
+  });
+}
+
 // Create the React root element
 createRoot(document.querySelector("#root")!).render(
   <StrictMode>

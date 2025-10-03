@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useRecipes } from "../hooks/useRecipes";
 import type { Recipe } from "../hooks/useRecipes";
 import { useEffect, useState } from "react";
