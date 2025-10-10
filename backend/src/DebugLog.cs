@@ -1,4 +1,5 @@
 namespace WebApp;
+
 public static class DebugLog
 {
     private static readonly Obj memory = new();
@@ -51,6 +52,9 @@ public static class DebugLog
             memory.GetKeys().ForEach(key =>
             {
                 var item = memory[key];
+
+                if (item == null) return;
+
                 if (
                     item.RESPONSE_DONE != null ||
                     item.timestamp + 5000 < Now
