@@ -4,12 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node node_modules/react-rapide dev",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "node node_modules/react-rapide preview",
     "rr": "node node_modules/react-rapide",
-    "react-rapide": "node node_modules/react-rapide",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
