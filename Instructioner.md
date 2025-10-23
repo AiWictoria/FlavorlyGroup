@@ -34,8 +34,6 @@ Ser det annorlunda ut så kopiera och klistra in det ovan.
   - Password: Loke25!
 Sen finish setup
 
-![alt text](image.png)
-
 Du ska då komma till en page not found sida skriv då `http://localhost:5001/admin` i browsern
 Testa att logga in med username och password.
 
