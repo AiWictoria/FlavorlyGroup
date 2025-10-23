@@ -130,3 +130,10 @@ Thumbs.db
 *.iml
 *.iws
 *.ipr
+
+# ============================================
+# Specific Files
+# ============================================
+
+# Prevent re-adding removed files
+/image.png
