@@ -4,11 +4,15 @@ $line-height-base: 1.4;
 $navbar-dark-color: #fcf1e7 !default;
 $navbar-dark-hover-color: #e0ad05 !default;
 $navbar-dark-active-color: #bb681a !default;
+$danger: #F14454;
+$warning: #F4D15E;
+$success: #10B981;
 $primary: #18110f;
 $secondary: #fff5eb;
 $enable-negative-margins: true;
 $light: #fcf1e7;
-$font-sizes:(
+
+$font-sizes: (
   1: 4.5rem,
   2: 2.5rem,
   3: 2rem,
