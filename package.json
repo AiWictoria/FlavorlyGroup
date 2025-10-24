@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "backend": "cd backend && dotnet run --urls http://localhost:5001",
+    "backend": "cd OrchardCore.Backend && dotnet run --urls http://localhost:5001",
     "start": "concurrently \"npm run backend\" \"npm run dev\""
   },
   "dependencies": {
