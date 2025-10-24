@@ -2,6 +2,7 @@ import { Col, Row } from "react-bootstrap";
 import OrderInfoSection from "../components/orderReceipt/OrderInfoSection";
 import ProductInfo from "../components/orderReceipt/ProductInfo";
 import Divider from "../components/orderReceipt/Divider";
+import OrderTitle from "../components/orderReceipt/OrderTitle";
 
 OrderReceipt.route = {
   path: "/order",
@@ -25,7 +26,10 @@ export default function OrderReceipt() {
     <>
       <div className="mt-5 pt-5">
         <Row className="mt-3 g-2 justify-content-center">
-          <Col xs={10} md={6} className="">
+          <Col xs={10}>
+            <OrderTitle name="Will" />
+          </Col>
+          <Col xs={10} sm={6} className="">
             <OrderInfoSection
               title="Delivery adress:"
               adress="Willgata 13B"
@@ -34,17 +38,17 @@ export default function OrderReceipt() {
             />
           </Col>
 
-          <Col xs={10} md={4}>
+          <Col xs={10} sm={4}>
             <OrderInfoSection title="Pay method:" paymethod="Apple Pay" />
           </Col>
           <Divider />
           <Col xs={10}>
             <div className="d-flex justify-content-between align-items-center fs-5 py-2 fw-bold">
-              <span className="fw-bold">Product</span>
+              <p className="fw-bold">Product</p>
 
-              <span className="d-flex justify-content-end gap-5">
-                <span>Quantity</span>
-                <span>Price</span>
+              <span className="d-flex justify-content-end gap-4">
+                <p>Quantity</p>
+                <p>Price</p>
               </span>
             </div>
           </Col>
@@ -59,7 +63,7 @@ export default function OrderReceipt() {
           ))}
           <Divider />
           <Col xs={10} className="d-flex justify-content-end">
-            <div className="fs-5 fw-bold">Total: {total} kr</div>
+            <h4 className="fw-bold">Total: {total} kr</h4>
           </Col>
         </Row>
       </div>
