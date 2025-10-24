@@ -11,10 +11,12 @@ export default function SignupForm({ onBack }: SignupFormProps) {
   const { createUser } = useAuth();
 
   const [form, setForm] = useState({
+    username: "",
     email: "",
     password: "",
     firstName: "",
     lastName: "",
+    phone: "",
   });
 
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {
@@ -24,11 +26,29 @@ export default function SignupForm({ onBack }: SignupFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await createUser(form.email, form.password, form.firstName, form.lastName);
+    await createUser(
+      form.username,
+      form.email,
+      form.password,
+      form.firstName,
+      form.lastName,
+      form.phone
+    );
   }
 
   return (
     <Form onSubmit={handleSubmit} className="m-2">
+      <Form.Group className="p-2">
+        <Form.Label>Username</Form.Label>
+        <Form.Control
+          type="username"
+          name="username"
+          placeholder="Enter username"
+          value={form.username}
+          onChange={setProperty}
+          required
+        />
+      </Form.Group>
       <Form.Group className="p-2">
         <Form.Label>Email</Form.Label>
         <Form.Control
@@ -70,6 +90,18 @@ export default function SignupForm({ onBack }: SignupFormProps) {
           name="lastName"
           placeholder="Last Name"
           value={form.lastName}
+          onChange={setProperty}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="p-2">
+        <Form.Label>Phone</Form.Label>
+        <Form.Control
+          type="phone"
+          name="phone"
+          placeholder="Phone number"
+          value={form.phone}
           onChange={setProperty}
           required
         />

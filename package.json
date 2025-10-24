@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
+    "dev": "vite",
     "lint": "eslint .",
     "rr": "node node_modules/react-rapide",
     "test": "vitest",
