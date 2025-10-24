@@ -1,14 +1,15 @@
-import type {JSX} from 'react';
-import{createElement} from 'react';
+import type { JSX } from "react";
+import { createElement } from "react";
 // page components
-import CreateRecipe from './pages/CreateRecipe.tsx';
-import EditRecipeDetails from './pages/EditRecipeDetails.tsx';
-import HomePage from './pages/HomePage.tsx';
-import NotAuthorizedPage from './pages/NotAuthorizedPage.tsx';
-import NotFoundPage from './pages/NotFoundPage.tsx';
-import RecipePage from './pages/RecipePage.tsx';
-import ShoppingListPage from './pages/ShoppingListPage.tsx';
-import ViewRecipeDetails from './pages/ViewRecipeDetails.tsx';
+import CreateRecipe from "./pages/CreateRecipe.tsx";
+import EditRecipeDetails from "./pages/EditRecipeDetails.tsx";
+import HomePage from "./pages/HomePage.tsx";
+import NotAuthorizedPage from "./pages/NotAuthorizedPage.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
+import RecipePage from "./pages/RecipePage.tsx";
+import ShoppingListPage from "./pages/ShoppingListPage.tsx";
+import ViewRecipeDetails from "./pages/ViewRecipeDetails.tsx";
+import OrderReceipt from "./pages/OrderReceipt.tsx";
 
 interface Route {
   element: JSX.Element;
@@ -17,7 +18,7 @@ interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
-  protected?:boolean
+  protected?: boolean;
 }
 
 export default [
@@ -28,9 +29,10 @@ export default [
   NotFoundPage,
   RecipePage,
   ShoppingListPage,
-  ViewRecipeDetails
+  ViewRecipeDetails,
+  OrderReceipt,
 ]
   // map the route property of each page component to a Route
-  .map(x => (({ element: createElement(x), ...x.route }) as Route))
+  .map((x) => ({ element: createElement(x), ...x.route } as Route))
   // sort by index (and if an item has no index, sort as index 0)
   .sort((a, b) => (a.index || 0) - (b.index || 0));
