@@ -1,5 +1,5 @@
-import type {JSX} from 'react';
-import{createElement} from 'react';
+import type { JSX } from 'react';
+import { createElement } from 'react';
 // page components
 import CreateRecipe from './pages/CreateRecipe.tsx';
 import EditRecipeDetails from './pages/EditRecipeDetails.tsx';
@@ -10,6 +10,7 @@ import RecipePage from './pages/RecipePage.tsx';
 import ShoppingListPage from './pages/ShoppingListPage.tsx';
 import ViewRecipeDetails from './pages/ViewRecipeDetails.tsx';
 import MyOrdersPage from './pages/MyOrdersPage.tsx';
+import OrderDetailsPage from './Pellemapp/OrderDetailsPage.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -18,7 +19,7 @@ interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
-  protected?:boolean
+  protected?: boolean
 }
 
 export default [
@@ -30,7 +31,8 @@ export default [
   RecipePage,
   ShoppingListPage,
   ViewRecipeDetails,
-  MyOrdersPage,
+  MyOrdersPage, ,
+  OrderDetailsPage
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))

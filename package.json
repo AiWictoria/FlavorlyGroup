@@ -25,6 +25,7 @@
     "express": "^5.1.0",
     "express-http-proxy": "^2.1.2",
     "express-session": "^1.18.1",
+    "lucide-react": "^0.547.0",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.1",
