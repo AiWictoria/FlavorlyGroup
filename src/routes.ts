@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage.tsx';
 import RecipePage from './pages/RecipePage.tsx';
 import ShoppingListPage from './pages/ShoppingListPage.tsx';
 import ViewRecipeDetails from './pages/ViewRecipeDetails.tsx';
+import MyOrdersPage from './pages/MyOrdersPage.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -28,7 +29,8 @@ export default [
   NotFoundPage,
   RecipePage,
   ShoppingListPage,
-  ViewRecipeDetails
+  ViewRecipeDetails,
+  MyOrdersPage,
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))
