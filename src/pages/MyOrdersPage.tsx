@@ -53,7 +53,7 @@ export default function MyOrdersPage() {
 
   return (
     <div className="container my-5 pt-5" >
-      <h1 className="mb-4">Mina ordrar</h1>
+      <h1 className="mb-4">My Orders</h1>
 
       <div className="row">
         {ordersMock.map((order) => (
