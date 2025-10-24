@@ -6,7 +6,6 @@ import RecipeSearchBar from "../components/RecipeSearchBar";
 import { sortRecipes } from "../utils/sortRecipes";
 import { useAuth } from "../hooks/useAuth";
 import { useSavedRecipes } from "../hooks/useSavedRecipes";
-import OrderInfoSection from "../components/orderReceipt/OrderInfoSection";
 
 RecipePage.route = {
   path: "/recipes",
@@ -51,14 +50,6 @@ export default function RecipePage() {
 
   return (
     <>
-      <OrderInfoSection
-        title="Delivery adress:"
-        adress="Willgata 13B"
-        postcode="123 34"
-        city="Willköping"
-      />
-      <OrderInfoSection title="Pay method:" paymethod="Apple Pay" />
-
       <div className="mt-5 pt-5 mb-5">
         <Row className="d-flex align-items-center mx-4 m-md-2 pe-2">
           <Col xs={12} md={4} lg={3}>
