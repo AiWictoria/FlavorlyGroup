@@ -10,6 +10,7 @@ import RecipePage from './pages/RecipePage.tsx';
 import ShoppingListPage from './pages/ShoppingListPage.tsx';
 import StoreManagerOrderView from './pages/StoreManagerOrderView';
 import ViewRecipeDetails from './pages/ViewRecipeDetails.tsx';
+import MyOrdersPage from './pages/MyOrdersPage.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -30,7 +31,8 @@ export default [
   RecipePage,
   ShoppingListPage,
   StoreManagerOrderView,
-  ViewRecipeDetails
+  ViewRecipeDetails,
+  MyOrdersPage
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))
