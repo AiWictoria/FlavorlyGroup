@@ -1,5 +1,5 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
+import { Form, Button, ListGroup, Row, Col, FormLabel } from "react-bootstrap";
 import { useState } from "react";
 
 ShoppingListPage.route = {
@@ -13,6 +13,13 @@ export default function ShoppingListPage() {
   ////////////////////////////////////////
   // MOCK UNTIL PROPER DB IS IMPLEMENTED//
   ////////////////////////////////////////
+
+  // export interface ShoppingItem {
+  //   id: number;
+  //   userId: number;
+  //   ingredient: string;
+  //   checked: boolean;
+  // }
 
   function useShoppingListMock() {
     const [items, setItems] = useState([
@@ -126,11 +133,19 @@ export default function ShoppingListPage() {
               className="d-flex align-items-center justify-content-between"
             >
               <Form.Check
+                id={`check-${item.id}`}
                 type="checkbox"
                 checked={item.checked}
                 onChange={(e) => toggleItemChecked(item.id, e.target.checked)}
-                label={item.ingredient}
+                label={
+                  <>
+                    {item.ingredient}
+                    <span className="ms-1">{item.amount}</span>
+                    <span className="ms-1">{item.unit}</span>
+                  </>
+                }
               />
+
               <Button
                 variant="outline-danger"
                 size="sm"
