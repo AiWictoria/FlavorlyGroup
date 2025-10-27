@@ -1,5 +1,5 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
+import { Form, Button, ListGroup, Row, Col, Card } from "react-bootstrap";
 import { useState } from "react";
 
 ShoppingListPage.route = {
@@ -118,34 +118,45 @@ export default function ShoppingListPage() {
         </Form>
 
         <ListGroup>
-          {items.map((item) => (
-            <ListGroup.Item
-              key={item.id}
-              className="d-flex align-items-center justify-content-between"
-            >
-              <Form.Check
-                id={`check-${item.id}`}
-                type="checkbox"
-                checked={item.checked}
-                onChange={(e) => toggleItemChecked(item.id, e.target.checked)}
-                label={
-                  <>
-                    {item.ingredient}
-                    <span className="ms-1">{item.amount}</span>
-                    <span className="ms-1">{item.unit}</span>
-                  </>
-                }
-              />
+          {items.length > 0 ? (
+            <>
+              {items.map((item) => (
+                <ListGroup.Item
+                  key={item.id}
+                  className="d-flex align-items-center justify-content-between "
+                >
+                  <Form.Check
+                    id={`check-${item.id}`}
+                    type="checkbox"
+                    checked={item.checked}
+                    onChange={(e) =>
+                      toggleItemChecked(item.id, e.target.checked)
+                    }
+                    label={
+                      <>
+                        <div className="d-flex flex-wrap">
+                          <span text-truncate>{item.ingredient}</span>
+                          <span className="ms-1">{item.amount}</span>
+                          <span className="ms-1">{item.unit}</span>
+                        </div>
+                      </>
+                    }
+                  />
 
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={() => removeItem(item.id)}
-              >
-                -
-              </Button>
-            </ListGroup.Item>
-          ))}
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => removeItem(item.id)}
+                  >
+                    -
+                  </Button>
+                </ListGroup.Item>
+              ))}
+              <Button className="mt-2">Add ingredients to cart</Button>
+            </>
+          ) : (
+            <div>Empty cart</div>
+          )}
         </ListGroup>
       </Col>
     </Row>
