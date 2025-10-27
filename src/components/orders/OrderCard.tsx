@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Card, Row, Col, Button, ListGroup } from "react-bootstrap";
 import { StatusBadge } from "./StatusBadge";
 
 interface OrderItem {
@@ -16,56 +17,50 @@ interface Order {
 export function OrderCard({ order }: { order: Order }) {
   const [open, setOpen] = useState(false);
 
-
   const total = order.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   return (
-    <div className="card shadow mb-3">
-      <div className="card-body">
-        <div className="d-flex align-items-center">
-          
-          <div className="me-3">
-            <h5 className="card-title mb-0 fw-bold">Order #{order.id}</h5>
-          </div>
+    <Card className="shadow mb-3">
+      <Card.Body>
+        <Row className="align-items-center">
+          <Col xs="auto">
+            <h5 className="mb-0 fw-bold">Order #{order.id}</h5>
+          </Col>
 
-          
-          <div className="flex-grow-1" />
-
-          
-          <div className="d-flex align-items-center">
+          <Col className="text-end">
             <StatusBadge status={order.status} />
-
-            <button
-              type="button"
-              className="btn btn-sm btn-secondary ms-2"
+            <Button
+              variant="secondary"
+              size="sm"
+              className="ms-2"
               onClick={() => setOpen(!open)}
               aria-expanded={open}
               aria-label="Toggle order details"
             >
               {open ? "▲" : "▼"}
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Col>
+        </Row>
 
         {open && (
-          <div className="card mt-2 py-2">
-            <ul className="list-unstyled mb-0 px-3">
+          <Card className="mt-3">
+            <ListGroup variant="flush">
               {order.items.map((item, i) => (
-                <li key={i} className="py-1 border-bottom d-flex justify-content-between">
+                <ListGroup.Item key={i} className="d-flex justify-content-between">
                   <span>
-                    {item.quantity}x {item.name}
+                    {item.quantity}× {item.name}
                   </span>
                   <span>{item.quantity * item.price} kr</span>
-                </li>
+                </ListGroup.Item>
               ))}
-              <li className="pt-2 fw-bold d-flex justify-content-between">
+              <ListGroup.Item className="fw-bold d-flex justify-content-between">
                 <span>Total:</span>
                 <span>{total} kr</span>
-              </li>
-            </ul>
-          </div>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card>
         )}
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 }
