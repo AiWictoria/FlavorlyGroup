@@ -10,7 +10,7 @@ export default function MyOrdersPage() {
   const ordersMock = [
     {
       id: 3325,
-      status: "Completed",
+      status: "Delivered",
       items: [
         { name: "Ägg", quantity: 2, price: 3 },
         { name: "Mjölk", quantity: 1, price: 12 },
@@ -18,7 +18,7 @@ export default function MyOrdersPage() {
     },
     {
       id: 3387,
-      status: "On its way",
+      status: "New order",
       items: [
         { name: "Bröd", quantity: 1, price: 25 },
         { name: "Smör", quantity: 1, price: 30 },
@@ -26,7 +26,7 @@ export default function MyOrdersPage() {
     },
     {
       id: 3809,
-      status: "Just came in",
+      status: "In progress",
       items: [
         { name: "Tomater", quantity: 3, price: 5 },
         { name: "Gurka", quantity: 2, price: 7 },
@@ -34,7 +34,7 @@ export default function MyOrdersPage() {
     },
     {
       id: 3905,
-      status: "Completed",
+      status: "New order",
       items: [
         { name: "Ost", quantity: 1, price: 40 },
         { name: "Juice", quantity: 2, price: 15 },
@@ -42,7 +42,7 @@ export default function MyOrdersPage() {
     },
     {
       id: 3906,
-      status: "Completed",
+      status: "Delivered",
       items: [
         { name: "Ost", quantity: 1, price: 40 },
         { name: "Juice", quantity: 2, price: 15 },
