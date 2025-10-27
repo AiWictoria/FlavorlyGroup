@@ -1,16 +1,17 @@
 import type { OrderItem } from "./typer";
 import { formatSek } from "./typer";
+import "./orders.css";
 
 export function OrderItemsTable({ items }: { items: OrderItem[] }) {
     return (
 
         <table className="">
-            <thead className="bg-primary text-white text-center">
-                <tr><th className="p-3">Amount</th><th>Units</th><th>Ingredients</th><th className="p-3">Cost</th></tr>
+            <thead className=" text-black text-center">
+                <tr><th>Amount</th><th>Units</th><th>Ingredients</th><th>Cost</th></tr>
             </thead>
-            <tbody className="fw-bold">
+            <tbody>
                 {items.map((x, i) => (
-                    <tr key={i} className="text-center bg-light border-bottom">
+                    <tr key={i} className="text-center border-bottom">
                         <td className="p-3">{x.amount}</td>
                         <td>{x.unit}</td>
                         <td>{x.name}</td>
