@@ -59,6 +59,7 @@ export default function ShoppingListPage() {
     //Change this to useShoppingList when done mocking
     /////////////////////////////////////////////////
     useShoppingListMock();
+
   const [newItem, setNewItem] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
@@ -70,19 +71,52 @@ export default function ShoppingListPage() {
   }
 
   return (
-    <Row className="mt-5 p-5">
-      <Col className="mt-4 mx-md-5 px-md-5">
+    <Row className="mt-5 p-3 p-xl-5">
+      <Col className="mt-4 mx-xl-5 px-xl-5">
         <h2>Shopping List</h2>
 
-        <Form onSubmit={handleAdd} className="d-flex my-3">
-          <Form.Control
-            placeholder="Add ingredient..."
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-          />
+        {/* <Form onSubmit={handleAdd}>
+          <Form.Group>
+            <Form.Control
+              placeholder="Add ingredient..."
+              value={newItem}
+              onChange={(e) => setNewItem(e.target.value)}
+            />
+          </Form.Group>
+
+
           <Button variant="success" type="submit" className="ms-2">
             Add
           </Button>
+        </Form> */}
+
+        <Form>
+          <Row className="mt-4">
+            <Col xs={12} xl={7} className="mb-2">
+              <Form.Group>
+                <Form.Control placeholder="Add ingredient..."></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col xs={6} xl={3} className="mb-2">
+              <Form.Group>
+                <Form.Control
+                  placeholder="Add amount..."
+                  type="text"
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+
+            <Col xs={6} xl={1}>
+              <Form.Control placeholder="Unit..." disabled></Form.Control>
+            </Col>
+            <Col xs={12} xl={1}>
+              <div className="d-grid gap-2 mb-4 mb-xl-5">
+                <Button variant="success" type="submit" className="w-auto">
+                  Add
+                </Button>
+              </div>
+            </Col>
+          </Row>
         </Form>
 
         <ListGroup>
