@@ -13,7 +13,7 @@ export function StatusBadge({ status }: { status: string }) {
   }
 
   return (
-    <span className={`badge bg-${variant} text-dark`}>
+    <span className={`badge text-${variant} fs-6 `}>
       {status}
     </span>
   );
