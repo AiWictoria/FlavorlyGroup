@@ -30,7 +30,7 @@ export function OrderCard({ order }: { order: Order }) {
           <Col className="text-end">
             <StatusBadge status={order.status} />
             <Button
-              variant="secondary"
+              variant=""
               size="sm"
               className="ms-2"
               onClick={() => setOpen(!open)}
