@@ -2,14 +2,14 @@ export function StatusBadge({ status }: { status: string }) {
   let variant: string;
 
   switch (status) {
-    case "Completed":
+    case "Delivered":
       variant = "success";
       break;
-    case "On its way":
+    case "In progress":
       variant = "warning";
       break;
     default:
-      variant = "danger";
+      variant = "info";
   }
 
   return (
