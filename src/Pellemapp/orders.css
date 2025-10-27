@@ -1,0 +1,35 @@
+.ordersbody {
+    font-family: sans-serif;
+}
+
+.orderstable {
+    border: 1px solid #E5e7eb;
+    background-color: #fafafa;
+}
+
+tr {
+
+    font-weight: 500;
+
+    th {
+        padding: 20px;
+    }
+
+}
+
+.OrderHeader {
+    background-color: #ededed;
+    color: #111827;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+}
+
+.icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
