@@ -7,10 +7,10 @@ interface OrderBoxProps {
 }
 
 const steps = [
-  { iconClass: "bi bi-cart" },
+  { iconClass: "bi bi-bag" },
   { iconClass: "bi bi-truck" },
   { label: "Payment", iconClass: "bi bi-credit-card" },
-  { label: "Confirmation", iconClass: "bi bi-check-circle" },
+  { label: "Confirmation", iconClass: "bi bi-check2" },
 ];
 
 export default function OrderBox({ activeStep, children }: OrderBoxProps) {
