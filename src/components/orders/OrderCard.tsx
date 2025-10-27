@@ -10,7 +10,7 @@ interface OrderItem {
 
 interface Order {
   id: number;
-  status: string;
+  status: "pending" | "processing" | "completed" | "cancelled";
   items: OrderItem[];
 }
 
@@ -23,11 +23,11 @@ export function OrderCard({ order }: { order: Order }) {
     <Card className="shadow mb-3">
       <Card.Body>
         <Row className="align-items-center">
-          <Col xs="auto">
+          <Col>
             <h5 className="mb-0 fw-bold">Order #{order.id}</h5>
           </Col>
 
-          <Col className="text-end">
+          <Col xs="auto" className="d-flex align-items-center">
             <StatusBadge status={order.status} />
             <Button
               variant=""

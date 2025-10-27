@@ -1,0 +1,29 @@
+.status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  color: white;
+  transition: all 0.2s ease;
+  vertical-align: middle; 
+  margin-right: 4px; 
+}
+
+.status-icon.pending {
+  background-color: #ffa94d;
+}
+
+.status-icon.processing {
+  background-color: #4dabff;
+}
+
+.status-icon.completed {
+  background-color: #40c057;
+}
+
+.status-icon.cancelled {
+  background-color: #ff6b6b;
+}

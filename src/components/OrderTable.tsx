@@ -1,8 +1,8 @@
 import { Table, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import type { Order } from '../types/order.types';
-import type { ReactElement } from 'react';
 import { useState } from 'react';
+import { StatusBadge } from './orders/StatusBadge';
 import './OrderTable.css';
 
 interface OrderTableProps {
@@ -35,24 +35,17 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
     setStatusSort(null);
   };
 
-  function getStatusSymbol(status: string): ReactElement {
-    const tooltips: Record<string, string> = {
-      pending: "New Order",
-      processing: "In Progress",
-      completed: "Completed"
-    };
-
-    const icons: Record<string, string> = {
-      pending: "bi-cart",
-      processing: "bi-three-dots",
-      completed: "bi-check-lg"
-    };
-
-    return (
-      <div title={tooltips[status]} className={`status-icon ${status}`}>
-        <i className={`bi ${icons[status]}`}></i>
-      </div>
-    );
+  const formatStatus = (status: string): string => {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return 'completed';
+      case 'processing':
+        return 'processing';
+      case 'pending':
+        return 'pending';
+      default:
+        return status;
+    }
   }
 
   function formatOrderNumber(orderNumber: string): string {
@@ -97,8 +90,8 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
 
   // Filter orders based on showCompleted prop
   const filteredOrders = showCompleted 
-    ? orders.filter(order => order.status === 'completed')
-    : orders.filter(order => ['pending', 'processing'].includes(order.status));
+    ? orders.filter(order => order.status === "completed")
+    : orders.filter(order => ["pending", "processing"].includes(order.status));
 
   // Apply sorting to filtered orders
   const sortedAndFilteredOrders = getSortedOrders(filteredOrders);
@@ -141,7 +134,9 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
         <tbody>
           {sortedAndFilteredOrders.map((order) => (
             <tr key={order.id}>
-              <td style={{ width: '80px', textAlign: 'center' }}>{getStatusSymbol(order.status)}</td>
+              <td style={{ width: '80px', textAlign: 'center' }}>
+                <StatusBadge status={formatStatus(order.status)} />
+              </td>
               <td style={{ width: '140px' }}>
                 <span className="order-number">
                   {formatOrderNumber(order.orderNumber)}

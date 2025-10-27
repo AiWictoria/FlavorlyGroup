@@ -58,6 +58,12 @@
   flex: 1;
 }
 
+.order-number {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  color: #666;
+}
+
 .table > thead > tr > th {
   background: #18110F !important;
   font-weight: 600;
@@ -83,7 +89,7 @@
 
 .sort-icon.asc {
   transform: rotate(180deg);
-}
+} 
 
 
 .table > thead > tr > th:first-child {
