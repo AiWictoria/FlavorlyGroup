@@ -1,5 +1,6 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
 import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
+import toast from "react-hot-toast";
 import { useState } from "react";
 
 ShoppingListPage.route = {
@@ -34,7 +35,6 @@ export default function ShoppingListPage() {
         amount: "1000",
       },
     ]);
-    ////////////////////////////////////////
 
     const addItem = async (ingredient: string) => {
       setItems((prev) => [
@@ -58,13 +58,31 @@ export default function ShoppingListPage() {
         prev.map((item) => (item.id === id ? { ...item, checked } : item))
       );
     };
+    const moveItemsToCart = () => {
+      setItems((prev) => prev.filter((item) => !item.checked));
+    };
 
     const fetchList = async () => {}; // no-op for mock
 
-    return { items, addItem, removeItem, toggleItemChecked, fetchList };
+    return {
+      items,
+      addItem,
+      removeItem,
+      toggleItemChecked,
+      fetchList,
+      moveItemsToCart,
+    };
   }
+  ////////////////////////////////////////
 
-  const { items, addItem, removeItem, toggleItemChecked, fetchList } =
+  const {
+    items,
+    addItem,
+    removeItem,
+    toggleItemChecked,
+    fetchList,
+    moveItemsToCart,
+  } =
     /////////////////////////////////////////////////
     //Change this to useShoppingList when done mocking
     /////////////////////////////////////////////////
@@ -152,7 +170,10 @@ export default function ShoppingListPage() {
                   </Button>
                 </ListGroup.Item>
               ))}
-              <Button className="mt-3">Add ingredients to cart</Button>
+
+              <Button className="mt-3" onClick={() => moveItemsToCart()}>
+                Add ingredients to cart
+              </Button>
             </ListGroup>
           </>
         ) : (
