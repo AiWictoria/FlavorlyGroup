@@ -72,10 +72,36 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
     });
   }
 
+  // Sort and filter orders
+  const getSortedOrders = (orders: Order[]) => {
+    let sortedOrders = [...orders];
+    
+    if (statusSort) {
+      sortedOrders.sort((a, b) => {
+        const statusOrder = { pending: 1, processing: 2, completed: 3, cancelled: 4 };
+        const comparison = statusOrder[a.status] - statusOrder[b.status];
+        return statusSort === 'asc' ? comparison : -comparison;
+      });
+    }
+    
+    if (dateSort) {
+      sortedOrders.sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateSort === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+    }
+
+    return sortedOrders;
+  };
+
   // Filter orders based on showCompleted prop
   const filteredOrders = showCompleted 
     ? orders.filter(order => order.status === 'completed')
     : orders.filter(order => ['pending', 'processing'].includes(order.status));
+
+  // Apply sorting to filtered orders
+  const sortedAndFilteredOrders = getSortedOrders(filteredOrders);
 
   return (
     <div className="table-wrapper">
@@ -113,7 +139,7 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
           </tr>
         </thead>
         <tbody>
-          {filteredOrders.map((order) => (
+          {sortedAndFilteredOrders.map((order) => (
             <tr key={order.id}>
               <td style={{ width: '80px', textAlign: 'center' }}>{getStatusSymbol(order.status)}</td>
               <td style={{ width: '140px' }}>
