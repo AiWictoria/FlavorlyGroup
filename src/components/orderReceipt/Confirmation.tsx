@@ -22,7 +22,7 @@ export default function Confirmation() {
         <Col xs={10}>
           <OrderTitle name="Will" />
         </Col>
-        <Col xs={10} sm={6} className="">
+        <Col xs={10} sm={6}>
           <OrderInfoSection
             title="Delivery adress:"
             adress="Willgata 13B"
@@ -45,8 +45,12 @@ export default function Confirmation() {
             </span>
           </div>
         </Col>
-        {sampleProducts.map((p) => (
-          <Col key={p.id} xs={10}>
+        {sampleProducts.map((p, i) => (
+          <Col
+            key={p.id}
+            xs={10}
+            className={i !== sampleProducts.length - 1 ? "border-bottom" : ""}
+          >
             <ProductInfo
               product={p.product}
               quantity={p.quantity}
