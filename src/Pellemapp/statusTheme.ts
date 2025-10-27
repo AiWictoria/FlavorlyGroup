@@ -30,7 +30,7 @@ export const STATUS_THEME: Record<OrderStatus, StatusTheme> = {
     }
 } as const;
 
-export const srufaceFor = (s: OrderStatus) => STATUS_THEME[s].surface;
+export const surfaceFor = (s: OrderStatus) => STATUS_THEME[s].surface;
 export const buttonFor = (s: OrderStatus) => STATUS_THEME[s].button;
 export const iconFor = (s: OrderStatus) => STATUS_THEME[s].icon;
 export const buttonTextFor = (s: OrderStatus) => STATUS_THEME[s].buttonText;
