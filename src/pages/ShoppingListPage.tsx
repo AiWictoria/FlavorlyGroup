@@ -1,5 +1,5 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, ListGroup, Row, Col, Card } from "react-bootstrap";
+import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 
 ShoppingListPage.route = {
@@ -108,7 +108,7 @@ export default function ShoppingListPage() {
               <Form.Control placeholder="Unit" disabled></Form.Control>
             </Col>
             <Col xs={12} xl={1}>
-              <div className="d-grid gap-2 mb-4 mb-xl-5">
+              <div className="d-grid gap-2 mb-5">
                 <Button variant="success" type="submit" className="w-auto">
                   Add
                 </Button>
@@ -117,9 +117,9 @@ export default function ShoppingListPage() {
           </Row>
         </Form>
 
-        <ListGroup>
-          {items.length > 0 ? (
-            <>
+        {items.length > 0 ? (
+          <>
+            <ListGroup>
               {items.map((item) => (
                 <ListGroup.Item
                   key={item.id}
@@ -135,7 +135,7 @@ export default function ShoppingListPage() {
                     label={
                       <>
                         <div className="d-flex flex-wrap">
-                          <span text-truncate>{item.ingredient}</span>
+                          <span>{item.ingredient}</span>
                           <span className="ms-1">{item.amount}</span>
                           <span className="ms-1">{item.unit}</span>
                         </div>
@@ -152,12 +152,17 @@ export default function ShoppingListPage() {
                   </Button>
                 </ListGroup.Item>
               ))}
-              <Button className="mt-2">Add ingredients to cart</Button>
-            </>
-          ) : (
-            <div>Empty cart</div>
-          )}
-        </ListGroup>
+              <Button className="mt-3">Add ingredients to cart</Button>
+            </ListGroup>
+          </>
+        ) : (
+          <div
+            className="d-flex justify-content-center align-items-center mt-5"
+            style={{ color: "#9b9d9eff" }}
+          >
+            <h1>Shopping list is empty...</h1>
+          </div>
+        )}
       </Col>
     </Row>
   );
