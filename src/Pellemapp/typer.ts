@@ -1,7 +1,7 @@
 
 //DTOs for orders
 
-export type OrderStatus = "NotStarted" | "Started" | "Finished";
+export type OrderStatus = "NotStarted" | "Started" | "Finished" | "Cancelled";
 
 export interface OrderItem { name: string; amount: number; unit: string; lineTotal: number; }
 export interface Customer { fullName: string; }
