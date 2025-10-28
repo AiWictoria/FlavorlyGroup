@@ -1,6 +1,8 @@
 @use 'bootstrap';
 @use 'sticky-footer';
 @use 'home-page';
+@use 'order-box';
+
 
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
@@ -41,4 +43,11 @@ h1{
 .navbar-toggler:focus {
   box-shadow: none !important;
   outline: none !important;
+}
+
+.flavorly-divider {
+  border: none;
+  border-bottom: 1px solid #e0ad05;
+  margin: 1.5rem 0;
+  opacity: 0.8; 
 }
