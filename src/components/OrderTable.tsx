@@ -97,9 +97,7 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
   const sortedAndFilteredOrders = getSortedOrders(filteredOrders);
 
   return (
-    <div className="table-wrapper">
-      <div className="table-container">
-        <Table responsive>
+    <Table responsive>
           <thead>
             <tr>
               <th style={{ width: '80px', textAlign: 'center' }}>
@@ -167,7 +165,5 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
           ))}
         </tbody>
       </Table>
-    </div>
-    </div>
   );
 }

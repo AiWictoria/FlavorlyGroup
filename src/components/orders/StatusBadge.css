@@ -4,7 +4,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 4px;
   font-size: 16px;
   color: white;
   transition: all 0.2s ease;
@@ -24,6 +24,36 @@
   background-color: #40c057;
 }
 
-.status-icon.cancelled {
-  background-color: #ff6b6b;
+.status-icon.cancelled,
+.status-icon.avbruten {
+  background-color: #dc3545; 
+}
+
+/* My Orders specific styling */
+.status-icon.my-orders {
+  border-radius: 4px !important; 
+  margin-left: auto; 
+  margin-right: 0;
+}
+
+.status-icon.my-orders.pending,
+.status-icon.my-orders.processing,
+.status-icon.my-orders.new-order,
+.status-icon.my-orders.in-progress {
+  background-color: #3b82f6 !important; 
+}
+
+.status-icon.my-orders.completed,
+.status-icon.my-orders.delivered {
+  background-color: #40c057 !important; 
+}
+
+.status-icon.my-orders.cancelled,
+.status-icon.my-orders.avbruten {
+  background-color: #dc3545 !important; /* Red for cancelled orders */
+}
+
+
+.status-icon.my-orders i {
+  animation: none !important;
 }

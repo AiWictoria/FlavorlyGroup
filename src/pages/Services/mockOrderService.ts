@@ -99,7 +99,7 @@ let mockOrders: Order[] = [
     customerName: "Lisa Larsson",
     sum: 82,
     date: "2025-10-20T18:30:00Z",
-    status: "completed",
+    status: "cancelled",
     createdAt: "2025-10-20T18:30:00Z",
     updatedAt: "2025-10-21T10:45:00Z",
   },

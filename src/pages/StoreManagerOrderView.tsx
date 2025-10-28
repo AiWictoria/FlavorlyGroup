@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Alert } from 'react-bootstrap';
+import { Container, Alert, Button } from 'react-bootstrap';
 import { OrderTable } from '../components/OrderTable';
 import type { Order } from '../types/order.types';
 import { fetchOrders, deleteOrder } from './Services/mockOrderService';
@@ -49,15 +49,23 @@ function StoreManagerOrderViewComponent() {
     <Container fluid className="py-4">
       {error && <Alert variant="danger">{error}</Alert>}
       
-     
-
       {orders.length === 0 ? (
         <div className="text-center">Inga ordrar hittades</div>
       ) : (
-        <OrderTable 
-          orders={orders} 
-          onDelete={handleDeleteOrder}
-        />
+        <div className="table-wrapper">
+          <div className="table-container">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h2 className="mb-0">Ordrar</h2>
+              <Button variant="outline-primary">
+                Completed Orders
+              </Button>
+            </div>
+            <OrderTable 
+              orders={orders} 
+              onDelete={handleDeleteOrder}
+            />
+          </div>
+        </div>
       )}
     </Container>
   );
