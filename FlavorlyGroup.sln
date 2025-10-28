@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchardCore.Backend", "OrchardCore.Backend\OrchardCore.Backend.csproj", "{06846EAD-2A47-4098-8A1B-5B6890CB2C59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backend", "backend\backend.csproj", "{6FC46855-AF8B-4D96-B2D9-92105D91FC49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +39,18 @@ Global
 		{06846EAD-2A47-4098-8A1B-5B6890CB2C59}.Release|x64.Build.0 = Release|Any CPU
 		{06846EAD-2A47-4098-8A1B-5B6890CB2C59}.Release|x86.ActiveCfg = Release|Any CPU
 		{06846EAD-2A47-4098-8A1B-5B6890CB2C59}.Release|x86.Build.0 = Release|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Debug|x64.Build.0 = Debug|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Debug|x86.Build.0 = Debug|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x64.ActiveCfg = Release|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x64.Build.0 = Release|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x86.ActiveCfg = Release|Any CPU
+		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
