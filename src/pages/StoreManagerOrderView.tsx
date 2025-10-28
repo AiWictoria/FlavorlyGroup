@@ -49,9 +49,7 @@ function StoreManagerOrderViewComponent() {
     <Container fluid className="py-4">
       {error && <Alert variant="danger">{error}</Alert>}
       
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">Ordrar</h2>
-      </div>
+     
 
       {orders.length === 0 ? (
         <div className="text-center">Inga ordrar hittades</div>
