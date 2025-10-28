@@ -11,7 +11,7 @@ export function OrderItemsTable({ items }: { items: OrderItem[] }) {
             </thead>
             <tbody>
                 {items.map((x, i) => (
-                    <tr key={i} className="text-center border-bottom">
+                    <tr key={i} className="text-center border-top border-bottom">
                         <td className="p-3">{x.amount}</td>
                         <td>{x.unit}</td>
                         <td>{x.name}</td>

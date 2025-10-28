@@ -1,6 +1,6 @@
 import type { OrderStatus } from "./typer";
 import type { LucideIcon } from "lucide-react"
-import { ShoppingCart, Hourglass, CheckCircle } from "lucide-react";
+import { ShoppingCart, Hourglass, CheckCircle, XCircle } from "lucide-react";
 
 type StatusTheme = {
     surface: string;
@@ -27,6 +27,12 @@ export const STATUS_THEME: Record<OrderStatus, StatusTheme> = {
         button: "btn btn-success text-white",
         icon: CheckCircle,
         buttonText: "Notify customer"
+    },
+    Cancelled: {
+        surface: "bg-secondary-subtle text-danger border-bottom border-danger",
+        button: "btn btn-outline-danger",
+        icon: XCircle,
+        buttonText: "Order cancelled"
     }
 } as const;
 

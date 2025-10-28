@@ -1,5 +1,6 @@
 import type { OrderStatus } from "./typer";
 import { buttonFor, buttonTextFor } from "./statusTheme";
+import "./orders.css";
 
 export function StatusButton({ status, onClick }: { status: OrderStatus; onClick: () => void; }) {
     return (

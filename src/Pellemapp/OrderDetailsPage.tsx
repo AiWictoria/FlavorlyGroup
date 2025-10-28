@@ -17,19 +17,17 @@ export default function OrderDetailsPage() {
     const NEXT: Record<OrderStatus, OrderStatus> = {
         NotStarted: "Started",
         Started: "Finished",
-        Finished: "NotStarted",
+        Finished: "Cancelled",
+        Cancelled: "NotStarted",
     };
 
     function handleStatusClick() {
-        setData(prev =>
-            prev
-                ? { ...prev, status: NEXT[prev.status] }
-                : prev
+        setData(previousOrder =>
+            previousOrder
+                ? { ...previousOrder, status: NEXT[previousOrder.status] }
+                : previousOrder
         );
     }
-
-
-
 
 
     return (
@@ -49,7 +47,7 @@ export default function OrderDetailsPage() {
                         Grand total: {formatSek(order.grandTotal)}
                     </div>
                 </div>
-                <div className="mt-3 text-center">
+                <div className="mt-4 text-center">
                     <StatusButton status={order.status} onClick={handleStatusClick} />
                 </div>
             </div>
