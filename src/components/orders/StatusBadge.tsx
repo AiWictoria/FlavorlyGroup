@@ -43,8 +43,8 @@ export function StatusBadge({ status, context = 'store-manager' }: StatusBadgePr
     "new order": "bi-clock", 
     completed: "bi-check-lg",
     delivered: "bi-check-lg",
-    cancelled: "bi-x-lg",
-    avbruten: "bi-x-lg"
+    cancelled: "bi-exclamation-lg",
+    avbruten: "bi-exclamation-lg"
   };
 
   const tooltips = context === 'my-orders' ? myOrdersTooltips : storeManagerTooltips;
