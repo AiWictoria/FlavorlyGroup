@@ -1,3 +1,6 @@
+# Mac
+.DS_Store
+
 # ============================================
 # .NET / C# (backend)
 # ============================================
@@ -43,11 +46,18 @@ bld/
 *.trx
 
 # Orchard Core specific
-App_Data/
+# Ignore runtime App_Data (gets restored from seed)
+backend/App_Data/
+
+# But keep the seed data committed to git
+!backend/App_Data.seed/
+
+# Ignore ImageSharp cache and other wwwroot runtime files
+backend/wwwroot/Default/
+
+# Other Orchard ignores
 App_Data_Sites/
 Localization/
-backend/Media/
-App_Data/*.db
 *.db-shm
 *.db-wal
 

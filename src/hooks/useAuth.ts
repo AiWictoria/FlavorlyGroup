@@ -3,12 +3,6 @@ import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export interface User {
-  // id: number;
-  // email: string;
-  // password?: string;
-  // role?: string;
-  // firstName?: string;
-  // lastName?: string;
   username: string;
   email: string;
   password: string;
