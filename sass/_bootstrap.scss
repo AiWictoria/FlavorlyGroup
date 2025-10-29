@@ -21,5 +21,17 @@ $font-sizes: (
   6: 1rem
 );
 
-// Import bootstrap
+
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+.sort-icon {
+  color: white !important;
+  font-size: 18px;
+  margin-left: 4px;
+  opacity: 1 !important;
+  font-weight: bold;
+}
+
+.sort-icon.asc {
+  transform: rotate(180deg);
+}

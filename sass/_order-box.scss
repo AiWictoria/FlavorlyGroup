@@ -1,0 +1,60 @@
+.orderbox {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 850px;
+  margin: 34px auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 910px) {
+  .orderbox {
+    margin: 20px 10px;
+    padding: 24px 10px;
+  }
+}
+
+.orderbox-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -74px;
+}
+
+.orderbox-step {
+  text-align: center;
+  flex: 1;
+}
+
+.orderbox-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  background: #fff;
+}
+
+.orderbox-circle{
+color: black;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.233);
+}
+.orderbox-circle.active {
+  color: white;
+  background: #bb681a;
+}
+
+.orderbox-circle.completed {
+  color: green;
+}
+
+.orderbox-circle.inactive {
+  border-color: #ccc;
+  background: #fff;
+}
+
+.orderbox-content {
+  margin-top: 2rem;
+}
