@@ -8,6 +8,7 @@ import NotAuthorizedPage from "./pages/NotAuthorizedPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import RecipePage from "./pages/RecipePage.tsx";
 import ShoppingListPage from "./pages/ShoppingListPage.tsx";
+import StoreManagerOrderView from "./pages/StoreManagerOrderView";
 import ViewRecipeDetails from "./pages/ViewRecipeDetails.tsx";
 import MyOrdersPage from "./pages/MyOrdersPage.tsx";
 import OrderReceipt from "./pages/OrderReceipt.tsx";
@@ -30,9 +31,9 @@ export default [
   NotFoundPage,
   RecipePage,
   ShoppingListPage,
+  StoreManagerOrderView,
   ViewRecipeDetails,
   MyOrdersPage,
-  ,
   OrderReceipt,
 ]
   // map the route property of each page component to a Route
