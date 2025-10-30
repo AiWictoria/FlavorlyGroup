@@ -1,4 +1,18 @@
+.quantity-border {
+  border: 2px solid #dfdddb;
+  border-radius: 2px;
+}
+
+.display {
+  display: "inline-flex";
+  width: "auto";
+}
+
 .shopping-list-button {
   border: none;
+  background-color: white;
+}
+
+.button-background-color {
   background-color: white;
 }

@@ -1,6 +1,5 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
 import { Form, Button, Row, Col, Table, Card } from "react-bootstrap";
-import toast from "react-hot-toast";
 import { useState } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 
@@ -22,6 +21,12 @@ ShoppingListPage.route = {
 //   unit: string;
 // }
 
+interface Product {
+  id: number;
+  name: string;
+  quantity: number;
+}
+
 export default function ShoppingListPage() {
   ////////////////////////////////////////
   // MOCK UNTIL PROPER DB IS IMPLEMENTED//
@@ -35,6 +40,12 @@ export default function ShoppingListPage() {
         unit: "ml",
         amount: "1000",
       },
+    ]);
+
+    const [products, setProducts] = useState<Product[]>([
+      { id: 1, name: "Green egg", quantity: 1 },
+      { id: 2, name: "Blue egg", quantity: 1 },
+      { id: 3, name: "Grey egg", quantity: 1 },
     ]);
 
     const addItem = async (ingredient: string) => {
@@ -67,17 +78,20 @@ export default function ShoppingListPage() {
 
     return {
       items,
+      products,
       addItem,
       removeItem,
       toggleItemChecked,
       fetchList,
       moveItemsToCart,
+      setProducts,
     };
   }
   ////////////////////////////////////////
 
   const {
     items,
+    products,
     addItem,
     removeItem,
     toggleItemChecked,
@@ -169,24 +183,16 @@ export default function ShoppingListPage() {
                         <option>Roma Tomatoes 1kg</option>
                       </Form.Select>
                     </td>
-                    <td className="text-center">
-                      <Button size="sm">-</Button>
-                      <span className="mx-2">2</span>
-                      <Button size="sm">+</Button>
+                    <td>
+                      <QuantitySelector value={1}></QuantitySelector>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
 
-            <QuantitySelector></QuantitySelector>
-
             <div className="d-grid gap-2">
-              <Button
-                className="mt-2"
-                size="lg"
-                onClick={() => moveItemsToCart()}
-              >
+              <Button onClick={() => moveItemsToCart()}>
                 Add products to cart
               </Button>
             </div>
