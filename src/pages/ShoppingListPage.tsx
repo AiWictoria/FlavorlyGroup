@@ -1,15 +1,8 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
-import {
-  Form,
-  Button,
-  ListGroup,
-  Row,
-  Col,
-  Dropdown,
-  Table,
-} from "react-bootstrap";
+import { Form, Button, Row, Col, Table, Card } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import QuantitySelector from "../components/QuantitySelector";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
@@ -144,95 +137,59 @@ export default function ShoppingListPage() {
         </Form>
 
         {items.length > 0 ? (
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th style={{ width: "1%" }}></th>
-                <th>Ingredient</th>
-                <th>Product</th>
-                <th>Quantity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr>
-                  <td>
-                    <Form.Check
-                      id={`check-${item.id}`}
-                      type="checkbox"
-                      checked={item.checked}
-                      onChange={(e) =>
-                        toggleItemChecked(item.id, e.target.checked)
-                      }
-                    ></Form.Check>
-                  </td>
-                  <td>
-                    {item.ingredient} {item.amount} {item.unit}
-                  </td>
-                  <td>
-                    <Form.Select size="sm">
-                      <option>Cherry Tomatoes 500g</option>
-                      <option>Roma Tomatoes 1kg</option>
-                    </Form.Select>
-                  </td>
-                  <td className="text-center">
-                    <Button size="sm">-</Button>
-                    <span className="mx-2">2</span>
-                    <Button size="sm">+</Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          <div
-            className="d-flex justify-content-center align-items-center mt-5"
-            style={{ color: "#9b9d9eff" }}
-          >
-            <h1>Shopping list is empty...</h1>
-          </div>
-        )}
-
-        {items.length > 0 ? (
           <>
-            <ListGroup>
-              {items.map((item) => (
-                <ListGroup.Item
-                  key={item.id}
-                  className="d-flex align-items-center "
-                >
-                  <Form.Check
-                    id={`check-${item.id}`}
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={(e) =>
-                      toggleItemChecked(item.id, e.target.checked)
-                    }
-                    label={
-                      <>
-                        <div className="d-flex flex-wrap">
-                          <span>{item.ingredient}</span>
-                          <span className="ms-1">{item.amount}</span>
-                          <span className="ms-1">{item.unit}</span>
-                        </div>
-                      </>
-                    }
-                  />
-                  <Button
-                    className="ms-auto"
-                    variant="danger"
-                    size="sm"
-                    onClick={() => removeItem(item.id)}
-                  >
-                    -
-                  </Button>
-                </ListGroup.Item>
-              ))}
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th style={{ width: "1%" }}></th>
+                  <th>Ingredient</th>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr>
+                    <td>
+                      <Form.Check
+                        id={`check-${item.id}`}
+                        type="checkbox"
+                        checked={item.checked}
+                        onChange={(e) =>
+                          toggleItemChecked(item.id, e.target.checked)
+                        }
+                      ></Form.Check>
+                    </td>
+                    <td>
+                      {item.ingredient} {item.amount} {item.unit}
+                    </td>
+                    <td>
+                      <Form.Select size="sm">
+                        <option>Cherry Tomatoes 500g</option>
+                        <option>Roma Tomatoes 1kg</option>
+                      </Form.Select>
+                    </td>
+                    <td className="text-center">
+                      <Button size="sm">-</Button>
+                      <span className="mx-2">2</span>
+                      <Button size="sm">+</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
 
-              <Button className="mt-3" onClick={() => moveItemsToCart()}>
-                Add ingredients to cart
+            <QuantitySelector></QuantitySelector>
+
+            <div className="d-grid gap-2">
+              <Button
+                className="mt-2"
+                size="lg"
+                onClick={() => moveItemsToCart()}
+              >
+                Add products to cart
               </Button>
-            </ListGroup>
+            </div>
           </>
         ) : (
           <div
