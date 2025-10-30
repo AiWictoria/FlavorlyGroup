@@ -1,5 +1,14 @@
 // import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  ListGroup,
+  Row,
+  Col,
+  Dropdown,
+  Card,
+  Table,
+} from "react-bootstrap";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
@@ -136,12 +145,47 @@ export default function ShoppingListPage() {
         </Form>
 
         {items.length > 0 ? (
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Ingredient</th>
+                <th>Product</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tomatoes (3 pcs)</td>
+                <td>
+                  <Form.Select size="sm">
+                    <option>Cherry Tomatoes 500g</option>
+                    <option>Roma Tomatoes 1kg</option>
+                  </Form.Select>
+                </td>
+                <td className="text-center">
+                  <Button size="sm">-</Button>
+                  <span className="mx-2">2</span>
+                  <Button size="sm">+</Button>
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        ) : (
+          <div
+            className="d-flex justify-content-center align-items-center mt-5"
+            style={{ color: "#9b9d9eff" }}
+          >
+            <h1>Shopping list is empty...</h1>
+          </div>
+        )}
+
+        {items.length > 0 ? (
           <>
             <ListGroup>
               {items.map((item) => (
                 <ListGroup.Item
                   key={item.id}
-                  className="d-flex align-items-center justify-content-between "
+                  className="d-flex align-items-center "
                 >
                   <Form.Check
                     id={`check-${item.id}`}
@@ -161,7 +205,15 @@ export default function ShoppingListPage() {
                     }
                   />
 
+                  <Dropdown className="ms-2">
+                    <Dropdown.Toggle variant="info">Products</Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item>All the products</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+
                   <Button
+                    className="ms-auto"
                     variant="danger"
                     size="sm"
                     onClick={() => removeItem(item.id)}
