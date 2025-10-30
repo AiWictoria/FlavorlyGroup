@@ -1,5 +1,5 @@
-// import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, Row, Col, Table, Card } from "react-bootstrap";
+import { useShoppingList } from "../hooks/useShoppingList";
+import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import { useState } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 
@@ -10,99 +10,9 @@ ShoppingListPage.route = {
   protected: true,
 };
 
-// Future interface for useShoppingList could look like this
-
-//  interface ShoppingItem {
-//   id: number;
-//   userId: number;
-//   ingredient: string;
-//   checked: boolean;
-//   amount: number;
-//   unit: string;
-// }
-
-interface Product {
-  id: number;
-  name: string;
-  quantity: number;
-}
-
 export default function ShoppingListPage() {
-  ////////////////////////////////////////
-  // MOCK UNTIL PROPER DB IS IMPLEMENTED//
-  function useShoppingListMock() {
-    const [items, setItems] = useState([
-      { id: "1", ingredient: "Eggs", checked: false, unit: "g", amount: "500" },
-      {
-        id: "2",
-        ingredient: "Milk",
-        checked: true,
-        unit: "ml",
-        amount: "1000",
-      },
-    ]);
-
-    const [products, setProducts] = useState<Product[]>([
-      { id: 1, name: "Green egg", quantity: 1 },
-      { id: 2, name: "Blue egg", quantity: 1 },
-      { id: 3, name: "Grey egg", quantity: 1 },
-    ]);
-
-    const addItem = async (ingredient: string) => {
-      setItems((prev) => [
-        ...prev,
-        {
-          id: Math.random().toString(),
-          ingredient,
-          checked: true,
-          unit: "",
-          amount: "",
-        },
-      ]);
-    };
-
-    const removeItem = (id: string) => {
-      setItems((prev) => prev.filter((item) => item.id !== id));
-    };
-
-    const toggleItemChecked = (id: string, checked: boolean) => {
-      setItems((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, checked } : item))
-      );
-    };
-    const moveItemsToCart = () => {
-      setItems((prev) => prev.filter((item) => !item.checked));
-    };
-
-    const fetchList = async () => {}; // no-op for mock
-
-    return {
-      items,
-      products,
-      addItem,
-      removeItem,
-      toggleItemChecked,
-      fetchList,
-      moveItemsToCart,
-      setProducts,
-    };
-  }
-  ////////////////////////////////////////
-
-  const {
-    items,
-    products,
-    addItem,
-    removeItem,
-    toggleItemChecked,
-    fetchList,
-    moveItemsToCart,
-  } =
-    /////////////////////////////////////////////////
-    //Change this to useShoppingList when done mocking
-    /////////////////////////////////////////////////
-    useShoppingListMock();
-
+  const { items, addItem, removeItem, toggleItemChecked, fetchList } =
+    useShoppingList();
   const [newItem, setNewItem] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
@@ -111,6 +21,10 @@ export default function ShoppingListPage() {
     await addItem(newItem.trim());
     await fetchList();
     setNewItem("");
+  }
+
+  function moveItemsToCart() {
+    // TODO: implement moving items to cart
   }
 
   return (
@@ -175,7 +89,8 @@ export default function ShoppingListPage() {
                       ></Form.Check>
                     </td>
                     <td>
-                      {item.ingredient} {item.amount} {item.unit}
+                      {item.ingredient}
+                      {/* {item.amount} {item.unit} */}
                     </td>
                     <td>
                       <Form.Select size="sm">
