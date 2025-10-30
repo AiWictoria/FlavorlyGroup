@@ -4,10 +4,10 @@
 //tillfällig mockdata som jag bara gjort temporärt med ai för att kunna testa beställningsflödet
 //tillfällig mockdata som jag bara gjort temporärt med ai för att kunna testa beställningsflödet
 
-import type { Order, CreateOrderDto, OrderResponse, OrdersResponse, OrderStatus, OrderItem } from "../../types/order.types";
+import type { Order, CreateOrderDto, OrderResponse, OrdersResponse, OrderStatus, OrderItem } from "@models/order.types";
 
 // Mockdata - realistiska beställningar
-let mockOrders: Order[] = [
+const mockOrders: Order[] = [
   {
     id: "1",
     orderNumber: "#0001",
@@ -121,7 +121,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * Skapa ny order (simulerar POST /api/orders)
  */
 export async function createOrder(orderDto: CreateOrderDto): Promise<OrderResponse> {
-  await delay(500); // Simulera nätverksfördröjning
+  await delay(0); // Simulera nätverksfördröjning
 
   const newOrder: Order = {
     id: String(mockOrders.length + 1),
@@ -156,7 +156,7 @@ export async function fetchOrders(
   page: number = 1,
   pageSize: number = 20
 ): Promise<OrdersResponse> {
-  await delay(300);
+  await delay(0);
 
   let filteredOrders = [...mockOrders];
 
@@ -187,7 +187,7 @@ export async function fetchOrders(
  * Hämta specifik order (simulerar GET /api/orders/:id)
  */
 export async function fetchOrderById(id: string): Promise<Order | null> {
-  await delay(300);
+  await delay(0);
 
   const order = mockOrders.find((o) => o.id === id);
   return order || null;
@@ -200,7 +200,7 @@ export async function updateOrderStatus(
   orderId: string,
   status: OrderStatus
 ): Promise<OrderResponse> {
-  await delay(400);
+  await delay(0);
 
   const orderIndex = mockOrders.findIndex((o) => o.id === orderId);
 
@@ -224,7 +224,7 @@ export async function updateOrderStatus(
  * Ta bort order (simulerar DELETE /api/orders/:id)
  */
 export async function deleteOrder(orderId: string): Promise<OrderResponse> {
-  await delay(300);
+  await delay(0);
 
   const orderIndex = mockOrders.findIndex((o) => o.id === orderId);
 
@@ -250,7 +250,7 @@ export async function toggleIngredientChecked(
   orderId: string,
   ingredientId: number
 ): Promise<OrderResponse> {
-  await delay(200);
+  await delay(0);
 
   const order = mockOrders.find((o) => o.id === orderId);
 
@@ -283,7 +283,7 @@ export async function toggleIngredientChecked(
  * Hämta statistik
  */
 export async function getOrderStats() {
-  await delay(200);
+  await delay(0);
 
   const stats = {
     total: mockOrders.length,

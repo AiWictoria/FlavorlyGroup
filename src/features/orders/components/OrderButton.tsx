@@ -1,4 +1,4 @@
-import type { OrderStatus } from "./typer";
+import type { OrderStatus } from "@models/order.types";
 import { buttonFor, buttonTextFor } from "./statusTheme";
 import "./orders.css";
 

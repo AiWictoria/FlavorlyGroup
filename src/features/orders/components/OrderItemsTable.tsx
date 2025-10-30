@@ -1,5 +1,5 @@
-import type { OrderItem } from "./typer";
-import { formatSek } from "./typer";
+import type { OrderItem } from "@models/order.types";
+import { formatSek } from "../utils/format";
 import "./orders.css";
 
 export function OrderItemsTable({ items }: { items: OrderItem[] }) {
@@ -14,8 +14,8 @@ export function OrderItemsTable({ items }: { items: OrderItem[] }) {
                     <tr key={i} className="text-center border-top border-bottom">
                         <td className="p-3">{x.amount}</td>
                         <td>{x.unit}</td>
-                        <td>{x.name}</td>
-                        <td className="">{formatSek(x.lineTotal)}</td>
+                        <td>{x.ingredient}</td>
+                        <td className="">{formatSek(x.cost)}</td>
                     </tr>
                 ))}
             </tbody>
