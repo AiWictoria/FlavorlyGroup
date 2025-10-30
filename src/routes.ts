@@ -1,7 +1,5 @@
 import type { JSX } from "react";
 import { createElement } from "react";
-import type { JSX } from 'react';
-import { createElement } from 'react';
 // page components
 import CreateRecipe from "./pages/CreateRecipe.tsx";
 import EditRecipeDetails from "./pages/EditRecipeDetails.tsx";
@@ -11,9 +9,10 @@ import NotFoundPage from "./pages/NotFoundPage.tsx";
 import RecipePage from "./pages/RecipePage.tsx";
 import ShoppingListPage from "./pages/ShoppingListPage.tsx";
 import ViewRecipeDetails from "./pages/ViewRecipeDetails.tsx";
-import MyOrdersPage from "./pages/MyOrdersPage.tsx";
+import MyOrdersPage from "@orders/pages/MyOrdersPage.tsx";
 import OrderReceipt from "./pages/OrderReceipt.tsx";
-import StoreManagerOrderView from "./pages/StoreManagerOrderView";
+import StoreManagerOrderView from "@orders/pages/StoreManagerOrderView";
+import OrderDetailsPage from "@orders/pages/OrderDetailsPage.tsx";
 
 interface Route {
   element: JSX.Element;
@@ -35,12 +34,12 @@ export default [
   ShoppingListPage,
   StoreManagerOrderView,
   ViewRecipeDetails,
-
-
-
-  MyOrdersPage, ,
+  MyOrdersPage,
   OrderReceipt,
   OrderDetailsPage
+
+
+
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route } as Route))
