@@ -6,7 +6,6 @@ import {
   Row,
   Col,
   Dropdown,
-  Card,
   Table,
 } from "react-bootstrap";
 import toast from "react-hot-toast";
@@ -51,7 +50,7 @@ export default function ShoppingListPage() {
         {
           id: Math.random().toString(),
           ingredient,
-          checked: false,
+          checked: true,
           unit: "",
           amount: "",
         },
@@ -148,26 +147,41 @@ export default function ShoppingListPage() {
           <Table striped bordered hover>
             <thead>
               <tr>
+                <th style={{ width: "1%" }}></th>
                 <th>Ingredient</th>
                 <th>Product</th>
                 <th>Quantity</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Tomatoes (3 pcs)</td>
-                <td>
-                  <Form.Select size="sm">
-                    <option>Cherry Tomatoes 500g</option>
-                    <option>Roma Tomatoes 1kg</option>
-                  </Form.Select>
-                </td>
-                <td className="text-center">
-                  <Button size="sm">-</Button>
-                  <span className="mx-2">2</span>
-                  <Button size="sm">+</Button>
-                </td>
-              </tr>
+              {items.map((item) => (
+                <tr>
+                  <td>
+                    <Form.Check
+                      id={`check-${item.id}`}
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={(e) =>
+                        toggleItemChecked(item.id, e.target.checked)
+                      }
+                    ></Form.Check>
+                  </td>
+                  <td>
+                    {item.ingredient} {item.amount} {item.unit}
+                  </td>
+                  <td>
+                    <Form.Select size="sm">
+                      <option>Cherry Tomatoes 500g</option>
+                      <option>Roma Tomatoes 1kg</option>
+                    </Form.Select>
+                  </td>
+                  <td className="text-center">
+                    <Button size="sm">-</Button>
+                    <span className="mx-2">2</span>
+                    <Button size="sm">+</Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         ) : (
@@ -204,14 +218,6 @@ export default function ShoppingListPage() {
                       </>
                     }
                   />
-
-                  <Dropdown className="ms-2">
-                    <Dropdown.Toggle variant="info">Products</Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item>All the products</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-
                   <Button
                     className="ms-auto"
                     variant="danger"
