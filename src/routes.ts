@@ -9,8 +9,10 @@ import NotFoundPage from "./pages/NotFoundPage.tsx";
 import RecipePage from "./pages/RecipePage.tsx";
 import ShoppingListPage from "./pages/ShoppingListPage.tsx";
 import ViewRecipeDetails from "./pages/ViewRecipeDetails.tsx";
-import MyOrdersPage from "./pages/MyOrdersPage.tsx";
+import MyOrdersPage from "@orders/pages/MyOrdersPage.tsx";
 import OrderReceipt from "./pages/OrderReceipt.tsx";
+import StoreManagerOrderView from "@orders/pages/StoreManagerOrderView";
+import OrderDetailsPage from "@orders/pages/OrderDetailsPage.tsx";
 
 interface Route {
   element: JSX.Element;
@@ -19,7 +21,7 @@ interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
-  protected?: boolean;
+  protected?: boolean
 }
 
 export default [
@@ -30,10 +32,14 @@ export default [
   NotFoundPage,
   RecipePage,
   ShoppingListPage,
+  StoreManagerOrderView,
   ViewRecipeDetails,
   MyOrdersPage,
-  ,
   OrderReceipt,
+  OrderDetailsPage
+
+
+
 ]
   // map the route property of each page component to a Route
   .map((x) => ({ element: createElement(x), ...x.route } as Route))

@@ -4,11 +4,15 @@ $line-height-base: 1.4;
 $navbar-dark-color: #fcf1e7 !default;
 $navbar-dark-hover-color: #e0ad05 !default;
 $navbar-dark-active-color: #bb681a !default;
+$danger: #e94757;
+$warning: #C4B44B;
+$success: #10B981;
 $primary: #18110f;
 $secondary: #fff5eb;
 $enable-negative-margins: true;
 $light: #fcf1e7;
-$font-sizes:(
+
+$font-sizes: (
   1: 4.5rem,
   2: 2.5rem,
   3: 2rem,
@@ -17,5 +21,17 @@ $font-sizes:(
   6: 1rem
 );
 
-// Import bootstrap
+
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+.sort-icon {
+  color: white !important;
+  font-size: 18px;
+  margin-left: 4px;
+  opacity: 1 !important;
+  font-weight: bold;
+}
+
+.sort-icon.asc {
+  transform: rotate(180deg);
+}
