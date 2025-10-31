@@ -4,14 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc -b && vite build",
     "dev": "vite",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "rr": "node node_modules/react-rapide",
+    "preview": "vite preview",
+    "save": "node scripts/save-seed.js",
+    "restore": "node scripts/restore-seed.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "backend": "cd backend && dotnet run --urls http://localhost:5001",
+    "backend": "node scripts/ensure-setup.js && cd backend && dotnet run --urls http://localhost:5001",
     "start": "concurrently \"npm run backend\" \"npm run dev\""
   },
   "dependencies": {
@@ -25,11 +27,11 @@
     "express": "^5.1.0",
     "express-http-proxy": "^2.1.2",
     "express-session": "^1.18.1",
+    "lucide-react": "^0.547.0",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.1",
     "react-hot-toast": "^2.6.0",
-    "react-rapide": "^1.0.35",
     "react-router-dom": "^7.5.0",
     "sass": "1.77.6"
   },

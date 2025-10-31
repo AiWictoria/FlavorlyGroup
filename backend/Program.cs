@@ -1,24 +1,35 @@
 using OrchardCore.Logging;
-using backend;
+using RestRoutes;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Host.UseNLogHost();
-
-builder.Services.AddOrchardCms();
-
-var app = builder.Build();
-
-if (!app.Environment.IsDevelopment())
+namespace backend
 {
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseNLogHost();
+
+            builder.Services.AddOrchardCms();
+
+            var app = builder.Build();
+
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
+
+            // our mods
+            app.MapRestRoutes();
+
+            app.UseStaticFiles();
+
+            app.UseOrchardCore();
+
+            app.Run();
+        }
+    }
 }
 
-app.MapAuthEndpoints();
-
-app.UseStaticFiles();
-
-app.UseOrchardCore();
-
-app.Run();
