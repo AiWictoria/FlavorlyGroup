@@ -1,6 +1,6 @@
 import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, Row, Col, Table } from "react-bootstrap";
-import { useState } from "react";
+import { Form, Button, Row, Col, Table, Dropdown } from "react-bootstrap";
+import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 
 ShoppingListPage.route = {
@@ -9,6 +9,15 @@ ShoppingListPage.route = {
   index: 4,
   protected: true,
 };
+
+export interface ShoppingItem {
+  id: number;
+  userId: number;
+  ingredient: string;
+  checked: boolean;
+  product?: string;
+  amount: number;
+}
 
 export default function ShoppingListPage() {
   const { items, addItem, removeItem, toggleItemChecked, fetchList } =
@@ -23,22 +32,51 @@ export default function ShoppingListPage() {
     setNewItem("");
   }
 
+  const [searchText, setSearch] = useState("");
+  const [searchedIngredients, setSearchIngredients] = useState("");
+
+  async function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
+    setSearch(event?.target.value);
+  }
+
+  useEffect(() => {
+    if (!searchText) return;
+
+    async function fetchData() {
+      const response = await fetch(
+        `/api/Ingredient?where=titleLIKE${searchText}`
+      );
+      setSearchIngredients(await response.json());
+      console.log(searchedIngredients);
+    }
+    fetchData();
+  }, [searchText]);
+
   function moveItemsToCart() {
     // TODO: implement moving items to cart
   }
 
   return (
-    <Row className="mt-5 p-3 p-xl-5">
+    <Row className="p-3 p-xl-5">
       <Col className="mt-4 mx-xl-5 px-xl-5">
         <h2>Shopping List</h2>
         <Form onSubmit={handleAdd}>
           <Row className="mt-4">
             <Col xs={12} xl={7} className="mb-2">
               <Form.Group>
-                <Form.Control
+                <Dropdown>
+                  <Dropdown.Toggle as="div" bsPrefix="p-0">
+                    <Form.Control
+                      placeholder="Add ingredient..."
+                      onChange={handleSearch}
+                    ></Form.Control>
+                  </Dropdown.Toggle>
+                </Dropdown>
+
+                {/* <Form.Control
                   placeholder="Add ingredient..."
                   onChange={(e) => setNewItem(e.target.value)}
-                ></Form.Control>
+                ></Form.Control> */}
               </Form.Group>
             </Col>
             <Col xs={6} xl={3} className="mb-2">
