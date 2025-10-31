@@ -2,7 +2,9 @@ import { useShoppingList } from "../hooks/useShoppingList";
 import { Form, Button, Row, Col, Table, Dropdown } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
-import IngredientSearch from "../components/shoppingList/IngredientSearch.tsx";
+import IngredientSearch, {
+  type Ingredient,
+} from "../components/shoppingList/IngredientSearch.tsx";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
@@ -37,8 +39,8 @@ export default function ShoppingListPage() {
     // TODO: implement moving items to cart
   }
 
-
-  const [ingredientName, setIngredientName] = useState("");
+  const [selectedIngredient, setSelectedIngredient] =
+    useState<Ingredient | null>(null);
 
   return (
     <Row className="p-3 p-xl-5">
@@ -49,8 +51,8 @@ export default function ShoppingListPage() {
             <Col xs={12} xl={7} className="mb-2">
               <Form.Group>
                 <IngredientSearch
-                  onSelect={(name) => setIngredientName(name)}
-                ></IngredientSearch>
+                  onSelect={(ingredient) => setSelectedIngredient(ingredient)}
+                />
               </Form.Group>
             </Col>
             <Col xs={6} xl={3} className="mb-2">
@@ -64,7 +66,11 @@ export default function ShoppingListPage() {
             </Col>
 
             <Col xs={6} xl={1}>
-              <Form.Control placeholder="Unit" disabled></Form.Control>
+              <Form.Control
+                placeholder="Unit"
+                disabled
+                value={selectedIngredient?.unit.title ?? ""}
+              />
             </Col>
             <Col xs={12} xl={1}>
               <div className="d-grid gap-2 mb-5">

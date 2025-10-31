@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Form } from "react-bootstrap";
 
-interface Ingredient {
+export interface Ingredient {
   id: number;
   title: string;
   unitId: number;
+  unit: Unit;
+}
+
+export interface Unit {
+  title: string;
 }
 
 interface IngredientSearchProps {
-  onSelect: (name: string) => void;
+  onSelect: (ingredient: Ingredient) => void;
 }
 
 export default function IngredientSearch({ onSelect }: IngredientSearchProps) {
@@ -29,7 +34,7 @@ export default function IngredientSearch({ onSelect }: IngredientSearchProps) {
 
     const fetchData = async () => {
       const response = await fetch(
-        `/api/Ingredient?where=titleLIKE${searchText}&limit=4`
+        `/api/expand/Ingredient?where=titleLIKE${searchText}&limit=4`
       );
       const data: Ingredient[] = await response.json();
       setSearchedIngredients(data);
@@ -52,9 +57,9 @@ export default function IngredientSearch({ onSelect }: IngredientSearchProps) {
           <Dropdown.Item
             key={ingredient.id}
             onClick={() => {
-              onSelect(ingredient.title); // ✅ send the title back to parent
-              setSearchText(ingredient.title); // show selected name in input
-              setSearchedIngredients([]); // hide dropdown
+              onSelect(ingredient);
+              setSearchText(ingredient.title);
+              setSearchedIngredients([]);
             }}
           >
             {ingredient.title}
