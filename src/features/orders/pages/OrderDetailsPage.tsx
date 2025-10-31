@@ -3,9 +3,10 @@ import { useOrder } from "@orders/hooks/useOrder";
 import { OrderHeader } from "@orders/components/OrderHeader";
 import { OrderItemsTable } from "@orders/components/OrderDetailItemsTable";
 import { formatDate, formatSek } from "@orders/utils/format";
-import type { OrderStatus, Order } from "@models/order.types";
+import type { OrderStatus } from "@models/order.types";
 import { useNavigate, useParams } from "react-router-dom";
-import { StatusButton } from "@orders/components/OrderButton";
+import { StatusButton } from "@orders/components/OrderStatusButton";
+import { StoreManagerBtn } from "@orders/components/OrderDetailsBackButton";
 import "@orders/components/orders.css";
 
 const gw = new InMemoryOrderGateway();
@@ -71,6 +72,7 @@ export default function OrderDetailsPage() {
     return (
         <div className="ordersbody">
             <div className="container my-4">
+                <StoreManagerBtn onClick={() => navigate("/store-manager/orders")} />
                 <OrderHeader
                     orderNumber={order.orderNumber}
                     status={order.status}
