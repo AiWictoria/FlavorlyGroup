@@ -1,5 +1,7 @@
 using OrchardCore.Logging;
 using RestRoutes;
+using DotNetEnv;
+using Stripe;
 
 namespace backend
 {
@@ -7,6 +9,10 @@ namespace backend
     {
         static void Main(string[] args)
         {
+            Env.Load();
+
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Host.UseNLogHost();
@@ -24,11 +30,15 @@ namespace backend
             // our mods
             app.MapRestRoutes();
 
+            // Behöver denna vara här då jag har  StripeRoutes i RestRoutes mappen?
+            app.MapStripeRoutes();
+
             app.UseStaticFiles();
 
             app.UseOrchardCore();
 
             app.Run();
+
         }
     }
 }
