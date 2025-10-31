@@ -41,7 +41,8 @@ public static class PostRoutes
                 // Check if body is null or empty
                 if (body == null || body.Count == 0)
                 {
-                    return Results.Json(new {
+                    return Results.Json(new
+                    {
                         error = "Cannot read request body"
                     }, statusCode: 400);
                 }
@@ -52,7 +53,8 @@ public static class PostRoutes
 
                 if (!isValid)
                 {
-                    return Results.Json(new {
+                    return Results.Json(new
+                    {
                         error = "Invalid fields provided",
                         invalidFields = invalidFields,
                         validFields = validFields.OrderBy(f => f).ToList()
@@ -157,7 +159,8 @@ public static class PostRoutes
                     }
                     else if (value is int or long or double or float or decimal)
                     {
-                        contentItem.Content[contentType][pascalKey] = new JObject {
+                        contentItem.Content[contentType][pascalKey] = new JObject
+                        {
                             ["Value"] = JToken.FromObject(value)
                         };
                     }
@@ -166,14 +169,16 @@ public static class PostRoutes
                 await contentManager.CreateAsync(contentItem, VersionOptions.Published);
                 await session.SaveChangesAsync();
 
-                return Results.Json(new {
+                return Results.Json(new
+                {
                     id = contentItem.ContentItemId,
                     title = contentItem.DisplayText
                 }, statusCode: 201);
             }
             catch (Exception ex)
             {
-                return Results.Json(new {
+                return Results.Json(new
+                {
                     error = ex.Message
                 }, statusCode: 500);
             }

@@ -3,17 +3,39 @@ import { useAuth } from './useAuth';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
+export interface Ingredient {
+  ingredientId: string;
+  amount: number;
+  unit: string;
+  ingredientName?: string;
+}
+
+export interface Instruction {
+  content: string;
+}
+
+export interface Comment {
+  content: string;
+  author: string;
+  createdAt: string;
+  userId: string;
+  recipeId: string;
+}
+
 export interface Recipe {
-  id: number;
-  userId: number;
+  id: string;
   title: string;
-  category: string;
-  ingredients: string;
-  instructions: string;
   imageUrl?: string;
-  author?: string;
-  averageRating?: number;
-  commentsCount?: number;
+  slug: string;
+  description?: string;
+  ingredients: Ingredient[];
+  instructions?: Instruction[];
+  category?: string;
+  comments?: Comment[];
+  userAuthor?: {
+    userId: string;
+    username: string;
+  };
 }
 
 export function useRecipes() {
@@ -23,63 +45,61 @@ export function useRecipes() {
 
   async function fetchRecipes() {
     try {
-      const res = await fetch('/api/Recipe', {
+      // Use expanded endpoint so relations (ingredients) are populated
+      const res = await fetch('/api/expand/Recipe', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
 
       if (res.ok) {
-        const mapped = data.map((r: any) => ({
-          ...r,
-          id: r.recipeId,
-          userId: Number(r.userId),
-        }));
-        setRecipes(mapped);
+        setRecipes(data as Recipe[]);
         return { success: true };
       } else {
         toast.error('Failed loading recipes');
         return { success: false };
       }
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
 
-  async function fetchRecipeById(id: number) {
+  async function fetchRecipeById(id: string) {
     try {
-      const res = await fetch(`/api/recipes/${id}`);
+      // Prefer expanded single fetch so ingredientName can be derived
+      const res = await fetch(`/api/expand/Recipe/${id}`);
       const data = await res.json();
 
       if (res.ok) {
-        return { ...data, id: data.recipeId ?? data.id };
+        return data as Recipe;
       } else {
         toast.error("We couldn't find that recipe");
         navigate('/recipes');
         return { success: false };
       }
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
 
   async function createRecipe(
-    recipe: Omit<Recipe, 'recipeId' | 'userId'> & { image?: File | null }
+    recipe: Omit<Recipe, 'id'> & { image?: File | null }
   ) {
     if (user === null) {
       toast.error('Please sign in to create recipes');
       return { success: false };
     }
     try {
-      const { image, ...recipeData } = recipe;
-      const recipeWithUserId = { ...recipeData, userId: user.id };
-
+      // Exkludera image utan att skapa oanvänd variabel
+      const recipeData: Record<string, unknown> = { ...(recipe as Record<string, unknown>) };
+      delete (recipeData as { image?: unknown }).image;
+      // TODO: Anpassa POST mot backend PostRoutes om/när stöd finns
       const res = await fetch('/api/recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(recipeWithUserId),
+        body: JSON.stringify(recipeData),
       });
       const data = await res.json();
 
@@ -93,13 +113,13 @@ export function useRecipes() {
         toast.error('Could not create recipe, try again later');
         return { success: false };
       }
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
   async function updateRecipe(
-    id: number,
+    id: string,
     recipe: Partial<Recipe>
   ): Promise<{ success: boolean }> {
     if (user === null) {
@@ -125,13 +145,13 @@ export function useRecipes() {
       }
       toast.error('Could not update recipe, try again');
       return { success: false };
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
 
-  async function uploadImage(recipeId: number, image: File) {
+  async function uploadImage(recipeId: string, image: File) {
     try {
       const formData = new FormData();
       formData.append('id', recipeId.toString());
@@ -154,7 +174,7 @@ export function useRecipes() {
     }
   }
 
-  async function deleteRecipe(id: number): Promise<{ success: boolean }> {
+  async function deleteRecipe(id: string): Promise<{ success: boolean }> {
     if (user === null) {
       toast.error('Sign it to delete recipe');
       return { success: false };

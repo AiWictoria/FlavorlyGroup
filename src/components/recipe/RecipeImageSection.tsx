@@ -21,7 +21,7 @@ export function RecipeImageSection({
   const { savedRecipes, saveRecipe, removeSaved } = useSavedRecipes();
 
   const isSaved = recipe
-    ? savedRecipes.some((r) => r.recipeId === recipe.id)
+    ? savedRecipes.some((r) => r.recipeId === String(recipe.id))
     : false;
 
   return (
