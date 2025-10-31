@@ -25,7 +25,7 @@ export function OrderCard({ order }: { order: Order }) {
               aria-expanded={open}
               aria-label="Toggle order details"
             >
-              {open ? "-" : "+"}
+              {open ? "▲" : "▼"}
             </Button>
           </Col>
         </Row>
