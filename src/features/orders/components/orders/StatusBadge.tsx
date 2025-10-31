@@ -20,8 +20,8 @@ export function StatusBadge({ status, context = 'store-manager' }: StatusBadgePr
     pending: "bi-cart",
     processing: "bi-three-dots",
     completed: "bi-check-lg",
-    cancelled: "bi-x-lg",
-    avbruten: "bi-x-lg"
+    cancelled: "bi-exclamation-lg",
+    avbruten: "bi-exclamation-lg"
   };
 
   // Simplified tooltips and icons for my orders
