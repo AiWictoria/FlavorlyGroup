@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Container, Alert, Button } from 'react-bootstrap';
 import { OrderTable } from '../components/OrderTable';
-import type { Order } from '../types/order.types';
-import { fetchOrders, deleteOrder } from './Services/mockOrderService';
+import type { Order } from '@models/order.types';
+import { fetchOrders, deleteOrder } from '../api/data.mock';
 
 function StoreManagerOrderViewComponent() {
   const [orders, setOrders] = useState<Order[]>([]);

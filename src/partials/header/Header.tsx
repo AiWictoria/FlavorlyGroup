@@ -27,7 +27,7 @@ export default function Header() {
         expand="md"
         className="bg-primary text-light"
         data-bs-theme="dark"
-        fixed="top"
+        sticky="top"
       >
         <Container fluid>
           <Navbar.Toggle
@@ -35,9 +35,8 @@ export default function Header() {
             onClick={() => setExpanded(!expanded)}
           >
             <i
-              className={`bi ${
-                expanded ? "bi-x-lg" : "bi-list"
-              } fs-1 text-light`}
+              className={`bi ${expanded ? "bi-x-lg" : "bi-list"
+                } fs-1 text-light`}
             ></i>
           </Navbar.Toggle>
 
