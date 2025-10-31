@@ -8,12 +8,11 @@ import './OrderTable.css';
 interface OrderTableProps {
   orders: Order[];
   onDelete?: (orderId: string) => void;
-  showCompleted?: boolean;
 }
 
 type SortDirection = 'asc' | 'desc' | null;
 
-export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTableProps) {
+export function OrderTable({ orders, onDelete }: OrderTableProps) {
   const [statusSort, setStatusSort] = useState<SortDirection>(null);
   const [dateSort, setDateSort] = useState<SortDirection>(null);
 
@@ -65,7 +64,7 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
     });
   }
 
-  // Sort and filter orders
+  // Sort orders
   const getSortedOrders = (orders: Order[]) => {
     let sortedOrders = [...orders];
 
@@ -88,13 +87,8 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
     return sortedOrders;
   };
 
-  // Filter orders based on showCompleted prop
-  const filteredOrders = showCompleted
-    ? orders.filter(order => order.status === "completed")
-    : orders.filter(order => ["pending", "processing"].includes(order.status));
-
-  // Apply sorting to filtered orders
-  const sortedAndFilteredOrders = getSortedOrders(filteredOrders);
+  // Apply sorting to orders
+  const sortedOrders = getSortedOrders(orders);
 
   return (
     <Table responsive>
@@ -130,7 +124,7 @@ export function OrderTable({ orders, onDelete, showCompleted = false }: OrderTab
         </tr>
       </thead>
       <tbody>
-        {sortedAndFilteredOrders.map((order) => (
+        {getSortedOrders(orders).map((order: Order) => (
           <tr key={order.id}>
             <td style={{ width: '80px', textAlign: 'center' }}>
               <StatusBadge status={formatStatus(order.status)} />
