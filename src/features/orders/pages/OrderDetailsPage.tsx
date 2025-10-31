@@ -1,7 +1,7 @@
 import { InMemoryOrderGateway } from "@orders/api/mock";
 import { useOrder } from "@orders/hooks/useOrder";
 import { OrderHeader } from "@orders/components/OrderHeader";
-import { OrderItemsTable } from "@orders/components/OrderItemsTable";
+import { OrderItemsTable } from "@orders/components/OrderDetailItemsTable";
 import { formatDate, formatSek } from "@orders/utils/format";
 import type { OrderStatus, Order } from "@models/order.types";
 import { useParams } from "react-router-dom";
