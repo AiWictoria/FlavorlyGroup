@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Form } from "react-bootstrap";
 
+// Component which retrieves Ingredient object when the user searches
+
 export interface Ingredient {
   id: number;
   title: string;
+  amount: number;
   unitId: number;
   unit: Unit;
 }

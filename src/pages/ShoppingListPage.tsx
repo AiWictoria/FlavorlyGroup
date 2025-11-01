@@ -25,6 +25,7 @@ export interface ShoppingItem {
 export default function ShoppingListPage() {
   const { items, addItem, removeItem, toggleItemChecked, fetchList } =
     useShoppingList();
+
   const [newItem, setNewItem] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
@@ -41,6 +42,9 @@ export default function ShoppingListPage() {
 
   const [selectedIngredient, setSelectedIngredient] =
     useState<Ingredient | null>(null);
+
+  const [amount, setAmount] = useState("");
+  const numberAmount = Number(amount);
 
   return (
     <Row className="p-3 p-xl-5">
@@ -59,9 +63,12 @@ export default function ShoppingListPage() {
               <Form.Group>
                 <Form.Control
                   placeholder="Add amount..."
+                  value={amount}
                   type="number"
-                  onChange={(e) => setNewItem(e.target.value)}
-                ></Form.Control>
+                  min={0}
+                  step="any"
+                  onChange={(e) => setAmount(e.target.value)}
+                />
               </Form.Group>
             </Col>
 
