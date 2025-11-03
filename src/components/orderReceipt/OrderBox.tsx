@@ -8,8 +8,8 @@ interface OrderBoxProps {
 }
 
 const steps = [
-  { iconClass: "bi bi-bag" },
-  { iconClass: "bi bi-truck" },
+  { label: "Cart", iconClass: "bi bi-bag" },
+  { label: "Delivery", iconClass: "bi bi-truck" },
   { label: "Payment", iconClass: "bi bi-credit-card" },
   { label: "Confirmation", iconClass: "bi bi-check2" },
 ];
