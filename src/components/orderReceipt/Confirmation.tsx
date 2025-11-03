@@ -1,7 +1,7 @@
 import { Col, Row } from "react-bootstrap";
 import OrderTitle from "./OrderTitle";
 import OrderInfoSection from "./OrderInfoSection";
-import Divider from "./Divider";
+import Divider from "../shared/Divider";
 import ProductInfo from "./ProductInfo";
 
 const sampleProducts = [

@@ -1,7 +1,7 @@
 import OrderBox from "../components/orderReceipt/OrderBox";
 import Confirmation from "../components/orderReceipt/Confirmation";
 import { useState } from "react";
-import Cart from "../components/orderReceipt/Cart";
+import Cart from "../components/cartParts/Cart";
 import Delivery from "../components/orderReceipt/Delivery";
 import Payment from "../components/orderReceipt/Payment";
 

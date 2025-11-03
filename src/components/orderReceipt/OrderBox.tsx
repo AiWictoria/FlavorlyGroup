@@ -1,6 +1,6 @@
 import React from "react";
 import { Step } from "./Step";
-import Box from "./Box";
+import Box from "../shared/Box";
 
 interface OrderBoxProps {
   activeStep: number;
