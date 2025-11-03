@@ -26,16 +26,6 @@ export default function ShoppingListPage() {
   const { items, addItem, removeItem, toggleItemChecked, fetchList } =
     useShoppingList();
 
-  const [newItem, setNewItem] = useState("");
-
-  async function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newItem.trim()) return;
-    await addItem(newItem.trim());
-    await fetchList();
-    setNewItem("");
-  }
-
   function moveItemsToCart() {
     // TODO: implement moving items to cart
   }
@@ -45,6 +35,21 @@ export default function ShoppingListPage() {
 
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
+
+
+  const [item, setItem] = useState<ShoppingItem[]>([]);
+
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+
+    const newItem: ShoppingItem = {
+      Ingredient: selectedIngredient,
+
+    }
+
+    await fetchList();
+  }
 
   return (
     <Row className="p-3 p-xl-5">
