@@ -25,7 +25,7 @@ export function OrderItemsTable({ items,
                     <th>Units</th>
                     <th>Ingredients</th>
                     <th>Cost</th>
-                    {showCheckboxes && <th>check</th>}
+                    {showCheckboxes && <th>Check</th>}
                 </tr>
             </thead>
 
