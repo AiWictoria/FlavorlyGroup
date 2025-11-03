@@ -33,7 +33,16 @@ export default function OrderReceipt() {
 
   return (
     <>
-      <OrderBox activeStep={activeStep}>{renderStepContent()}</OrderBox>
+      <OrderBox
+        activeStep={activeStep}
+        onStepClick={(stepIndex) => {
+          if (stepIndex <= activeStep) {
+            setActiveStep(stepIndex);
+          }
+        }}
+      >
+        {renderStepContent()}
+      </OrderBox>
     </>
   );
 }

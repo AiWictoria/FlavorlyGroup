@@ -5,6 +5,7 @@ import Box from "./Box";
 interface OrderBoxProps {
   activeStep: number;
   children: React.ReactNode;
+  onStepClick?: (stepIndex: number) => void;
 }
 
 const steps = [
@@ -14,9 +15,13 @@ const steps = [
   { label: "Confirmation", iconClass: "bi bi-check2" },
 ];
 
-export default function OrderBox({ activeStep, children }: OrderBoxProps) {
+export default function OrderBox({
+  activeStep,
+  children,
+  onStepClick,
+}: OrderBoxProps) {
   return (
-    <Box size="m">
+    <Box size="s">
       <div className="orderbox-steps">
         {steps.map((step, index) => {
           const status =
@@ -27,7 +32,16 @@ export default function OrderBox({ activeStep, children }: OrderBoxProps) {
               : "inactive";
 
           return (
-            <Step key={step.label} iconClass={step.iconClass} status={status} />
+            <Step
+              key={step.label}
+              iconClass={step.iconClass}
+              status={status}
+              onClick={() => {
+                if (onStepClick) {
+                  onStepClick(index);
+                }
+              }}
+            />
           );
         })}
       </div>
