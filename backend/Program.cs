@@ -19,6 +19,17 @@ namespace backend
 
             builder.Services.AddOrchardCms();
 
+            // CORS (för frontend på annan port)
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())
@@ -27,10 +38,11 @@ namespace backend
                 app.UseHsts();
             }
 
+            app.UseCors();
+
             // our mods
             app.MapRestRoutes();
 
-            // Behöver denna vara här då jag har  StripeRoutes i RestRoutes mappen?
             app.MapStripeRoutes();
 
             app.UseStaticFiles();
