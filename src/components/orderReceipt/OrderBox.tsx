@@ -4,6 +4,7 @@ import Box from "./Box";
 
 interface OrderBoxProps {
   activeStep: number;
+  completedSteps: number[];
   children: React.ReactNode;
   onStepClick?: (stepIndex: number) => void;
 }
@@ -17,6 +18,7 @@ const steps = [
 
 export default function OrderBox({
   activeStep,
+  completedSteps,
   children,
   onStepClick,
 }: OrderBoxProps) {
@@ -27,7 +29,7 @@ export default function OrderBox({
           const status =
             index === activeStep
               ? "active"
-              : index < activeStep
+              : completedSteps.includes(index)
               ? "completed"
               : "inactive";
 
@@ -37,9 +39,7 @@ export default function OrderBox({
               iconClass={step.iconClass}
               status={status}
               onClick={() => {
-                if (onStepClick) {
-                  onStepClick(index);
-                }
+                if (onStepClick) onStepClick(index);
               }}
             />
           );
