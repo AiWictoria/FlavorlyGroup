@@ -4,41 +4,45 @@ import { Dropdown, Form } from "react-bootstrap";
 // Component which retrieves Ingredient object when the user searches
 
 export interface Ingredient {
-  id: number;
+  id: string;
   title: string;
   amount: number;
-  unitId: number;
   unit: Unit;
 }
 
 export interface Unit {
+  id: string;
   title: string;
 }
 
 interface IngredientSearchProps {
   // Sends back the Ingredient object
-  onSelect: (ingredient: Ingredient) => void;
+  onIngredientChange: (ingredient?: Ingredient) => void;
 }
 
-export default function IngredientSearch({ onSelect }: IngredientSearchProps) {
+export default function IngredientSearch({
+  onIngredientChange,
+}: IngredientSearchProps) {
   // Controls whether the dropdown should be shown or not
   const [show, setShow] = useState(false);
-
   const [searchText, setSearchText] = useState("");
   const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>(
     []
   );
 
   function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
+    setSearchedIngredients([]);
     setSearchText(event.target.value);
     setShow(true);
+
+    // Clear ingredient when user starts searching ingredients again
+    onIngredientChange(undefined);
   }
 
   // Search for ingredients when the user types
   useEffect(() => {
     // Don't search if theres no text in textfield
     if (!searchText) {
-      setSearchedIngredients([]);
       setShow(false);
       return;
     }
@@ -68,7 +72,7 @@ export default function IngredientSearch({ onSelect }: IngredientSearchProps) {
           <Dropdown.Item
             key={ingredient.id}
             onClick={() => {
-              onSelect(ingredient);
+              onIngredientChange(ingredient);
               setSearchText(ingredient.title);
               setShow(false);
             }}

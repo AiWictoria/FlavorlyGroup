@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 import IngredientSearch, {
   type Ingredient,
-} from "../components/shoppingList/IngredientSearch.tsx";
+  type Unit,
+} from "../components/shoppingList/IngredientSearch";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
@@ -13,42 +14,42 @@ ShoppingListPage.route = {
   protected: true,
 };
 
-export interface ShoppingItem {
-  id: number;
-  userId: number;
-  ingredient: string;
+interface ShoppingItem {
+  id: string;
+  shoppingItemIngredient: Ingredient;
   checked: boolean;
-  product?: string;
-  amount: number;
 }
 
 export default function ShoppingListPage() {
   const { items, addItem, removeItem, toggleItemChecked, fetchList } =
     useShoppingList();
 
-  function moveItemsToCart() {
-    // TODO: implement moving items to cart
-  }
-
-  const [selectedIngredient, setSelectedIngredient] =
-    useState<Ingredient | null>(null);
+  const [selectedIngredient, setSelectedIngredient] = useState<
+    Ingredient | undefined
+  >(undefined);
 
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
 
-
-  const [item, setItem] = useState<ShoppingItem[]>([]);
-
+  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
 
-    const newItem: ShoppingItem = {
-      Ingredient: selectedIngredient,
+    if (numberAmount <= 0 || selectedIngredient == undefined) return;
 
-    }
+    const updatedIngredient = {
+      ...selectedIngredient,
+      amount: numberAmount,
+    };
 
-    await fetchList();
+    const newShoppingItem: ShoppingItem = {
+      id: "",
+      shoppingItemIngredient: updatedIngredient,
+      checked: true,
+    };
+
+    setShoppingList((prevList) => [...prevList, newShoppingItem]);
   }
 
   return (
@@ -60,7 +61,9 @@ export default function ShoppingListPage() {
             <Col xs={12} xl={7} className="mb-2">
               <Form.Group>
                 <IngredientSearch
-                  onSelect={(ingredient) => setSelectedIngredient(ingredient)}
+                  onIngredientChange={(ingredient) =>
+                    setSelectedIngredient(ingredient)
+                  }
                 />
               </Form.Group>
             </Col>
@@ -70,7 +73,8 @@ export default function ShoppingListPage() {
                   placeholder="Add amount..."
                   value={amount}
                   type="number"
-                  min={0}
+                  min={1}
+                  max={99}
                   step="any"
                   onChange={(e) => setAmount(e.target.value)}
                 />
@@ -94,7 +98,7 @@ export default function ShoppingListPage() {
           </Row>
         </Form>
 
-        {items.length > 0 ? (
+        {shoppingList.length > 0 ? (
           <>
             <Table striped bordered hover>
               <thead>
@@ -106,7 +110,7 @@ export default function ShoppingListPage() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((item) => (
+                {shoppingList.map((item) => (
                   <tr>
                     <td>
                       <Form.Check
@@ -119,8 +123,9 @@ export default function ShoppingListPage() {
                       ></Form.Check>
                     </td>
                     <td>
-                      {item.ingredient}
-                      {/* {item.amount} {item.unit} */}
+                      {item.shoppingItemIngredient.title}{" "}
+                      {item.shoppingItemIngredient.amount}{" "}
+                      {item.shoppingItemIngredient.unit.title}
                     </td>
                     <td>
                       <Form.Select size="sm">
@@ -136,10 +141,8 @@ export default function ShoppingListPage() {
               </tbody>
             </Table>
 
-            <div className="d-grid gap-2">
-              <Button onClick={() => moveItemsToCart()}>
-                Add products to cart
-              </Button>
+            <div className="d-grid gap-2 mt-3">
+              <Button>Add products to cart</Button>
             </div>
           </>
         ) : (

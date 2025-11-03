@@ -2,13 +2,6 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import toast from "react-hot-toast";
 
-export interface ShoppingItem {
-  id: number;
-  userId: number;
-  ingredient: string;
-  checked: boolean;
-}
-
 export function useShoppingList() {
   const { user } = useAuth();
   const [items, setItems] = useState<ShoppingItem[]>([]);
@@ -54,7 +47,7 @@ export function useShoppingList() {
     }
   }
 
-  async function toggleItemChecked(id: number, checked: boolean) {
+  async function toggleItemChecked(id: string, checked: boolean) {
     try {
       const res = await fetch(`/api/shoppingList/${id}`, {
         method: "PUT",
