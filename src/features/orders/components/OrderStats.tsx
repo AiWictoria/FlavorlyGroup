@@ -1,0 +1,96 @@
+import { Row, Col } from 'react-bootstrap';
+import type { Order } from '@models/order.types';
+import './OrderStats.css';
+
+interface OrderStatsProps {
+  orders: Order[];
+}
+
+export function OrderStats({ orders }: OrderStatsProps) {
+  const stats = {
+    total: orders.length,
+    pending: orders.filter(o => o.status === "pending").length,
+    processing: orders.filter(o => o.status === "processing").length,
+    completed: orders.filter(o => o.status === "completed").length,
+    cancelled: orders.filter(o => o.status === "cancelled").length,
+    totalRevenue: orders.reduce((sum, order) => sum + order.sum, 0)
+  };
+
+  const activeOrders = stats.pending + stats.processing;
+  const completionRate = stats.total > 0 
+    ? Math.round((stats.completed / stats.total) * 100)
+    : 0;
+
+  return (
+    <div className="stats-container">
+      <Row className="g-3 p-4">
+        <Col sm={6} lg={3}>
+          <div className="stats-card">
+            <div className="stats-icon pending">
+              <i className="bi bi-clock"></i>
+            </div>
+            <div className="stats-content">
+              <div className="stats-value">{activeOrders}</div>
+              <div className="stats-label">Active Orders</div>
+              <div className="stats-detail">
+                <span className="stats-detail-item">
+                  <i className="bi bi-cart"></i> {stats.pending} pending
+                </span>
+                <span className="stats-detail-item">
+                  <i className="bi bi-three-dots"></i> {stats.processing} processing
+                </span>
+              </div>
+            </div>
+          </div>
+        </Col>
+        <Col sm={6} lg={3}>
+          <div className="stats-card">
+            <div className="stats-icon completed">
+              <i className="bi bi-check-lg"></i>
+            </div>
+            <div className="stats-content">
+              <div className="stats-value">{completionRate}%</div>
+              <div className="stats-label">Completion Rate</div>
+              <div className="stats-detail">
+                <span className="stats-detail-item">
+                  <i className="bi bi-check-lg"></i> {stats.completed} completed
+                </span>
+                <span className="stats-detail-item">
+                  <i className="bi bi-exclamation-lg"></i> {stats.cancelled} cancelled
+                </span>
+              </div>
+            </div>
+          </div>
+        </Col>
+        <Col sm={6} lg={3}>
+          <div className="stats-card">
+            <div className="stats-icon orders">
+              <i className="bi bi-boxes"></i>
+            </div>
+            <div className="stats-content">
+              <div className="stats-value">{stats.total}</div>
+              <div className="stats-label">Total Orders</div>
+              <div className="stats-detail">
+                All time orders
+              </div>
+            </div>
+          </div>
+        </Col>
+        <Col sm={6} lg={3}>
+          <div className="stats-card">
+            <div className="stats-icon revenue">
+              <i className="bi bi-cash"></i>
+            </div>
+            <div className="stats-content">
+              <div className="stats-value">{stats.totalRevenue} kr</div>
+              <div className="stats-label">Total Revenue</div>
+              <div className="stats-detail">
+                Total earnings from all orders
+              </div>
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </div>
+  );
+}

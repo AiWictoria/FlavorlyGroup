@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { OrderTable } from '../components/OrderTable';
+import { OrderStats } from '../components/OrderStats';
 import type { Order } from '@models/order.types';
 import { fetchOrders, deleteOrder } from '../api/data.mock';
 
@@ -41,22 +42,24 @@ function StoreManagerOrderViewComponent() {
 
   if (loading) {
     return (
-      <Container fluid className="py-4">
+      <Container fluid className="py-4" style={{ backgroundColor: 'rgb(252, 241, 231)' }}>
         <div className="text-center">Loading orders...</div>
       </Container>
     );
   }
 
   return (
-    <Container fluid className="py-4">
+    <Container fluid className="py-4" style={{ backgroundColor: 'rgb(252, 241, 231)' }}>
       {error && <Alert variant="danger">{error}</Alert>}
       
       {orders.length === 0 ? (
         <div className="text-center">No orders found</div>
       ) : (
-        <div className="table-wrapper">
-          <div className="table-container">
-            <div className="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <OrderStats orders={orders} />
+          <div className="table-wrapper">
+            <div className="table-container">
+              <div className="d-flex justify-content-between align-items-center mb-3">
               <h2 className="mb-0">
                 {selectedTab === 'completed' && 'Completed Orders'}
                 {selectedTab === 'pending' && 'Current Orders'}
@@ -92,6 +95,7 @@ function StoreManagerOrderViewComponent() {
             />
           </div>
         </div>
+      </div>
       )}
     </Container>
   );
