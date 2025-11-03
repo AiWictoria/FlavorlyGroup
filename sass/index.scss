@@ -45,9 +45,16 @@ h1{
   outline: none !important;
 }
 
-.flavorly-divider {
+.flavorly-divider-orange {
   border: none;
   border-bottom: 1px solid #e0ad05;
   margin: 1.5rem 0;
   opacity: 0.8; 
+}
+
+.flavorly-divider-gray {
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.233);
+  margin: 1.5rem 0;
+  opacity: 0.8;
 }
