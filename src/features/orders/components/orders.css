@@ -12,7 +12,6 @@
 }
 
 tr {
-
     font-weight: 500;
 
     th {
@@ -41,6 +40,17 @@ tr {
 
 button {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.storemanagerbtn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 2rem;
+
+    &:hover {
+        background-color: #ffffff;
+    }
 }
 
 @media (max-width: 450px) {
