@@ -1,10 +1,9 @@
 import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, Row, Col, Table, Dropdown } from "react-bootstrap";
+import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 import IngredientSearch, {
   type Ingredient,
-  type Unit,
 } from "../components/shoppingList/IngredientSearch";
 
 ShoppingListPage.route = {
@@ -21,12 +20,11 @@ interface ShoppingItem {
 }
 
 export default function ShoppingListPage() {
-  const { items, addItem, removeItem, toggleItemChecked, fetchList } =
-    useShoppingList();
-
   const [selectedIngredient, setSelectedIngredient] = useState<
     Ingredient | undefined
   >(undefined);
+
+  const [product, setProduct] = useState("");
 
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
@@ -53,12 +51,12 @@ export default function ShoppingListPage() {
   }
 
   return (
-    <Row className="p-3 p-xl-5">
+    <Row className="p-0 p-xl-5">
       <Col className="mt-4 mx-xl-5 px-xl-5">
         <h2>Shopping List</h2>
         <Form onSubmit={handleAdd}>
           <Row className="mt-4">
-            <Col xs={12} xl={7} className="mb-2">
+            <Col xs={12} xl={5} className="mb-2">
               <Form.Group>
                 <IngredientSearch
                   onIngredientChange={(ingredient) =>
@@ -67,7 +65,7 @@ export default function ShoppingListPage() {
                 />
               </Form.Group>
             </Col>
-            <Col xs={6} xl={3} className="mb-2">
+            <Col xs={6} xl={4} className="mb-2">
               <Form.Group>
                 <Form.Control
                   placeholder="Add amount..."
@@ -88,10 +86,10 @@ export default function ShoppingListPage() {
                 value={selectedIngredient?.unit.title ?? ""}
               />
             </Col>
-            <Col xs={12} xl={1}>
+            <Col xs={12} xl={2}>
               <div className="d-grid gap-2 mb-5">
                 <Button variant="success" type="submit" className="w-auto">
-                  Add
+                  Add ingredient
                 </Button>
               </div>
             </Col>
@@ -103,7 +101,6 @@ export default function ShoppingListPage() {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th style={{ width: "1%" }}></th>
                   <th>Ingredient</th>
                   <th>Product</th>
                   <th>Quantity</th>
@@ -111,24 +108,19 @@ export default function ShoppingListPage() {
               </thead>
               <tbody>
                 {shoppingList.map((item) => (
-                  <tr>
-                    <td>
-                      <Form.Check
-                        id={`check-${item.id}`}
-                        type="checkbox"
-                        checked={item.checked}
-                        onChange={(e) =>
-                          toggleItemChecked(item.id, e.target.checked)
-                        }
-                      ></Form.Check>
-                    </td>
+                  <tr key={item.id}>
                     <td>
                       {item.shoppingItemIngredient.title}{" "}
                       {item.shoppingItemIngredient.amount}{" "}
                       {item.shoppingItemIngredient.unit.title}
                     </td>
                     <td>
-                      <Form.Select size="sm">
+                      <Form.Select
+                        size="sm"
+                        value={product}
+                        onChange={(e) => setProduct(e.target.value)}
+                      >
+                        <option></option>
                         <option>Cherry Tomatoes 500g</option>
                         <option>Roma Tomatoes 1kg</option>
                       </Form.Select>
@@ -141,7 +133,7 @@ export default function ShoppingListPage() {
               </tbody>
             </Table>
 
-            <div className="d-grid gap-2 mt-3">
+            <div className="d-grid gap-3 mt-3 mb-4">
               <Button>Add products to cart</Button>
             </div>
           </>
