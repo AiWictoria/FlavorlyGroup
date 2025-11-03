@@ -1,5 +1,6 @@
 import React from "react";
 import { Step } from "./Step";
+import Box from "./Box";
 
 interface OrderBoxProps {
   activeStep: number;
@@ -15,7 +16,7 @@ const steps = [
 
 export default function OrderBox({ activeStep, children }: OrderBoxProps) {
   return (
-    <div className="orderbox mt-5 pt-5">
+    <Box size="m">
       <div className="orderbox-steps">
         {steps.map((step, index) => {
           const status =
@@ -32,6 +33,6 @@ export default function OrderBox({ activeStep, children }: OrderBoxProps) {
       </div>
 
       <div className="orderbox-content">{children}</div>
-    </div>
+    </Box>
   );
 }
