@@ -1,5 +1,3 @@
-import { Row, Col } from "react-bootstrap";
-
 interface ProductInfoProps {
   product: string;
   quantity?: number;
