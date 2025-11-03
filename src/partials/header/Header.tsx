@@ -35,8 +35,9 @@ export default function Header() {
             onClick={() => setExpanded(!expanded)}
           >
             <i
-              className={`bi ${expanded ? "bi-x-lg" : "bi-list"
-                } fs-1 text-light`}
+              className={`bi ${
+                expanded ? "bi-x-lg" : "bi-list"
+              } fs-1 text-light`}
             ></i>
           </Navbar.Toggle>
 

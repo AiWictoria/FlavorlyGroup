@@ -1,5 +1,4 @@
 @use 'bootstrap';
-@use 'sticky-footer';
 @use 'home-page';
 @use 'order-box';
 
@@ -14,6 +13,10 @@ body {
 h1{
   font-family: 'Playfair Display', sans-serif;
   font-weight: 700;
+}
+
+main {
+  flex: 1;
 }
 
 .profile-toggle::after {

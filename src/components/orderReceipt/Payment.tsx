@@ -6,7 +6,7 @@ interface PaymentProps {
 export default function Payment({ onNext, onBack }: PaymentProps) {
   return (
     <>
-      <Row className="mt-3 g-2 justify-content-center">
+      <Row>
         <Col>
           <h2>Detta är Payment</h2>
           <button onClick={onNext}>Next</button>

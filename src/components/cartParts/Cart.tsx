@@ -5,7 +5,7 @@ interface CartProps {
 export default function Cart({ onNext }: CartProps) {
   return (
     <>
-      <Row className="mt-3 g-2 justify-content-center">
+      <Row>
         <Col>
           <h2>Detta är Cart</h2>
           <button onClick={onNext}>Next</button>
