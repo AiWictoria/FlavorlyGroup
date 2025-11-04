@@ -1,18 +1,18 @@
-@use 'bootstrap';
-@use 'sticky-footer';
-@use 'home-page';
-@use 'order-box';
+@use "bootstrap";
+@use "sticky-footer";
+@use "home-page";
+@use "order-box";
+@use "quantity-selector";
 
-
-@import 'bootstrap-icons/font/bootstrap-icons.css';
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 
 body {
-  font-family: 'Playfair Display', sans-serif;
+  font-family: "Playfair Display", sans-serif;
 }
 
-h1{
-  font-family: 'Playfair Display', sans-serif;
+h1 {
+  font-family: "Playfair Display", sans-serif;
   font-weight: 700;
 }
 
@@ -21,7 +21,7 @@ h1{
 }
 
 .profile-modal .modal-dialog {
-  max-width: 500px; 
+  max-width: 500px;
   width: 100%;
 }
 
@@ -49,5 +49,5 @@ h1{
   border: none;
   border-bottom: 1px solid #e0ad05;
   margin: 1.5rem 0;
-  opacity: 0.8; 
+  opacity: 0.8;
 }
