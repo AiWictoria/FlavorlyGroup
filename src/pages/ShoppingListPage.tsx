@@ -55,7 +55,7 @@ export default function ShoppingListPage() {
   return (
     <Box size="l" className="custom-class">
       <Row className="p-0">
-        <Col className=" mx-xl-3">
+        <Col className="mt-4 mx-xl-5">
           <h2>Shopping List</h2>
           <Form onSubmit={handleAdd}>
             <Row className="mt-4">
@@ -135,6 +135,40 @@ export default function ShoppingListPage() {
                   ))}
                 </tbody>
               </Table>
+
+              <Row
+                className="mb-5 mt-5 p-1 m-1"
+                style={{
+                  backgroundColor: "#f2f2f2",
+                }}
+              >
+                {shoppingList.map((item) => (
+                  <>
+                    <Col xs={12} lg={4}>
+                      <span>
+                        <b>Ingredient:</b>{" "}
+                      </span>
+                      {item.shoppingItemIngredient.title}{" "}
+                      {item.shoppingItemIngredient.amount}{" "}
+                      {item.shoppingItemIngredient.unit.title}{" "}
+                    </Col>
+                    <Col xs={12} lg={4} className="mt-1">
+                      <Form.Select
+                        size="sm"
+                        value={product}
+                        onChange={(e) => setProduct(e.target.value)}
+                      >
+                        <option value="">Choose product</option>
+                        <option>Cherry Tomatoes 500g</option>
+                        <option>Roma Tomatoes 1kg</option>
+                      </Form.Select>
+                    </Col>
+                    <Col xs={12} lg={4} className="mt-1">
+                      <b>Product:</b> {product}
+                    </Col>
+                  </>
+                ))}
+              </Row>
 
               <div className="d-grid gap-3 mt-3 mb-4">
                 <Button>Add products to cart</Button>
