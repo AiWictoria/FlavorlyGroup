@@ -72,3 +72,33 @@ button {
     }
 
 }
+
+@media (max-width: 429px) {
+    .order-items-table {
+        max-width: 90%;
+        font-size: 11px;
+    }
+
+    th {
+        padding: 0;
+    }
+
+    tr {
+        padding: 0;
+    }
+
+    .order-items-table .cell-amount .unit-inline {
+        font-size: 10px;
+    }
+
+    .OrderHeader {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+
+}
