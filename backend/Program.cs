@@ -24,6 +24,9 @@ namespace backend
             // our mods
             app.MapRestRoutes();
 
+            // dedicated recipes endpoint
+            app.MapRecipeRoutes();
+
             app.UseStaticFiles();
 
             app.UseOrchardCore();

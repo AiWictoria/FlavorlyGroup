@@ -38,7 +38,7 @@ public static partial class GetRoutes
                 foreach (var kvp in typeDict)
                 {
                     // Skip meta-fields (but keep Author for Comment content type)
-                    var isMeta = IsOrchardMetaKey(kvp.Key) || IsTaxonomyMetaKey(kvp.Key);
+                    var isMeta = IsOrchardMetaKey(kvp.Key);
                     if (isMeta && !(string.Equals(contentType, "Comment", StringComparison.OrdinalIgnoreCase) && kvp.Key == "Author"))
                         continue;
 
@@ -51,6 +51,102 @@ public static partial class GetRoutes
                             fieldName = fieldName + "Id";
                         }
                         clean[fieldName] = value;
+                    }
+                }
+
+                // Expose full RecipePart payload (nested), preserving embedded objects
+                if (string.Equals(contentType, "Recipe", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (obj.TryGetValue("RecipePart", out var recipePartEl) && recipePartEl.ValueKind == JsonValueKind.Object)
+                    {
+                        var recipePartDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(recipePartEl.GetRawText());
+                        if (recipePartDict != null)
+                        {
+                            var recipePart = new Dictionary<string, object>();
+
+                            // Special handling for Category: prefer TagNames, fallback to first TermContentItemId or first TermItem title
+                            if (recipePartDict.TryGetValue("Category", out var categoryEl) && categoryEl.ValueKind == JsonValueKind.Object)
+                            {
+                                string? categoryValue = null;
+                                var categoryDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(categoryEl.GetRawText());
+                                if (categoryDict != null)
+                                {
+                                    if (categoryDict.TryGetValue("TagNames", out var tagNamesEl) && tagNamesEl.ValueKind == JsonValueKind.Array)
+                                    {
+                                        var firstTag = tagNamesEl.EnumerateArray().FirstOrDefault(e => e.ValueKind == JsonValueKind.String);
+                                        if (firstTag.ValueKind == JsonValueKind.String)
+                                        {
+                                            categoryValue = firstTag.GetString();
+                                        }
+                                    }
+
+                                    if (string.IsNullOrWhiteSpace(categoryValue) && categoryDict.TryGetValue("TermContentItemIds", out var termIdsEl) && termIdsEl.ValueKind == JsonValueKind.Array)
+                                    {
+                                        var firstId = termIdsEl.EnumerateArray().FirstOrDefault(e => e.ValueKind == JsonValueKind.String);
+                                        if (firstId.ValueKind == JsonValueKind.String)
+                                        {
+                                            categoryValue = firstId.GetString();
+                                        }
+                                    }
+
+                                    // If populated: TermItems is present; derive a readable name from first term
+                                    if (string.IsNullOrWhiteSpace(categoryValue) && categoryDict.TryGetValue("TermItems", out var termItemsEl) && termItemsEl.ValueKind == JsonValueKind.Array)
+                                    {
+                                        var firstItem = termItemsEl.EnumerateArray().FirstOrDefault(e => e.ValueKind == JsonValueKind.Object);
+                                        if (firstItem.ValueKind == JsonValueKind.Object)
+                                        {
+                                            var firstItemDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(firstItem.GetRawText());
+                                            if (firstItemDict != null)
+                                            {
+                                                // Prefer DisplayText; fallback to TitlePart.Title; else id
+                                                if (firstItemDict.TryGetValue("DisplayText", out var displayTextEl) && displayTextEl.ValueKind == JsonValueKind.String)
+                                                {
+                                                    categoryValue = displayTextEl.GetString();
+                                                }
+                                                else if (firstItemDict.TryGetValue("TitlePart", out var titlePartEl) && titlePartEl.ValueKind == JsonValueKind.Object)
+                                                {
+                                                    var titlePartDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(titlePartEl.GetRawText());
+                                                    if (titlePartDict != null && titlePartDict.TryGetValue("Title", out var titleEl) && titleEl.ValueKind == JsonValueKind.String)
+                                                    {
+                                                        categoryValue = titleEl.GetString();
+                                                    }
+                                                }
+                                                else if (firstItemDict.TryGetValue("ContentItemId", out var termIdEl) && termIdEl.ValueKind == JsonValueKind.String)
+                                                {
+                                                    categoryValue = termIdEl.GetString();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(categoryValue))
+                                {
+                                    recipePart["category"] = categoryValue!;
+                                    clean["category"] = categoryValue!;
+                                }
+                            }
+
+                            foreach (var kvp in recipePartDict)
+                            {
+                                var isMetaInner = IsOrchardMetaKey(kvp.Key);
+                                if (isMetaInner) continue;
+
+                                // Skip Category here because we handled it above
+                                if (kvp.Key == "Category") continue;
+
+                                var nestedValue = ExtractFieldValue(kvp.Value);
+                                if (nestedValue != null)
+                                {
+                                    recipePart[ToCamelCase(kvp.Key)] = nestedValue;
+                                }
+                            }
+
+                            if (recipePart.Count > 0)
+                            {
+                                clean["recipePart"] = recipePart;
+                            }
+                        }
                     }
                 }
 
@@ -80,7 +176,7 @@ public static partial class GetRoutes
                     }
                     else if (unitDict.TryGetValue("title", out var unitTitleVal) && unitTitleVal is string unitTitleStr && !string.IsNullOrWhiteSpace(unitTitleStr))
                     {
-                        // Fall back to a human-readable name
+                        // Fall back to a readable name
                         clean["unitName"] = unitTitleStr;
                     }
                     else if (unitDict.TryGetValue("name", out var unitNameVal) && unitNameVal is string unitNameStr && !string.IsNullOrWhiteSpace(unitNameStr))

@@ -31,17 +31,21 @@ public static partial class GetRoutes
         if (populate)
         {
             var allReferencedIds = new HashSet<string>();
+            var allTermIds = new HashSet<string>();
             foreach (var obj in plainObjects)
             {
                 CollectContentItemIds(obj, allReferencedIds);
+                CollectTermContentItemIds(obj, allTermIds);
             }
 
-            if (allReferencedIds.Count > 0)
+            var idsToFetch = allReferencedIds.Union(allTermIds).ToHashSet();
+
+            if (idsToFetch.Count > 0)
             {
                 var referencedItems = await session
                     .Query()
                     .For<ContentItem>()
-                    .With<ContentItemIndex>(x => x.ContentItemId.IsIn(allReferencedIds))
+                    .With<ContentItemIndex>(x => x.ContentItemId.IsIn(idsToFetch))
                     .ListAsync();
 
                 var refJsonString = JsonSerializer.Serialize(referencedItems, jsonOptions);
@@ -61,6 +65,7 @@ public static partial class GetRoutes
                     foreach (var obj in plainObjects)
                     {
                         PopulateContentItemIds(obj, itemsDictionary);
+                        PopulateTermContentItemIds(obj, itemsDictionary);
                     }
                 }
             }

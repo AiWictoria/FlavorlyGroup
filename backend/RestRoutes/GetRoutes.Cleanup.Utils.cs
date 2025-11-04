@@ -42,6 +42,10 @@ public static partial class GetRoutes
         {
             case "TaxonomyContentItemId":
             case "TermContentItemIds":
+            case "TermItems":
+            case "TaxonomyItems":
+            case "TaxonomyPart":
+            case "Terms":
                 return true;
             default:
                 return false;

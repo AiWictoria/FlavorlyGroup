@@ -4,6 +4,7 @@ using System.Text.Json;
 
 public static partial class GetRoutes
 {
+    // Create a list of objects from a list of content items
     private static void CopyListPart(
         Dictionary<string, JsonElement> src,
         string partKey,
@@ -21,6 +22,7 @@ public static partial class GetRoutes
         }
     }
 
+    // Clean the content items array
     private static List<object> CleanContentItemsArray(JsonElement items)
     {
         var list = new List<object>();

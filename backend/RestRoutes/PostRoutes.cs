@@ -71,6 +71,11 @@ public static class PostRoutes
                 contentItem.Owner = context.User?.Identity?.Name ?? "anonymous";
                 contentItem.Author = contentItem.Owner;
 
+                // Build content in plain dictionaries/lists to avoid type issues with dynamic Json
+                var root = new Dictionary<string, object>();
+                var section = new Dictionary<string, object>();
+                root[contentType] = section;
+
                 // Build content directly into the content item
                 foreach (var kvp in body)
                 {
@@ -80,6 +85,179 @@ public static class PostRoutes
 
                     var pascalKey = ToPascalCase(kvp.Key);
                     var value = kvp.Value;
+                    // Map slug to AutoroutePart.Path
+                    if (string.Equals(kvp.Key, "slug", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var slugVal = value is JsonElement sje && sje.ValueKind == JsonValueKind.String ? sje.GetString() : value?.ToString();
+                        if (!string.IsNullOrWhiteSpace(slugVal))
+                        {
+                            root["AutoroutePart"] = new Dictionary<string, object> { { "Path", slugVal! } };
+                        }
+                        continue;
+                    }
+
+                    // Contained: Ingredients (RecipeIngredient[])
+                    if (string.Equals(kvp.Key, "ingredients", StringComparison.OrdinalIgnoreCase) && value is JsonElement ingEl && ingEl.ValueKind == JsonValueKind.Array)
+                    {
+                        var contentItems = new List<object>();
+                        foreach (var ing in ingEl.EnumerateArray())
+                        {
+                            if (ing.ValueKind != JsonValueKind.Object) continue;
+                            var part = new Dictionary<string, object>();
+
+                            foreach (var prop in ing.EnumerateObject())
+                            {
+                                if (string.Equals(prop.Name, "ingredientId", StringComparison.OrdinalIgnoreCase) && prop.Value.ValueKind == JsonValueKind.String)
+                                {
+                                    part["Ingredient"] = new Dictionary<string, object> { { "ContentItemIds", new List<string> { prop.Value.GetString()! } } };
+                                }
+                                else if (string.Equals(prop.Name, "unitId", StringComparison.OrdinalIgnoreCase) && prop.Value.ValueKind == JsonValueKind.String)
+                                {
+                                    part["Unit"] = new Dictionary<string, object> { { "ContentItemIds", new List<string> { prop.Value.GetString()! } } };
+                                }
+                                else if (string.Equals(prop.Name, "quantity", StringComparison.OrdinalIgnoreCase) && prop.Value.ValueKind == JsonValueKind.Number)
+                                {
+                                    part["Quantity"] = new Dictionary<string, object> { { "Value", prop.Value.GetDouble() } };
+                                }
+                            }
+
+                            var ingredientObj = new Dictionary<string, object>
+                            {
+                                { "ContentType", "RecipeIngredient" },
+                                { "RecipeIngredient", part }
+                            };
+                            contentItems.Add(ingredientObj);
+                        }
+
+                        root["Ingredients"] = new Dictionary<string, object> { { "ContentItems", contentItems } };
+                        continue;
+                    }
+
+                    // Contained: Instructions (Instruction[])
+                    if (string.Equals(kvp.Key, "instructions", StringComparison.OrdinalIgnoreCase) && value is JsonElement instrEl && instrEl.ValueKind == JsonValueKind.Array)
+                    {
+                        var contentItems = new List<object>();
+                        foreach (var instr in instrEl.EnumerateArray())
+                        {
+                            if (instr.ValueKind != JsonValueKind.Object) continue;
+                            var part = new Dictionary<string, object>();
+
+                            foreach (var prop in instr.EnumerateObject())
+                            {
+                                if (string.Equals(prop.Name, "content", StringComparison.OrdinalIgnoreCase) && prop.Value.ValueKind == JsonValueKind.String)
+                                {
+                                    part["Content"] = new Dictionary<string, object> { { "Text", prop.Value.GetString()! } };
+                                }
+                                else if (string.Equals(prop.Name, "order", StringComparison.OrdinalIgnoreCase) && prop.Value.ValueKind == JsonValueKind.Number)
+                                {
+                                    part["Order"] = new Dictionary<string, object> { { "Value", prop.Value.GetDouble() } };
+                                }
+                            }
+
+                            var instrObj = new Dictionary<string, object>
+                            {
+                                { "ContentType", "Instruction" },
+                                { "Instruction", part }
+                            };
+                            contentItems.Add(instrObj);
+                        }
+
+                        root["RecipeInstructions"] = new Dictionary<string, object> { { "ContentItems", contentItems } };
+                        continue;
+                    }
+
+
+                    // Special handling: recipePart nested mapping to Orchard shapes
+                    if (string.Equals(kvp.Key, "recipePart", StringComparison.OrdinalIgnoreCase) && value is JsonElement rpEl && rpEl.ValueKind == JsonValueKind.Object)
+                    {
+                        if (!((root[contentType] as Dictionary<string, object>)!.ContainsKey("RecipePart")))
+                        {
+                            section["RecipePart"] = new Dictionary<string, object>();
+                        }
+                        var rp = (Dictionary<string, object>)section["RecipePart"];
+
+                        foreach (var prop in rpEl.EnumerateObject())
+                        {
+                            var childKey = ToPascalCase(prop.Name);
+                            var childVal = prop.Value;
+
+                            if (string.Equals(prop.Name, "description", StringComparison.OrdinalIgnoreCase) && childVal.ValueKind == JsonValueKind.String)
+                            {
+                                rp["Description"] = new Dictionary<string, object> { { "Markdown", childVal.GetString()! } };
+                            }
+                            else if ((string.Equals(prop.Name, "prepTimeMinutes", StringComparison.OrdinalIgnoreCase)
+                                    || string.Equals(prop.Name, "cookTimeMinutes", StringComparison.OrdinalIgnoreCase)
+                                    || string.Equals(prop.Name, "servings", StringComparison.OrdinalIgnoreCase))
+                                    && childVal.ValueKind == JsonValueKind.Number)
+                            {
+                                rp[childKey] = new Dictionary<string, object> { { "Value", childVal.GetDouble() } };
+                            }
+                            else if (string.Equals(prop.Name, "recipeImage", StringComparison.OrdinalIgnoreCase) && childVal.ValueKind == JsonValueKind.Object)
+                            {
+                                var img = new Dictionary<string, object>();
+                                foreach (var imgProp in childVal.EnumerateObject())
+                                {
+                                    if ((string.Equals(imgProp.Name, "paths", StringComparison.OrdinalIgnoreCase)
+                                        || string.Equals(imgProp.Name, "mediaTexts", StringComparison.OrdinalIgnoreCase))
+                                        && imgProp.Value.ValueKind == JsonValueKind.Array)
+                                    {
+                                        var arr = new List<string>();
+                                        foreach (var a in imgProp.Value.EnumerateArray())
+                                        {
+                                            if (a.ValueKind == JsonValueKind.String) arr.Add(a.GetString()!);
+                                        }
+                                        img[ToPascalCase(imgProp.Name)] = arr;
+                                    }
+                                }
+                                rp["RecipeImage"] = img;
+                            }
+                            else if (string.Equals(prop.Name, "category", StringComparison.OrdinalIgnoreCase) && childVal.ValueKind == JsonValueKind.Array)
+                            {
+                                var ids = new List<string>();
+                                foreach (var idEl in childVal.EnumerateArray())
+                                {
+                                    if (idEl.ValueKind == JsonValueKind.String)
+                                    {
+                                        var s = idEl.GetString();
+                                        if (s != null) ids.Add(s);
+                                    }
+                                }
+                                if (!rp.ContainsKey("Category")) rp["Category"] = new Dictionary<string, object>();
+                                ((Dictionary<string, object>)rp["Category"])["TermContentItemIds"] = ids;
+                            }
+                            else
+                            {
+                                // Fallback: generic conversion with PascalCase key
+                                rp[childKey] = ConvertJsonElementToPlain(childVal);
+                            }
+                        }
+                        continue;
+                    }
+
+                    // Special handling: top-level category as taxonomy terms
+                    if (string.Equals(kvp.Key, "category", StringComparison.OrdinalIgnoreCase) && value is JsonElement catEl && catEl.ValueKind == JsonValueKind.Array)
+                    {
+                        if (!section.ContainsKey("RecipePart") || section["RecipePart"] is not Dictionary<string, object>)
+                        {
+                            section["RecipePart"] = new Dictionary<string, object>();
+                        }
+                        var rp = (Dictionary<string, object>)section["RecipePart"];
+                        if (!rp.ContainsKey("Category") || rp["Category"] is not Dictionary<string, object>)
+                        {
+                            rp["Category"] = new Dictionary<string, object>();
+                        }
+                        var ids = new List<string>();
+                        foreach (var idEl in catEl.EnumerateArray())
+                        {
+                            if (idEl.ValueKind == JsonValueKind.String)
+                            {
+                                var s = idEl.GetString();
+                                if (s != null) ids.Add(s);
+                            }
+                        }
+                        ((Dictionary<string, object>)rp["Category"])["TermContentItemIds"] = ids;
+                        continue;
+                    }
 
                     // Handle fields ending with "Id" - these are content item references
                     if (kvp.Key.EndsWith("Id", StringComparison.OrdinalIgnoreCase) &&
@@ -94,7 +272,11 @@ public static class PostRoutes
                         // Assign as a List<string> to avoid wrapping
                         if (idValue != null)
                         {
-                            contentItem.Content[contentType][fieldName]["ContentItemIds"] = new List<string> { idValue };
+                            if (!section.ContainsKey(fieldName) || section[fieldName] is not Dictionary<string, object>)
+                            {
+                                section[fieldName] = new Dictionary<string, object>();
+                            }
+                            ((Dictionary<string, object>)section[fieldName])["ContentItemIds"] = new List<string> { idValue };
                         }
                     }
                     else if (value is JsonElement jsonElement)
@@ -102,25 +284,37 @@ public static class PostRoutes
                         // Extract the actual string value, not a wrapped JObject
                         if (jsonElement.ValueKind == JsonValueKind.String)
                         {
-                            contentItem.Content[contentType][pascalKey]["Text"] = jsonElement.GetString();
+                            if (!section.ContainsKey(pascalKey) || section[pascalKey] is not Dictionary<string, object>)
+                            {
+                                section[pascalKey] = new Dictionary<string, object>();
+                            }
+                            ((Dictionary<string, object>)section[pascalKey])["Text"] = jsonElement.GetString()!;
                         }
                         else if (jsonElement.ValueKind == JsonValueKind.Number)
                         {
-                            contentItem.Content[contentType][pascalKey]["Value"] = jsonElement.GetDouble();
+                            if (!section.ContainsKey(pascalKey) || section[pascalKey] is not Dictionary<string, object>)
+                            {
+                                section[pascalKey] = new Dictionary<string, object>();
+                            }
+                            ((Dictionary<string, object>)section[pascalKey])["Value"] = jsonElement.GetDouble();
                         }
                         else if (jsonElement.ValueKind == JsonValueKind.True || jsonElement.ValueKind == JsonValueKind.False)
                         {
-                            contentItem.Content[contentType][pascalKey]["Value"] = jsonElement.GetBoolean();
+                            if (!section.ContainsKey(pascalKey) || section[pascalKey] is not Dictionary<string, object>)
+                            {
+                                section[pascalKey] = new Dictionary<string, object>();
+                            }
+                            ((Dictionary<string, object>)section[pascalKey])["Value"] = jsonElement.GetBoolean();
                         }
                         else if (jsonElement.ValueKind == JsonValueKind.Object)
                         {
                             // Handle objects - convert keys to PascalCase
-                            var obj = new JObject();
+                            var obj = new Dictionary<string, object>();
                             foreach (var prop in jsonElement.EnumerateObject())
                             {
-                                obj[ToPascalCase(prop.Name)] = ConvertJsonElementToPascal(prop.Value);
+                                obj[ToPascalCase(prop.Name)] = ConvertJsonElementToPlain(prop.Value);
                             }
-                            contentItem.Content[contentType][pascalKey] = obj;
+                            section[pascalKey] = obj;
                         }
                         else if (jsonElement.ValueKind == JsonValueKind.Array)
                         {
@@ -139,31 +333,45 @@ public static class PostRoutes
                             var isContentItemIds = arrayData.Count > 0 &&
                                 arrayData.All(id => id.Length > 20 && id.All(c => char.IsLetterOrDigit(c)));
 
+                            if (!section.ContainsKey(pascalKey) || section[pascalKey] is not Dictionary<string, object>)
+                            {
+                                section[pascalKey] = new Dictionary<string, object>();
+                            }
                             if (isContentItemIds)
                             {
-                                contentItem.Content[contentType][pascalKey]["ContentItemIds"] = arrayData;
+                                ((Dictionary<string, object>)section[pascalKey])["ContentItemIds"] = arrayData;
                             }
                             else
                             {
-                                contentItem.Content[contentType][pascalKey]["Values"] = arrayData;
+                                ((Dictionary<string, object>)section[pascalKey])["Values"] = arrayData.Cast<object>().ToList();
                             }
                         }
                         else
                         {
-                            contentItem.Content[contentType][pascalKey] = ConvertJsonElement(jsonElement);
+                            section[pascalKey] = ConvertJsonElementToPlain(jsonElement);
                         }
                     }
                     else if (value is string strValue)
                     {
-                        contentItem.Content[contentType][pascalKey]["Text"] = strValue;
+                        if (!section.ContainsKey(pascalKey) || section[pascalKey] is not Dictionary<string, object>)
+                        {
+                            section[pascalKey] = new Dictionary<string, object>();
+                        }
+                        ((Dictionary<string, object>)section[pascalKey])["Text"] = strValue;
                     }
                     else if (value is int or long or double or float or decimal)
                     {
-                        contentItem.Content[contentType][pascalKey] = new JObject
+                        section[pascalKey] = new Dictionary<string, object>
                         {
-                            ["Value"] = JToken.FromObject(value)
+                            { "Value", value }
                         };
                     }
+                }
+
+                // Apply built content into the dynamic ContentItem content
+                foreach (var kv in root)
+                {
+                    contentItem.Content[kv.Key] = kv.Value;
                 }
 
                 await contentManager.CreateAsync(contentItem, VersionOptions.Published);
@@ -263,5 +471,18 @@ public static class PostRoutes
         }
 
         return JToken.Parse(element.GetRawText());
+    }
+
+    private static object ConvertJsonElementToPlain(JsonElement element)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.String => new Dictionary<string, object> { { "Text", element.GetString()! } },
+            JsonValueKind.Number => new Dictionary<string, object> { { "Value", element.GetDouble() } },
+            JsonValueKind.True or JsonValueKind.False => new Dictionary<string, object> { { "Value", element.GetBoolean() } },
+            JsonValueKind.Array => new Dictionary<string, object> { { "values", element.EnumerateArray().Select(e => e.ValueKind == JsonValueKind.String ? (object)(e.GetString()!) : e.ValueKind == JsonValueKind.Number ? e.GetDouble() : e.ValueKind == JsonValueKind.True || e.ValueKind == JsonValueKind.False ? (object)e.GetBoolean() : (object)e.ToString()).ToList() } },
+            JsonValueKind.Object => element.EnumerateObject().ToDictionary(p => ToPascalCase(p.Name), p => ConvertJsonElementToPlain(p.Value)),
+            _ => element.ToString()
+        };
     }
 }
