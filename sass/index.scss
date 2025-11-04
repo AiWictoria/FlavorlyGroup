@@ -62,3 +62,26 @@ main {
   margin: 1.5rem 0;
   opacity: 0.8;
 }
+
+.quantity-wrapper {
+  border-radius: 5px;
+  width: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+}
+
+.quantity-button {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  color: inherit;
+  padding: 4px 6px;
+}
+
+.flavorly-shadow {
+  border: 1px solid #dddddd93;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+}
