@@ -72,9 +72,8 @@ public static partial class GetRoutes
             var permissionCheck = await PermissionsACL.CheckPermissions(contentType, "GET", context, session);
             if (permissionCheck != null) return permissionCheck;
 
-            // Populate automatically for Recipe so ingredient names are available
-            var shouldPopulate = string.Equals(contentType, "Recipe", StringComparison.OrdinalIgnoreCase);
-            var cleanObjects = await FetchCleanContent(contentType, session, populate: shouldPopulate);
+            // Get clean data without population
+            var cleanObjects = await FetchCleanContent(contentType, session, populate: false);
 
             // Find the item with matching id
             var item = cleanObjects.FirstOrDefault(obj => obj.ContainsKey("id") && obj["id"]?.ToString() == id);
@@ -100,9 +99,8 @@ public static partial class GetRoutes
             var permissionCheck = await PermissionsACL.CheckPermissions(contentType, "GET", context, session);
             if (permissionCheck != null) return permissionCheck;
 
-            // Populate automatically for Recipe so ingredient names are available
-            var shouldPopulate = string.Equals(contentType, "Recipe", StringComparison.OrdinalIgnoreCase);
-            var cleanObjects = await FetchCleanContent(contentType, session, populate: shouldPopulate);
+            // Get clean data without population
+            var cleanObjects = await FetchCleanContent(contentType, session, populate: false);
 
             // Apply query filters
             var filteredData = ApplyQueryFilters(context.Request.Query, cleanObjects);

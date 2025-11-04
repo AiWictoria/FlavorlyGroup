@@ -4,7 +4,10 @@ using System.Text.Json;
 
 public static partial class GetRoutes
 {
-    private static Dictionary<string, object> CleanObject(Dictionary<string, JsonElement> obj, string contentType)
+    private static Dictionary<string, object> CleanObject(
+        Dictionary<string, JsonElement> obj,
+        string contentType,
+        Dictionary<string, JsonElement>? usersDictionary = null)
     {
         var clean = new Dictionary<string, object>();
 
@@ -15,21 +18,7 @@ public static partial class GetRoutes
         if (obj.TryGetValue("DisplayText", out var title))
             clean["title"] = title.GetString()!;
 
-        // Map AutoroutePart.Path -> slug
-        if (obj.TryGetValue("AutoroutePart", out var autoroute) && autoroute.ValueKind == JsonValueKind.Object)
-        {
-            var routeDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(autoroute.GetRawText());
-            if (routeDict != null && routeDict.TryGetValue("Path", out var pathElement) && pathElement.ValueKind == JsonValueKind.String)
-            {
-                var slug = pathElement.GetString();
-                if (!string.IsNullOrWhiteSpace(slug))
-                {
-                    clean["slug"] = slug!;
-                }
-            }
-        }
-
-        // Get the content type section (e.g., "Recipe")
+        // Get the content type section (e.g., "Pet", "PetOwner")
         if (obj.TryGetValue(contentType, out var typeSection) && typeSection.ValueKind == JsonValueKind.Object)
         {
             var typeDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(typeSection.GetRawText());
@@ -37,203 +26,422 @@ public static partial class GetRoutes
             {
                 foreach (var kvp in typeDict)
                 {
-                    // Skip meta-fields (but keep Author for Comment content type)
-                    var isMeta = IsOrchardMetaKey(kvp.Key);
-                    if (isMeta && !(string.Equals(contentType, "Comment", StringComparison.OrdinalIgnoreCase) && kvp.Key == "Author"))
-                        continue;
-
-                    var (value, isIdReference) = ExtractFieldValueWithContext(kvp.Value);
-                    var fieldName = ToCamelCase(kvp.Key);
+                    var (value, isIdReference) = ExtractFieldValueWithContext(kvp.Value, usersDictionary);
                     if (value != null)
                     {
+                        var fieldName = ToCamelCase(kvp.Key);
+
+                        // If it's an ID reference from ContentItemIds, append "Id" to field name
                         if (isIdReference)
                         {
                             fieldName = fieldName + "Id";
                         }
+
                         clean[fieldName] = value;
-                    }
-                }
-
-                // Expose full RecipePart payload (nested), preserving embedded objects
-                if (string.Equals(contentType, "Recipe", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (obj.TryGetValue("RecipePart", out var recipePartEl) && recipePartEl.ValueKind == JsonValueKind.Object)
-                    {
-                        var recipePartDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(recipePartEl.GetRawText());
-                        if (recipePartDict != null)
-                        {
-                            var recipePart = new Dictionary<string, object>();
-
-                            // Special handling for Category: prefer TagNames, fallback to first TermContentItemId or first TermItem title
-                            if (recipePartDict.TryGetValue("Category", out var categoryEl) && categoryEl.ValueKind == JsonValueKind.Object)
-                            {
-                                string? categoryValue = null;
-                                var categoryDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(categoryEl.GetRawText());
-                                if (categoryDict != null)
-                                {
-                                    if (categoryDict.TryGetValue("TagNames", out var tagNamesEl) && tagNamesEl.ValueKind == JsonValueKind.Array)
-                                    {
-                                        var firstTag = tagNamesEl.EnumerateArray().FirstOrDefault(e => e.ValueKind == JsonValueKind.String);
-                                        if (firstTag.ValueKind == JsonValueKind.String)
-                                        {
-                                            categoryValue = firstTag.GetString();
-                                        }
-                                    }
-
-                                    if (string.IsNullOrWhiteSpace(categoryValue) && categoryDict.TryGetValue("TermContentItemIds", out var termIdsEl) && termIdsEl.ValueKind == JsonValueKind.Array)
-                                    {
-                                        var firstId = termIdsEl.EnumerateArray().FirstOrDefault(e => e.ValueKind == JsonValueKind.String);
-                                        if (firstId.ValueKind == JsonValueKind.String)
-                                        {
-                                            categoryValue = firstId.GetString();
-                                        }
-                                    }
-
-                                    // If populated: TermItems is present; derive a readable name from first term
-                                    if (string.IsNullOrWhiteSpace(categoryValue) && categoryDict.TryGetValue("TermItems", out var termItemsEl) && termItemsEl.ValueKind == JsonValueKind.Array)
-                                    {
-                                        var firstItem = termItemsEl.EnumerateArray().FirstOrDefault(e => e.ValueKind == JsonValueKind.Object);
-                                        if (firstItem.ValueKind == JsonValueKind.Object)
-                                        {
-                                            var firstItemDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(firstItem.GetRawText());
-                                            if (firstItemDict != null)
-                                            {
-                                                // Prefer DisplayText; fallback to TitlePart.Title; else id
-                                                if (firstItemDict.TryGetValue("DisplayText", out var displayTextEl) && displayTextEl.ValueKind == JsonValueKind.String)
-                                                {
-                                                    categoryValue = displayTextEl.GetString();
-                                                }
-                                                else if (firstItemDict.TryGetValue("TitlePart", out var titlePartEl) && titlePartEl.ValueKind == JsonValueKind.Object)
-                                                {
-                                                    var titlePartDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(titlePartEl.GetRawText());
-                                                    if (titlePartDict != null && titlePartDict.TryGetValue("Title", out var titleEl) && titleEl.ValueKind == JsonValueKind.String)
-                                                    {
-                                                        categoryValue = titleEl.GetString();
-                                                    }
-                                                }
-                                                else if (firstItemDict.TryGetValue("ContentItemId", out var termIdEl) && termIdEl.ValueKind == JsonValueKind.String)
-                                                {
-                                                    categoryValue = termIdEl.GetString();
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (!string.IsNullOrWhiteSpace(categoryValue))
-                                {
-                                    recipePart["category"] = categoryValue!;
-                                    clean["category"] = categoryValue!;
-                                }
-                            }
-
-                            foreach (var kvp in recipePartDict)
-                            {
-                                var isMetaInner = IsOrchardMetaKey(kvp.Key);
-                                if (isMetaInner) continue;
-
-                                // Skip Category here because we handled it above
-                                if (kvp.Key == "Category") continue;
-
-                                var nestedValue = ExtractFieldValue(kvp.Value);
-                                if (nestedValue != null)
-                                {
-                                    recipePart[ToCamelCase(kvp.Key)] = nestedValue;
-                                }
-                            }
-
-                            if (recipePart.Count > 0)
-                            {
-                                clean["recipePart"] = recipePart;
-                            }
-                        }
-                    }
-                }
-
-                // Derive ingredientName/ingredientId if populated ingredient object is available
-                if (clean.TryGetValue("Ingredient", out var ingredientObj) && ingredientObj is Dictionary<string, object> ingredientDict)
-                {
-                    if (ingredientDict.TryGetValue("title", out var ingredientTitle) && ingredientTitle is string titleStr && !string.IsNullOrWhiteSpace(titleStr))
-                    {
-                        clean["ingredientName"] = titleStr;
-                    }
-                    if (ingredientDict.TryGetValue("id", out var ingredientIdVal) && ingredientIdVal is string ingredientIdStr && !string.IsNullOrWhiteSpace(ingredientIdStr))
-                    {
-                        clean["ingredientId"] = ingredientIdStr;
-                    }
-
-                    // Remove embedded object to match target shape
-                    clean.Remove("Ingredient");
-                }
-
-                // Derive unitCode/unitName and unitId if populated unit object is available
-                if (clean.TryGetValue("Unit", out var unitObj) && unitObj is Dictionary<string, object> unitDict)
-                {
-                    // Prefer explicit code if available
-                    if (unitDict.TryGetValue("code", out var unitCodeVal) && unitCodeVal is string codeStr && !string.IsNullOrWhiteSpace(codeStr))
-                    {
-                        clean["unitCode"] = codeStr;
-                    }
-                    else if (unitDict.TryGetValue("title", out var unitTitleVal) && unitTitleVal is string unitTitleStr && !string.IsNullOrWhiteSpace(unitTitleStr))
-                    {
-                        // Fall back to a readable name
-                        clean["unitName"] = unitTitleStr;
-                    }
-                    else if (unitDict.TryGetValue("name", out var unitNameVal) && unitNameVal is string unitNameStr && !string.IsNullOrWhiteSpace(unitNameStr))
-                    {
-                        clean["unitName"] = unitNameStr;
-                    }
-
-                    if (unitDict.TryGetValue("id", out var unitIdVal) && unitIdVal is string unitIdStr && !string.IsNullOrWhiteSpace(unitIdStr))
-                    {
-                        clean["unitId"] = unitIdStr;
-                    }
-
-                    // Remove embedded object to match target shape
-                    clean.Remove("Unit");
-                }
-
-                // For comments, derive a simple author string from Author.UserNames[0]
-                if (string.Equals(contentType, "Comment", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (clean.TryGetValue("author", out var authorVal))
-                    {
-                        if (authorVal is Dictionary<string, object> authorDict)
-                        {
-                            if (authorDict.TryGetValue("userNames", out var namesVal))
-                            {
-                                if (namesVal is IEnumerable<object> namesEnum)
-                                {
-                                    var first = namesEnum.OfType<string>().FirstOrDefault(s => !string.IsNullOrWhiteSpace(s));
-                                    if (!string.IsNullOrWhiteSpace(first))
-                                    {
-                                        clean["author"] = first!;
-                                    }
-                                }
-                                else if (namesVal is string singleName && !string.IsNullOrWhiteSpace(singleName))
-                                {
-                                    clean["author"] = singleName;
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
 
-
-        CopyListPart(obj, "Ingredients", "ingredients", clean);
-
-        // RecipeInstructions
-        CopyListPart(obj, "RecipeInstructions", "instructions", clean);
-
-        // Comments/CommentList (support both shapes)
-        if (obj.ContainsKey("Comments") || obj.ContainsKey("CommentList"))
+        // Handle BagPart (many-to-many with extra fields)
+        if (obj.TryGetValue("BagPart", out var bagPart) && bagPart.ValueKind == JsonValueKind.Object)
         {
-            CopyListPart(obj, obj.ContainsKey("Comments") ? "Comments" : "CommentList", "comments", clean);
+            var bagDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(bagPart.GetRawText());
+            if (bagDict != null && bagDict.TryGetValue("ContentItems", out var contentItems) &&
+                contentItems.ValueKind == JsonValueKind.Array)
+            {
+                var itemsList = new List<object>();
+                foreach (var item in contentItems.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.Object)
+                    {
+                        var itemDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
+                        if (itemDict != null && itemDict.TryGetValue("ContentType", out var itemTypeElement))
+                        {
+                            var itemType = itemTypeElement.GetString();
+                            if (itemType != null)
+                            {
+                                var cleanedItem = CleanObject(itemDict, itemType, usersDictionary);
+                                // Include contentType for roundtripping
+                                cleanedItem["contentType"] = itemType;
+                                itemsList.Add(cleanedItem);
+                            }
+                        }
+                    }
+                }
+
+                if (itemsList.Count > 0)
+                {
+                    clean["items"] = itemsList;
+                }
+            }
         }
 
-
         return clean;
+    }
+
+    private static (object? value, bool isIdReference) ExtractFieldValueWithContext(
+        JsonElement element,
+        Dictionary<string, JsonElement>? usersDictionary = null)
+    {
+        // Handle Text fields: { "Text": "value" } → "value"
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(element.GetRawText());
+            if (dict != null)
+            {
+                // Check for Text field
+                if (dict.ContainsKey("Text") && dict.Count == 1)
+                {
+                    var textElement = dict["Text"];
+                    // Handle both string and array (in case of POST-created items)
+                    if (textElement.ValueKind == JsonValueKind.String)
+                    {
+                        return (textElement.GetString(), false);
+                    }
+                    else if (textElement.ValueKind == JsonValueKind.Array)
+                    {
+                        // If it's an array, try to get the first element
+                        var arr = textElement.EnumerateArray().ToList();
+                        if (arr.Count > 0 && arr[0].ValueKind == JsonValueKind.String)
+                        {
+                            return (arr[0].GetString(), false);
+                        }
+                    }
+                    return (null, false);
+                }
+
+                // Check for UserPickerField (UserIds + UserNames arrays)
+                if ((dict.ContainsKey("UserIds") || dict.ContainsKey("userIds")) &&
+                    (dict.ContainsKey("UserNames") || dict.ContainsKey("userNames")))
+                {
+                    var userIdsKey = dict.ContainsKey("UserIds") ? "UserIds" : "userIds";
+                    var userNamesKey = dict.ContainsKey("UserNames") ? "UserNames" : "userNames";
+
+                    var userIds = dict[userIdsKey];
+                    var userNames = dict[userNamesKey];
+
+                    if (userIds.ValueKind == JsonValueKind.Array && userNames.ValueKind == JsonValueKind.Array)
+                    {
+                        var idsList = userIds.EnumerateArray()
+                            .Where(x => x.ValueKind == JsonValueKind.String)
+                            .Select(x => x.GetString())
+                            .Where(x => x != null)
+                            .ToList();
+
+                        var namesList = userNames.EnumerateArray()
+                            .Where(x => x.ValueKind == JsonValueKind.String)
+                            .Select(x => x.GetString())
+                            .Where(x => x != null)
+                            .ToList();
+
+                        // Zip the IDs and usernames together into an array of objects
+                        var users = new List<Dictionary<string, object>>();
+                        for (int i = 0; i < Math.Min(idsList.Count, namesList.Count); i++)
+                        {
+                            var user = new Dictionary<string, object>
+                            {
+                                ["id"] = idsList[i]!,
+                                ["username"] = namesList[i]!
+                            };
+
+                            // Enrich with data from usersDictionary if available
+                            if (usersDictionary != null && usersDictionary.TryGetValue(idsList[i]!, out var userData))
+                            {
+                                if (userData.TryGetProperty("Email", out var email) && email.ValueKind == JsonValueKind.String)
+                                {
+                                    var emailStr = email.GetString();
+                                    if (emailStr != null) user["email"] = emailStr;
+                                }
+
+                                if (userData.TryGetProperty("PhoneNumber", out var phone) && phone.ValueKind == JsonValueKind.String)
+                                {
+                                    var phoneStr = phone.GetString();
+                                    if (phoneStr != null) user["phone"] = phoneStr;
+                                }
+
+                                // Spread Properties object (contains firstName, lastName, etc.)
+                                if (userData.TryGetProperty("Properties", out var props) && props.ValueKind == JsonValueKind.Object)
+                                {
+                                    foreach (var prop in props.EnumerateObject())
+                                    {
+                                        // Convert property name to camelCase (FirstName -> firstName)
+                                        var propName = char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
+                                        if (prop.Value.ValueKind == JsonValueKind.String)
+                                        {
+                                            var propValue = prop.Value.GetString();
+                                            if (propValue != null) user[propName] = propValue;
+                                        }
+                                        else if (prop.Value.ValueKind != JsonValueKind.Null)
+                                        {
+                                            // Handle non-string property values
+                                            user[propName] = JsonSerializer.Deserialize<object>(prop.Value.GetRawText());
+                                        }
+                                    }
+                                }
+                            }
+
+                            users.Add(user);
+                        }
+
+                        return (users, false);
+                    }
+                }
+
+                // Check for ContentItemIds array (non-populated relations)
+                if (dict.ContainsKey("ContentItemIds"))
+                {
+                    var ids = dict["ContentItemIds"];
+                    if (ids.ValueKind == JsonValueKind.Array)
+                    {
+                        var idsList = new List<string>();
+                        foreach (var idElement in ids.EnumerateArray())
+                        {
+                            if (idElement.ValueKind == JsonValueKind.String)
+                            {
+                                var idStr = idElement.GetString();
+                                if (idStr != null) idsList.Add(idStr);
+                            }
+                        }
+                        // Single ID: return as string with isIdReference=true (appends "Id" to field name)
+                        // Multiple IDs: return as array with isIdReference=true (appends "Id" to field name)
+                        if (idsList.Count == 1)
+                        {
+                            return (idsList[0], true);
+                        }
+                        else if (idsList.Count > 1)
+                        {
+                            return (idsList.ToArray(), true);
+                        }
+                        return (null, false); // Empty array
+                    }
+                }
+
+                // Check for Items array (populated relations)
+                if (dict.ContainsKey("Items"))
+                {
+                    var items = dict["Items"];
+                    if (items.ValueKind == JsonValueKind.Array)
+                    {
+                        var itemsList = new List<object>();
+                        foreach (var item in items.EnumerateArray())
+                        {
+                            if (item.ValueKind == JsonValueKind.Object)
+                            {
+                                var itemDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
+                                if (itemDict != null)
+                                {
+                                    // Get the content type from the item
+                                    string? itemType = null;
+                                    if (itemDict.TryGetValue("ContentType", out var ct))
+                                    {
+                                        itemType = ct.GetString();
+                                    }
+                                    itemsList.Add(CleanObject(itemDict, itemType ?? "", usersDictionary));
+                                }
+                            }
+                        }
+                        // Return null (serializes to remove key) if 0 items, object if one item otherwise array
+                        var result = itemsList.Count == 0 ? null : itemsList.Count == 1 ? itemsList[0] : itemsList;
+                        return (result, false);
+                    }
+                }
+
+                // Check for { "values": [...] } pattern (common in OrchardCore list fields)
+                if (dict.Count == 1 && (dict.ContainsKey("values") || dict.ContainsKey("Values")))
+                {
+                    var valuesKey = dict.ContainsKey("values") ? "values" : "Values";
+                    var values = dict[valuesKey];
+                    if (values.ValueKind == JsonValueKind.Array)
+                    {
+                        var valuesList = new List<object>();
+                        foreach (var val in values.EnumerateArray())
+                        {
+                            var extractedValue = ExtractFieldValue(val, usersDictionary);
+                            if (extractedValue != null)
+                            {
+                                valuesList.Add(extractedValue);
+                            }
+                        }
+                        return (valuesList, false);
+                    }
+                }
+
+                // Otherwise return the whole object cleaned
+                var cleaned = new Dictionary<string, object>();
+                foreach (var kvp in dict)
+                {
+                    var value = ExtractFieldValue(kvp.Value, usersDictionary);
+                    if (value != null)
+                    {
+                        cleaned[ToCamelCase(kvp.Key)] = value;
+                    }
+                }
+
+                // Unwrap single-property objects (e.g., {"value": 42} → 42)
+                if (cleaned.Count == 1)
+                {
+                    return (cleaned.Values.First(), false);
+                }
+
+                return (cleaned, false);
+            }
+        }
+        else if (element.ValueKind == JsonValueKind.Array)
+        {
+            var list = new List<object>();
+            foreach (var item in element.EnumerateArray())
+            {
+                var value = ExtractFieldValue(item, usersDictionary);
+                if (value != null)
+                {
+                    list.Add(value);
+                }
+            }
+            return (list, false);
+        }
+        else if (element.ValueKind == JsonValueKind.String)
+        {
+            return (element.GetString(), false);
+        }
+        else if (element.ValueKind == JsonValueKind.Number)
+        {
+            return (element.GetDouble(), false);
+        }
+        else if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
+        {
+            return (element.GetBoolean(), false);
+        }
+
+        return (null, false);
+    }
+
+    private static object? ExtractFieldValue(
+        JsonElement element,
+        Dictionary<string, JsonElement>? usersDictionary = null)
+    {
+        // Handle Text fields: { "Text": "value" } → "value"
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(element.GetRawText());
+            if (dict != null)
+            {
+                // Check for Text field
+                if (dict.ContainsKey("Text") && dict.Count == 1)
+                {
+                    return dict["Text"].GetString();
+                }
+
+                // Check for ContentItemIds array (non-populated relations)
+                if (dict.ContainsKey("ContentItemIds"))
+                {
+                    var ids = dict["ContentItemIds"];
+                    if (ids.ValueKind == JsonValueKind.Array)
+                    {
+                        var idsList = new List<string>();
+                        foreach (var idElement in ids.EnumerateArray())
+                        {
+                            if (idElement.ValueKind == JsonValueKind.String)
+                            {
+                                var idStr = idElement.GetString();
+                                if (idStr != null) idsList.Add(idStr);
+                            }
+                        }
+                        // Return single ID string if exactly one item, array for multiple items
+                        if (idsList.Count == 1)
+                        {
+                            return idsList[0];
+                        }
+                        else if (idsList.Count > 1)
+                        {
+                            return idsList.ToArray();
+                        }
+                        return null; // Empty array
+                    }
+                }
+
+                // Check for Items array (populated relations)
+                if (dict.ContainsKey("Items"))
+                {
+                    var items = dict["Items"];
+                    if (items.ValueKind == JsonValueKind.Array)
+                    {
+                        var itemsList = new List<object>();
+                        foreach (var item in items.EnumerateArray())
+                        {
+                            if (item.ValueKind == JsonValueKind.Object)
+                            {
+                                var itemDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
+                                if (itemDict != null)
+                                {
+                                    // Get the content type from the item
+                                    string? itemType = null;
+                                    if (itemDict.TryGetValue("ContentType", out var ct))
+                                    {
+                                        itemType = ct.GetString();
+                                    }
+                                    itemsList.Add(CleanObject(itemDict, itemType ?? "", usersDictionary));
+                                }
+                            }
+                        }
+                        // Return null (serializes to remove key) if 0 items, object if one item otherwise array
+                        return itemsList.Count == 0 ? null : itemsList.Count == 1 ? itemsList[0] : itemsList;
+                    }
+                }
+
+                // Otherwise return the whole object cleaned
+                var cleaned = new Dictionary<string, object>();
+                foreach (var kvp in dict)
+                {
+                    var value = ExtractFieldValue(kvp.Value, usersDictionary);
+                    if (value != null)
+                    {
+                        cleaned[ToCamelCase(kvp.Key)] = value;
+                    }
+                }
+
+                // Unwrap single-property objects (e.g., {"value": 42} → 42)
+                if (cleaned.Count == 1)
+                {
+                    return cleaned.Values.First();
+                }
+
+                return cleaned;
+            }
+        }
+        else if (element.ValueKind == JsonValueKind.Array)
+        {
+            var list = new List<object>();
+            foreach (var item in element.EnumerateArray())
+            {
+                var value = ExtractFieldValue(item, usersDictionary);
+                if (value != null)
+                {
+                    list.Add(value);
+                }
+            }
+            return list;
+        }
+        else if (element.ValueKind == JsonValueKind.String)
+        {
+            return element.GetString();
+        }
+        else if (element.ValueKind == JsonValueKind.Number)
+        {
+            return element.GetDouble();
+        }
+        else if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
+        {
+            return element.GetBoolean();
+        }
+
+        return null;
+    }
+
+    private static string ToCamelCase(string str)
+    {
+        if (string.IsNullOrEmpty(str) || char.IsLower(str[0]))
+            return str;
+        return char.ToLower(str[0]) + str.Substring(1);
     }
 }
