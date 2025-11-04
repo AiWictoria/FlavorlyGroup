@@ -27,7 +27,6 @@ export default function ShoppingListPage() {
   >(undefined);
 
   const [product, setProduct] = useState("");
-
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
 
@@ -57,102 +56,114 @@ export default function ShoppingListPage() {
       <Row className="p-0">
         <Col className="mt-4 mx-xl-5">
           <h2>Shopping List</h2>
-          <Form onSubmit={handleAdd}>
-            <Row className="mt-4">
-              <Col xs={12} xl={4}>
-                <Form.Group>
-                  <IngredientSearch
-                    onIngredientChange={(ingredient) =>
-                      setSelectedIngredient(ingredient)
-                    }
-                  />
-                </Form.Group>
-              </Col>
-              <Col xs={6} xl={4} className="mb-2">
-                <Form.Group>
+
+          <div className="shopping-list-container">
+            <Form onSubmit={handleAdd}>
+              <Row className="mt-4">
+                <Col xs={12} xl={4} className="mb-2">
+                  <Form.Group>
+                    <IngredientSearch
+                      onIngredientChange={(ingredient) =>
+                        setSelectedIngredient(ingredient)
+                      }
+                    />
+                  </Form.Group>
+                </Col>
+                <Col xs={6} xl={4} className="mb-2">
+                  <Form.Group>
+                    <Form.Control
+                      placeholder="Add amount..."
+                      value={amount}
+                      type="number"
+                      min={1}
+                      max={99}
+                      step="any"
+                      onChange={(e) => setAmount(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col xs={6} xl={2}>
                   <Form.Control
-                    placeholder="Add amount..."
-                    value={amount}
-                    type="number"
-                    min={1}
-                    max={99}
-                    step="any"
-                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Unit"
+                    disabled
+                    value={selectedIngredient?.unit.title ?? ""}
                   />
-                </Form.Group>
-              </Col>
+                </Col>
+                <Col xs={12} xl={2}>
+                  <div className="d-grid gap-2 mb-5">
+                    <Button variant="success" type="submit" className="w-auto">
+                      Add ingredient
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
 
-              <Col xs={6} xl={2}>
-                <Form.Control
-                  placeholder="Unit"
-                  disabled
-                  value={selectedIngredient?.unit.title ?? ""}
-                />
-              </Col>
-              <Col xs={12} xl={2}>
-                <div className="d-grid gap-2 mb-5">
-                  <Button variant="success" type="submit" className="w-auto">
-                    Add ingredient
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </Form>
+            {shoppingList.length > 0 ? (
+              <>
+                <Col className="m-2 fs-6">
+                  {shoppingList.map((item, index) => (
+                    <>
+                      <Row
+                        key={index}
+                        className="shopping-list-item d-flex align-items-center pt-2 pb-2 "
+                      >
+                        <Col xs={12} md={12} lg={3} className="mb-2">
+                          <span>
+                            <b>Ingredient:</b>{" "}
+                          </span>
+                          {item.shoppingItemIngredient.title}{" "}
+                          {item.shoppingItemIngredient.amount}{" "}
+                          {item.shoppingItemIngredient.unit.title}{" "}
+                        </Col>
 
-          {shoppingList.length > 0 ? (
-            <>
-              <Col className="shopping-list-container mb-5 p-1 m-1 fs-6">
-                {shoppingList.map((item, index) => (
-                  <>
-                    <Row
-                      key={index}
-                      className="shopping-list-item d-flex align-items-center p-1"
-                    >
-                      <Col xs={12} xl={3}>
-                        <span>
-                          <b>Ingredient:</b>{" "}
-                        </span>
-                        {item.shoppingItemIngredient.title}{" "}
-                        {item.shoppingItemIngredient.amount}{" "}
-                        {item.shoppingItemIngredient.unit.title}{" "}
-                      </Col>
-                      <Col xs={12} xl={3} className="mt-1">
-                        <Form.Select
-                          size="sm"
-                          value={product}
-                          onChange={(e) => setProduct(e.target.value)}
+                        <Col
+                          xs={12}
+                          md={8}
+                          lg={6}
+                          className="mt-1 mb-2 d-flex align-items-center"
                         >
-                          <option value="">Choose product</option>
-                          <option>Cherry Tomatoes 500g</option>
-                          <option>Roma Tomatoes 1kg</option>
-                        </Form.Select>
-                      </Col>
-                      <Col xs={12} xl={3} className="mt-1">
-                        <b>Product:</b> {product}
-                      </Col>
-                      <Col xs={6} xl={2}>
-                        <b>Total cost:</b>
-                      </Col>
-                      <Col xs={6} xl={1} className="d-flex justify-content-end">
-                        <QuantitySelector value={1}></QuantitySelector>
-                      </Col>
-                    </Row>
-                  </>
-                ))}
-              </Col>
+                          <b className="me-2">Product:</b>
+                          <Form.Select
+                            size="sm"
+                            value={product}
+                            onChange={(e) => setProduct(e.target.value)}
+                          >
+                            <option value="">Choose product</option>
+                            <option>Cherry Tomatoes 500g</option>
+                            <option>Roma Tomatoes 1kg</option>
+                          </Form.Select>
+                        </Col>
+                        <Col xs={6} md={2} lg={2}>
+                          <b>Total cost:</b> 5 kr
+                        </Col>
+                        <Col
+                          xs={6}
+                          md={2}
+                          lg={1}
+                          className="d-flex justify-content-end"
+                        >
+                          <QuantitySelector value={1}></QuantitySelector>
+                        </Col>
+                      </Row>
+                    </>
+                  ))}
+                </Col>
 
-              <div className="d-grid gap-3 mt-3 mb-4">
-                <Button>Add products to cart</Button>
+                <div className="d-grid gap-3 mt-3 mb-4">
+                  <Button>Add products to cart</Button>
+                </div>
+              </>
+            ) : (
+              <div
+                className="d-flex justify-content-center align-items-center mt-5 mb-5"
+                style={{ color: "#9b9d9eff" }}
+              >
+                <h1>Shopping list is empty...</h1>
               </div>
-            </>
-          ) : (
-            <div
-              className="d-flex justify-content-center align-items-center mt-5 mb-5"
-              style={{ color: "#9b9d9eff" }}
-            >
-              <h1>Shopping list is empty...</h1>
-            </div>
-          )}
+            )}
+          </div>
         </Col>
       </Row>
     </Box>
