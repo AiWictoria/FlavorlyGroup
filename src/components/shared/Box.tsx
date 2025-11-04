@@ -11,7 +11,7 @@ export default function Box({
 }: BoxProps) {
   return (
     <>
-      <div className={`orderbox-${size} ${className}`}>{children}</div>
+      <div className={`orderbox orderbox-${size} ${className}`}>{children}</div>
     </>
   );
 }
