@@ -13,12 +13,14 @@ public static partial class GetRoutes
         YesSql.ISession session,
         bool populate = true)
     {
+        // Fetch all content items for the given content type
         var contentItems = await session
             .Query()
             .For<ContentItem>()
             .With<ContentItemIndex>(x => x.ContentType == contentType && x.Published)
             .ListAsync();
 
+        // Serialize to JSON and deserialize to Dictionary<string, JsonElement>
         var jsonOptions = new JsonSerializerOptions
         {
             ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
@@ -166,6 +168,189 @@ public static partial class GetRoutes
         }
 
         return cleanObjects;
+    }
+
+    // Fetch clean content and also return raw data keyed by ContentItemId
+    public static async Task<(List<Dictionary<string, object>> cleanObjects, Dictionary<string, Dictionary<string, JsonElement>> rawById)> FetchCleanContentWithRaw(
+        string contentType,
+        YesSql.ISession session,
+        bool populate = true)
+    {
+        // Fetch all content items for the given content type
+        var contentItems = await session
+            .Query()
+            .For<ContentItem>()
+            .With<ContentItemIndex>(x => x.ContentType == contentType && x.Published)
+            .ListAsync();
+
+        // Serialize to JSON and deserialize to Dictionary<string, JsonElement>
+        var jsonOptions = new JsonSerializerOptions
+        {
+            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+        };
+        var jsonString = JsonSerializer.Serialize(contentItems, jsonOptions);
+        var plainObjects = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(jsonString);
+        if (plainObjects == null) return (new List<Dictionary<string, object>>(), new Dictionary<string, Dictionary<string, JsonElement>>());
+
+        // Build rawById dictionary before any modifications
+        var rawById = new Dictionary<string, Dictionary<string, JsonElement>>();
+        foreach (var obj in plainObjects)
+        {
+            if (obj.TryGetValue("ContentItemId", out var idElement))
+            {
+                var id = idElement.GetString();
+                if (id != null)
+                {
+                    // Create a deep copy to avoid modifications affecting the raw data
+                    var rawJsonString = JsonSerializer.Serialize(obj, jsonOptions);
+                    var rawCopy = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(rawJsonString);
+                    if (rawCopy != null)
+                    {
+                        rawById[id] = rawCopy;
+                    }
+                }
+            }
+        }
+
+        // Only populate if requested
+        if (populate)
+        {
+            var allReferencedIds = new HashSet<string>();
+            foreach (var obj in plainObjects)
+            {
+                CollectContentItemIds(obj, allReferencedIds);
+            }
+
+            if (allReferencedIds.Count > 0)
+            {
+                var referencedItems = await session
+                    .Query()
+                    .For<ContentItem>()
+                    .With<ContentItemIndex>(x => x.ContentItemId.IsIn(allReferencedIds))
+                    .ListAsync();
+
+                var refJsonString = JsonSerializer.Serialize(referencedItems, jsonOptions);
+                var plainRefItems = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(refJsonString);
+                if (plainRefItems != null)
+                {
+                    var itemsDictionary = new Dictionary<string, Dictionary<string, JsonElement>>();
+                    foreach (var item in plainRefItems)
+                    {
+                        if (item.TryGetValue("ContentItemId", out var idElement))
+                        {
+                            var id = idElement.GetString();
+                            if (id != null) itemsDictionary[id] = item;
+                        }
+                    }
+
+                    foreach (var obj in plainObjects)
+                    {
+                        PopulateContentItemIds(obj, itemsDictionary);
+                    }
+                }
+            }
+        }
+
+        // Collect all UserIds for enrichment
+        Dictionary<string, JsonElement>? usersDictionary = null;
+        if (populate)
+        {
+            var allUserIds = new HashSet<string>();
+            foreach (var obj in plainObjects)
+            {
+                CollectUserIds(obj, allUserIds);
+            }
+
+            if (allUserIds.Count > 0)
+            {
+                // Query UserIndex to get user data
+                var users = await session
+                    .Query()
+                    .For<OrchardCore.Users.Models.User>()
+                    .With<OrchardCore.Users.Indexes.UserIndex>(x => x.UserId.IsIn(allUserIds))
+                    .ListAsync();
+
+                if (users.Any())
+                {
+                    var usersJsonString = JsonSerializer.Serialize(users, jsonOptions);
+                    var plainUsers = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(usersJsonString);
+                    if (plainUsers != null)
+                    {
+                        usersDictionary = new Dictionary<string, JsonElement>();
+                        foreach (var user in plainUsers)
+                        {
+                            if (user.TryGetValue("UserId", out var userIdElement))
+                            {
+                                var userId = userIdElement.GetString();
+                                if (userId != null)
+                                {
+                                    usersDictionary[userId] = JsonSerializer.SerializeToElement(user);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Clean up the bullshit
+        var cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary)).ToList();
+
+        // Second population pass: cleanup may have introduced new ID fields (e.g., from BagPart items)
+        if (populate && cleanObjects.Count > 0)
+        {
+            // Convert cleanObjects to JsonElement for processing
+            var cleanJsonString = JsonSerializer.Serialize(cleanObjects);
+            var cleanPlainObjects = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(cleanJsonString);
+
+            if (cleanPlainObjects != null)
+            {
+                // Collect any new IDs that appeared during cleanup
+                var newReferencedIds = new HashSet<string>();
+                foreach (var obj in cleanPlainObjects)
+                {
+                    CollectContentItemIds(obj, newReferencedIds);
+                }
+
+                if (newReferencedIds.Count > 0)
+                {
+                    // Fetch the newly referenced items
+                    var newReferencedItems = await session
+                        .Query()
+                        .For<ContentItem>()
+                        .With<ContentItemIndex>(x => x.ContentItemId.IsIn(newReferencedIds))
+                        .ListAsync();
+
+                    var newRefJsonString = JsonSerializer.Serialize(newReferencedItems, jsonOptions);
+                    var plainNewRefItems = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(newRefJsonString);
+
+                    if (plainNewRefItems != null)
+                    {
+                        // Create dictionary with cleaned items
+                        var newItemsDictionary = new Dictionary<string, Dictionary<string, object>>();
+                        foreach (var item in plainNewRefItems)
+                        {
+                            if (item.TryGetValue("ContentItemId", out var idElement) &&
+                                item.TryGetValue("ContentType", out var typeElement))
+                            {
+                                var id = idElement.GetString();
+                                var type = typeElement.GetString();
+                                if (id != null && type != null)
+                                {
+                                    // Clean the item before adding to dictionary
+                                    newItemsDictionary[id] = CleanObject(item, type, usersDictionary);
+                                }
+                            }
+                        }
+
+                        // Populate the IDs in cleaned data with cleaned items
+                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary);
+                    }
+                }
+            }
+        }
+
+        return (cleanObjects, rawById);
     }
 
     // Helper to populate ID fields with already-cleaned items
