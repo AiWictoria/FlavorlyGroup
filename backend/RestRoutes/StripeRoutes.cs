@@ -32,8 +32,8 @@ public static class StripeRoutes
                     }
             },
         //Vi kommer behöva ändra detta till själva sidorna i react appen när vi har dem
-        SuccessUrl = "http://localhost:5173/order",
-        CancelUrl = "http://localhost:5173"
+        SuccessUrl = "http://localhost:5173/order?status=success&step=confirmation",
+        CancelUrl = "http://localhost:5173/order?status=cancelled&step=payment"
       };
 
       var service = new SessionService();
