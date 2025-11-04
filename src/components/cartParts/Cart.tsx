@@ -10,7 +10,14 @@ export default function Cart({ onNext }: CartProps) {
         <Col>
           <h2>Detta är Cart</h2>
           <button onClick={onNext}>Next</button>
-          <TotalBox />
+          <TotalBox
+            buttonLable="Delivery"
+            products={[
+              { name: "Mjölk", price: 20, quantity: 2 },
+              { name: "Banan", price: 10, quantity: 1 },
+            ]}
+            deliveryPrice={15}
+          />
         </Col>
       </Row>
     </>
