@@ -51,6 +51,7 @@ Global
 		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x64.Build.0 = Release|Any CPU
 		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x86.ActiveCfg = Release|Any CPU
 		{6FC46855-AF8B-4D96-B2D9-92105D91FC49}.Release|x86.Build.0 = Release|Any CPU
+
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

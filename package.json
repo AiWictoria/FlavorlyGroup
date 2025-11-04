@@ -13,7 +13,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "backend": "node scripts/ensure-setup.js && cd backend && dotnet run --urls http://localhost:5001",
+    "backend": "node scripts/ensure-setup.js && cd backend && dotnet watch --urls http://localhost:5001",
     "start": "concurrently \"npm run backend\" \"npm run dev\""
   },
   "dependencies": {

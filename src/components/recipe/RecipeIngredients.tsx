@@ -26,7 +26,14 @@ export function RecipeIngredients({
 
   useEffect(() => {
     if (recipe?.ingredients) {
-      const parts = recipe.ingredients.split(",");
+      const parts = recipe.ingredients.map((ing) => {
+        const segments: string[] = [];
+        if (ing.amount !== undefined && ing.amount !== null) segments.push(String(ing.amount));
+        if (ing.unit) segments.push(ing.unit);
+        if (ing.ingredientName) segments.push(ing.ingredientName);
+        else if (ing.ingredientId) segments.push(`#${ing.ingredientId}`);
+        return segments.join(" ");
+      });
       setIngredientList(parts);
       setCheckedItems(new Array(parts.length).fill(false));
     } else {
