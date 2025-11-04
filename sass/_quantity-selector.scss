@@ -1,0 +1,32 @@
+.quantity-border {
+  border: 2px solid #dfdddb;
+  border-radius: 2px;
+  display: inline-flex;
+  padding: 0;
+  overflow: hidden;
+}
+
+.display {
+  display: inline-flex;
+  width: auto;
+}
+
+.quantity-selector-button {
+  border: none;
+  background-color: white;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.button-background-color {
+  background-color: white;
+  padding: 4px 8px;
+}
+
+.plus-color {
+  color: green;
+}
+
+.minus-color {
+  color: #510b0b;
+}
