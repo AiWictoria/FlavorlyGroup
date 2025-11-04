@@ -18,7 +18,7 @@ public static partial class GetRoutes
 
     private static bool IsOrchardMetaKey(string key)
     {
-        // Vanliga OrchardCore-meta och brus
+        // OrchardCore-meta fields
         switch (key)
         {
             case "ContentItemVersionId":
@@ -29,7 +29,7 @@ public static partial class GetRoutes
             case "CreatedUtc":
             case "Owner":
             case "Author":
-            case "TitlePart": // vi använder redan DisplayText
+            case "TitlePart":
                 return true;
             default:
                 return false;
