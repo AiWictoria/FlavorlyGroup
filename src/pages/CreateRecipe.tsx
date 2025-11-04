@@ -15,7 +15,7 @@ export default function CreateRecipe() {
   const { createRecipe, uploadImage } = useRecipes();
   const [recipe, setRecipe] = useState({
     id: 0,
-    userId: user?.id || 0,
+    userId: user?.userId || 0,
     title: "",
     category: "",
     ingredients: "",
