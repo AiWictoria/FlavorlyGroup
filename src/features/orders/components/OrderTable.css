@@ -1,9 +1,6 @@
-/* Main table wrapper */
+/* Basic responsive container */
 .table-wrapper {
-  background: #FCF1E7;
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
   padding: 24px 0;
 }
 
@@ -12,90 +9,63 @@
   max-width: 1024px;
   margin: 0 auto;
   padding: 0 1rem;
-  overflow-x: auto;
 }
 
-/* Custom scrollbar for better UX */
-.table-container::-webkit-scrollbar {
-  height: 8px;
+/* Table styling */
+.table-custom {
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.table-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+.table-custom tbody td {
+  background-color: #ededed !important;
+  padding: 12px 8px;
 }
 
-.table-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+.table-custom thead th {
+  background-color: white !important;
+  padding: 12px 8px;
 }
 
-.table-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
+.customer-name {
+  display: block;
+  padding-left: 0;
 }
 
+.name-column {
+  padding-left: 8px !important;
+}
+
+.header-cell-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile optimizations */
 @media (max-width: 768px) {
   .table-wrapper {
     padding: 16px 0;
   }
 
-  .table-container {
-    padding: 0 0.5rem;
+  .date-column,
+  .name-column {
+    display: none !important;
   }
 
-  .table > tbody > tr > td:last-child {
-    padding-right: 24px !important;
-  }
-
-  .order-actions .btn {
-    padding: 0.25rem 0.5rem;
-  }
-
-  .order-actions .btn i {
-    margin: 0;
-  }
-
-  .order-actions .btn span {
-    display: none;
-  }
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .table {
-    font-size: 12px;
-    width: 100% !important;
-    min-width: auto !important;
-  }
-
-  /* Date handling is now in the main mobile-only media query */
-
-  /* Optimize remaining columns */
   .status-column {
-    width: 35px !important;
-    padding: 8px 0px 8px 4px !important;
+    width: 80px !important;
   }
 
   .order-column {
-    width: 50px !important;
-    padding: 8px 2px !important;
+    width: 100px !important;
   }
 
-  .name-column {
-    min-width: auto !important;
-    padding: 8px 2px !important;
+  .view-btn, .delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
   }
-
-  .actions-column {
-    width: 60px !important;
-    padding: 8px 4px !important;
-  }
-
-  /* Make status badge smaller */
-  .status-column .badge {
-    padding: 4px !important;
-    font-size: 10px !important;
-  }
+}
 
   /* Customer info layout */
   .customer-info {
@@ -114,9 +84,10 @@
   }
 
 .order-table-container {
-  background: #fff;
   border-radius: 8px;
   overflow: hidden;
+  margin-top: 1rem;
+  padding: 0;
 }
 
 .order-table-container .table {
@@ -204,22 +175,28 @@
   }
 
   /* Action buttons */
-  .order-actions {
-    display: flex;
-    gap: 4px !important;
-  }
+.order-actions {
+  display: flex;
+  gap: 4px !important;
+  background-color: #ededed;
+  padding: 4px;
+  border-radius: 4px;
+}
 
-  .view-btn, .delete-btn {
-    padding: 2px 4px !important;
-    font-size: 11px !important;
-    min-width: 26px;
-  }
+.view-btn, .delete-btn {
+  padding: 2px 4px !important;
+  font-size: 11px !important;
+  min-width: 26px;
+  background-color: white !important;
+}
 
-  .view-btn span, .delete-btn span {
-    display: none;
-  }
+.view-btn:hover, .delete-btn:hover {
+  background-color: #f8f9fa !important;
+}
 
-  .view-btn i, .delete-btn i {
+.view-btn span, .delete-btn span {
+  display: none;
+}  .view-btn i, .delete-btn i {
     margin: 0 !important;
     font-size: 11px !important;
   }
@@ -339,11 +316,6 @@
   line-height: 20px;
   font-weight: 450;
   vertical-align: middle;
-  background-color: white !important;
-}
-
-.table > tbody > tr:hover > td {
-  background-color: #F9FAFB !important;
 }
 
 .table > tbody > tr:last-child > td:first-child {

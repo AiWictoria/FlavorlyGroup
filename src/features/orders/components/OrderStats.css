@@ -3,11 +3,10 @@
   max-width: 1024px;
   margin: 0 auto 1.5rem;
   padding: 0;
-  background: rgb(252, 241, 231);
 }
 
 .stats-card {
-  background: white;
+  background: #ededed;
   border-radius: 6px;
   padding: 1.5rem;
   height: 100%;

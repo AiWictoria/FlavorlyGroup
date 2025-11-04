@@ -93,7 +93,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
 
   return (
     <Box size="xl" className="order-table-container">
-      <Table responsive>
+      <Table responsive variant="light" className="table-custom">
         <thead>
           <tr>
             <th className="status-column" style={{ width: '80px', textAlign: 'center' }}>
@@ -127,22 +127,20 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
       </thead>
       <tbody>
         {getSortedOrders(orders).map((order: Order) => (
-          <tr key={order.id}>
-            <td className="status-column" style={{ width: '80px', textAlign: 'center' }}>
+          <tr key={order.id} style={{ backgroundColor: '#ededed' }}>
+            <td className="status-column" style={{ width: '80px', textAlign: 'center', backgroundColor: '#ededed' }}>
               <StatusBadge status={formatStatus(order.status)} />
             </td>
-            <td className="order-column" style={{ width: '140px' }}>
+            <td className="order-column" style={{ width: '140px', backgroundColor: '#ededed' }}>
               <span className="order-number">
                 {formatOrderNumber(order.orderNumber)}
               </span>
             </td>
-            <td className="name-column" style={{ minWidth: '200px' }}>
-              <div className="customer-info">
-                <span className="customer-name">{order.customerName}</span>
-              </div>
+            <td className="name-column" style={{ minWidth: '200px', paddingLeft: '8px', backgroundColor: '#ededed' }}>
+              <span className="customer-name">{order.customerName}</span>
             </td>
-            <td className="date-column" style={{ minWidth: '160px' }}>{formatDate(order.date)}</td>
-            <td className="actions-column" style={{ width: '200px' }}>
+            <td className="date-column" style={{ minWidth: '160px', backgroundColor: '#ededed' }}>{formatDate(order.date)}</td>
+            <td className="actions-column" style={{ width: '200px', backgroundColor: '#ededed' }}>
               <div className="d-flex gap-2 justify-content-end order-actions">
                 <Link to={`/orders/${order.id}`}>
                   <Button variant="outline-primary" size="sm" className="view-btn">

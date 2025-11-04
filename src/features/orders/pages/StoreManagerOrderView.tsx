@@ -42,14 +42,14 @@ function StoreManagerOrderViewComponent() {
 
   if (loading) {
     return (
-      <Container fluid className="py-4" style={{ backgroundColor: 'rgb(252, 241, 231)' }}>
+      <Container fluid className="py-4">
         <div className="text-center">Loading orders...</div>
       </Container>
     );
   }
 
   return (
-    <Container fluid className="py-4" style={{ backgroundColor: 'rgb(252, 241, 231)' }}>
+    <Container fluid className="py-4">
       {error && <Alert variant="danger">{error}</Alert>}
       
       {orders.length === 0 ? (
