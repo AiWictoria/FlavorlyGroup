@@ -18,11 +18,11 @@ export function OrderItemsTable({ items,
     const allowEdit = status === "processing";
 
     return (
-        <table className="">
+        <table className="order-items-table">
             <thead className=" text-black text-center">
                 <tr>
-                    <th>Amount</th>
-                    <th>Units</th>
+                    <th className="col-amount">Amount</th>
+                    <th className="col-units">Units</th>
                     <th>Ingredients</th>
                     <th>Cost</th>
                     {showCheckboxes && <th>Check</th>}
@@ -34,8 +34,10 @@ export function OrderItemsTable({ items,
                     <tr key={x.id ?? x.ingredient}
                         className={`text-center border-top border-bottom ${x.checked ? "opacity-75" : ""} `}
                     >
-                        <td className="p-3">{x.amount}</td>
-                        <td>{x.unit}</td>
+                        <td className="p-3 cell-amount">
+                            <span className="amount">{x.amount}</span>
+                            <span className="unit-inline">{x.unit}</span></td>
+                        <td className="cell-units">{x.unit}</td>
                         <td>{x.ingredient}</td>
                         <td className="">{formatSek(x.cost)}</td>
 
