@@ -1,6 +1,6 @@
 /* Main table wrapper */
 .table-wrapper {
-  background: #FCF1E7;
+  background: #fcf1e7;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -266,18 +266,18 @@
 
 /* Table header styling */
 .table > thead {
-  background-color: #18110F !important;
+  background-color: #18110f !important;
 }
 
 .table > thead > tr {
-  background-color: #18110F !important;
+  background-color: #18110f !important;
 }
 
 .table > thead > tr > th {
   padding: 12px 24px !important;
-  border-bottom: 1px solid #E5E7EB !important;
+  border-bottom: 1px solid #e5e7eb !important;
   color: white !important;
-  background-color: #18110F !important;
+  background-color: #18110f !important;
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
@@ -331,9 +331,7 @@
 }
 
 .table > tbody > tr > td {
-  border: none !important;
-  padding: 16px 24px !important;
-  border-bottom: 1px solid #E5E7EB !important;
+  border-bottom: 1px solid #e5e7eb !important;
   color: #374151;
   font-size: 14px;
   line-height: 20px;
@@ -343,7 +341,7 @@
 }
 
 .table > tbody > tr:hover > td {
-  background-color: #F9FAFB !important;
+  background-color: #f9fafb !important;
 }
 
 .table > tbody > tr:last-child > td:first-child {
@@ -367,15 +365,15 @@
 }
 
 .status-icon.pending {
-  background-color: #DC2626;
+  background-color: #dc2626;
 }
 
 .status-icon.processing {
-  background-color: #F59E0B;
+  background-color: #f59e0b;
 }
 
 .status-icon.completed {
-  background-color: #10B981;
+  background-color: #10b981;
 }
 
 .status-icon.cancelled,
@@ -410,9 +408,10 @@
   font-weight: 500;
   color: #374151;
   font-size: 14px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   padding: 2px 8px;
-  background-color: #F3F4F6;
+  background-color: #f3f4f6;
   border-radius: 4px;
   letter-spacing: -0.025em;
   line-height: 20px;
