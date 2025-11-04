@@ -1,5 +1,6 @@
 import { Col, Row } from "react-bootstrap";
 import TotalBox from "./TotalBox";
+import CartItem from "./CartItem";
 interface CartProps {
   onNext: () => void;
 }
@@ -9,6 +10,7 @@ export default function Cart({ onNext }: CartProps) {
       <Row>
         <Col>
           <h2>Detta är Cart</h2>
+          <CartItem></CartItem>
           <button onClick={onNext}>Next</button>
           <TotalBox
             buttonLable="Delivery"
