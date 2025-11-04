@@ -11,7 +11,7 @@ export default function App() {
 
   return (
     <>
-      <div className="d-flex flex-column min-vh-100 mt-5">
+      <div className="d-flex flex-column min-vh-100">
         <Header />
         <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
         <Main />
