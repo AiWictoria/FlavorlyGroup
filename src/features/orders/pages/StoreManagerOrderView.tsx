@@ -59,28 +59,31 @@ function StoreManagerOrderViewComponent() {
           <OrderStats orders={orders} />
           <div className="table-wrapper">
             <div className="table-container">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-              <h2 className="mb-0">
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+              <h2 className="mb-0 text-center text-md-start">
                 {selectedTab === 'completed' && 'Completed Orders'}
                 {selectedTab === 'pending' && 'Current Orders'}
                 {selectedTab === 'cancelled' && 'Cancelled Orders'}
               </h2>
-              <ButtonGroup>
+              <ButtonGroup className="d-flex flex-wrap justify-content-center">
                 <Button 
                   variant={selectedTab === 'pending' ? "primary" : "outline-primary"}
                   onClick={() => setSelectedTab('pending')}
+                  className="flex-grow-0"
                 >
-                  Current Orders
+                  Current
                 </Button>
                 <Button 
                   variant={selectedTab === 'completed' ? "primary" : "outline-primary"}
                   onClick={() => setSelectedTab('completed')}
+                  className="flex-grow-0"
                 >
                   Completed
                 </Button>
                 <Button 
                   variant={selectedTab === 'cancelled' ? "primary" : "outline-primary"}
                   onClick={() => setSelectedTab('cancelled')}
+                  className="flex-grow-0"
                 >
                   Cancelled
                 </Button>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Order } from '@models/order.types';
 import { useState } from 'react';
 import { StatusBadge } from './orders/StatusBadge';
+import Box from '../../../components/orderReceipt/Box';
 import './OrderTable.css';
 
 interface OrderTableProps {
@@ -91,34 +92,35 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
   const sortedOrders = getSortedOrders(orders);
 
   return (
-    <Table responsive>
-      <thead>
-        <tr>
-          <th style={{ width: '80px', textAlign: 'center' }}>
-            <div className="header-cell-content justify-content-center" onClick={handleStatusSort} style={{ cursor: 'pointer' }}>
-              <span>Status</span>
-              <i className={`bi bi-arrow-down sort-icon ${statusSort === 'asc' ? 'asc' : ''}`}
+    <Box size="xl" className="order-table-container">
+      <Table responsive>
+        <thead>
+          <tr>
+            <th className="status-column" style={{ width: '80px', textAlign: 'center' }}>
+              <div className="header-cell-content justify-content-center" onClick={handleStatusSort} style={{ cursor: 'pointer' }}>
+                <span>Status</span>
+                <i className={`bi bi-arrow-down sort-icon ${statusSort === 'asc' ? 'asc' : ''}`}
                 style={{ visibility: statusSort ? 'visible' : 'hidden' }}></i>
             </div>
           </th>
-          <th style={{ width: '140px' }}>
+          <th className="order-column" style={{ width: '140px' }}>
             <div className="header-cell-content">
               <span>Order Nr.</span>
             </div>
           </th>
-          <th style={{ minWidth: '200px' }}>
+          <th className="name-column" style={{ minWidth: '200px' }}>
             <div className="header-cell-content">
               <span>Name</span>
             </div>
           </th>
-          <th style={{ minWidth: '160px' }}>
+          <th className="date-column" style={{ minWidth: '160px' }}>
             <div className="header-cell-content" onClick={handleDateSort} style={{ cursor: 'pointer' }}>
               <span>Date</span>
               <i className={`bi bi-arrow-down sort-icon ${dateSort === 'asc' ? 'asc' : ''}`}
                 style={{ visibility: dateSort ? 'visible' : 'hidden' }}></i>
             </div>
           </th>
-          <th className="text-end" style={{ width: '200px' }}>
+          <th className="actions-column text-end" style={{ width: '200px' }}>
             Actions
           </th>
         </tr>
@@ -126,31 +128,37 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
       <tbody>
         {getSortedOrders(orders).map((order: Order) => (
           <tr key={order.id}>
-            <td style={{ width: '80px', textAlign: 'center' }}>
+            <td className="status-column" style={{ width: '80px', textAlign: 'center' }}>
               <StatusBadge status={formatStatus(order.status)} />
             </td>
-            <td style={{ width: '140px' }}>
+            <td className="order-column" style={{ width: '140px' }}>
               <span className="order-number">
                 {formatOrderNumber(order.orderNumber)}
               </span>
             </td>
-            <td style={{ minWidth: '200px' }}>{order.customerName}</td>
-            <td style={{ minWidth: '160px' }}>{formatDate(order.date)}</td>
-            <td style={{ width: '200px' }}>
-              <div className="d-flex gap-4 justify-content-end">
+            <td className="name-column" style={{ minWidth: '200px' }}>
+              <div className="customer-info">
+                <span className="customer-name">{order.customerName}</span>
+              </div>
+            </td>
+            <td className="date-column" style={{ minWidth: '160px' }}>{formatDate(order.date)}</td>
+            <td className="actions-column" style={{ width: '200px' }}>
+              <div className="d-flex gap-2 justify-content-end order-actions">
                 <Link to={`/orders/${order.id}`}>
-                  <Button variant="outline-primary" size="sm">
+                  <Button variant="outline-primary" size="sm" className="view-btn">
                     <i className="bi bi-eye me-1"></i>
-                    View
+                    <span>View</span>
                   </Button>
                 </Link>
                 {onDelete && (
                   <Button
                     variant="outline-danger"
                     size="sm"
+                    className="delete-btn"
                     onClick={() => onDelete(order.id)}
                   >
-                    <i className="bi bi-trash"></i>
+                    <i className="bi bi-trash me-1"></i>
+                    <span>Delete</span>
                   </Button>
                 )}
               </div>
@@ -159,5 +167,6 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
         ))}
       </tbody>
     </Table>
+    </Box>
   );
 }
