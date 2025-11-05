@@ -88,9 +88,6 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
     return sortedOrders;
   };
 
-  // Apply sorting to orders
-  const sortedOrders = getSortedOrders(orders);
-
   return (
     <Box size="xl" className="order-table-container">
       <Table responsive variant="light" className="table-custom">
