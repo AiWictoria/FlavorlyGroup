@@ -32,10 +32,16 @@ export default function CreateRecipe() {
   }
 
   async function handleSubmit() {
-    const result = await createRecipe(recipe);
+    const result = await createRecipe({
+      title: recipe.title,
+      category: recipe.category,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      image: recipe.image,
+    });
 
     if (result?.success && recipe.image) {
-      await uploadImage(result.insertId, recipe.image);
+      await uploadImage(recipe.image);
     }
     if (result.success) {
       setRecipe({

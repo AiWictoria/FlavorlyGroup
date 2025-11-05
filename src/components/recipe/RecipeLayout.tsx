@@ -7,7 +7,7 @@ import type { Recipe } from "../../hooks/useRecipes";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
-  recipe?: Recipe;
+  recipe?: Recipe | null;
   onSubmit?: (recipe: Recipe) => void;
   onChange?: (field: string, value: string) => void;
   onFileSelect?: (file: File | null) => void;
@@ -32,7 +32,7 @@ export default function RecipeLayout({
           <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4">
             <RecipeImageSection
               mode={mode}
-              recipe={recipe}
+              recipe={recipe ?? undefined}
               onFileSelect={onFileSelect}
             />
           </Col>
