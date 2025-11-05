@@ -1,16 +1,234 @@
-/* Main table wrapper */
+/* Basic responsive container */
 .table-wrapper {
-  background: #fcf1e7;
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 48px 0;
+  padding: 24px 0;
 }
 
 .table-container {
   width: 100%;
   max-width: 1024px;
   margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Table styling */
+.table-custom {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-custom tbody td {
+  background-color: #ededed !important;
+  padding: 12px 8px;
+}
+
+.table-custom thead th {
+  background-color: white !important;
+  padding: 12px 8px;
+}
+
+.customer-name {
+  display: block;
+  padding-left: 0;
+}
+
+.name-column {
+  padding-left: 8px !important;
+}
+
+.header-cell-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .table-wrapper {
+    padding: 16px 0;
+  }
+
+  .date-column,
+  .name-column {
+    display: none !important;
+  }
+
+  .status-column {
+    width: 80px !important;
+  }
+
+  .order-column {
+    width: 100px !important;
+  }
+
+  .view-btn, .delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+  /* Customer info layout */
+  .customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .customer-name {
+    font-weight: 500;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+
+.order-table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.order-table-container .table {
+  margin-bottom: 0;
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  .table td, .table th {
+    padding: 12px;
+  }
+
+  .customer-info {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .date-column,
+  .name-column {
+    display: none !important;
+  }
+
+  .table td, .table th {
+    padding: 8px 4px;
+  }
+
+  .status-column {
+    width: 80px !important;
+  }
+
+  .order-column {
+    width: 100px !important;
+  }
+
+  .actions-column {
+    width: auto !important;
+  }
+
+  .order-actions {
+    flex-wrap: nowrap;
+  }
+
+  .view-btn, .delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .order-table-container {
+    margin: 0 -12px;  /* Negative margin för att sträcka ut containern på mobil */
+    border-radius: 0;
+  }
+}
+}
+  
+  .table td, .table th {
+    padding: 8px 4px !important;
+  }
+
+  .order-actions {
+    padding-right: 4px;
+  }
+
+  .customer-info {
+    padding-left: 4px;
+  }
+
+  .status-column {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+}
+
+  /* Optimize table cell spacing */
+  .table > thead > tr > th,
+  .table > tbody > tr > td {
+    padding: 8px 4px !important;
+  }
+
+  .table > thead > tr > th:first-child,
+  .table > tbody > tr > td:first-child {
+    padding-left: 8px !important;
+  }
+
+  /* Action buttons */
+.order-actions {
+  display: flex;
+  gap: 4px !important;
+  background-color: #ededed;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.view-btn, .delete-btn {
+  padding: 2px 4px !important;
+  font-size: 11px !important;
+  min-width: 26px;
+  background-color: white !important;
+}
+
+.view-btn:hover, .delete-btn:hover {
+  background-color: #f8f9fa !important;
+}
+
+.view-btn span, .delete-btn span {
+  display: none;
+}  .view-btn i, .delete-btn i {
+    margin: 0 !important;
+    font-size: 11px !important;
+  }
+
+  /* Order number */
+  .order-number {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* Table header optimizations */
+  .table > thead > tr > th {
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 8px 4px !important;
+  }
+
+  /* Sort icons */
+  .sort-icon {
+    font-size: 12px !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+  .table-container {
+    padding: 0 0.25rem;
+  }
+
+  .customer-name {
+    max-width: 100px;
+  }
 }
 
 /* Base table styling */
@@ -96,11 +314,7 @@
   line-height: 20px;
   font-weight: 450;
   vertical-align: middle;
-  background-color: white !important;
-}
-
-.table > tbody > tr:hover > td {
-  background-color: #f9fafb !important;
+  background-color: #ededed !important;
 }
 
 .table > tbody > tr:last-child > td:first-child {
