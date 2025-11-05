@@ -46,7 +46,7 @@ export default function OrderBox({
         })}
       </div>
 
-      <div className="orderbox-content py-5">{children}</div>
+      <div className="orderbox-content py-4">{children}</div>
     </Box>
   );
 }

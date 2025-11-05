@@ -28,16 +28,18 @@ export default function CartItem({
           <img src={productImage} alt={name}></img>
         </Col>
 
-        <Col>
-          <h5>{name}</h5>
-          <QuantitySelector
-            value={quantity}
-            onChange={handleQuantityChange}
-          ></QuantitySelector>
+        <Col className="d-flex flex-column">
+          <h6>{name}</h6>
+          <div className="mt-auto">
+            <QuantitySelector
+              value={quantity}
+              onChange={handleQuantityChange}
+            />
+          </div>
         </Col>
 
         <Col xs="auto" className="text-end">
-          <h4>{totalPrice}kr</h4>
+          <h5>{totalPrice}kr</h5>
         </Col>
       </Row>
     </>

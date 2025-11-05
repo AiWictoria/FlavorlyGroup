@@ -63,23 +63,6 @@ main {
   opacity: 0.8;
 }
 
-.quantity-wrapper {
-  border-radius: 5px;
-  width: 75px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-}
-
-.quantity-button {
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
-  outline: none;
-  color: inherit;
-  padding: 4px 6px;
-}
 
 .flavorly-shadow {
   border: 1px solid #dddddd93;
@@ -92,4 +75,11 @@ main {
   object-fit: cover;
   object-position: center;
   border-radius: 8px;
+}
+
+
+@media (max-width: 450px) {
+  .item-wrapper img {
+    width: 55px;
+  }
 }

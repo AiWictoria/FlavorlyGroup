@@ -1,26 +1,19 @@
-.quantity-border {
-  border: 2px solid #dfdddb;
-  border-radius: 2px;
-  display: inline-flex;
-  padding: 0;
-  overflow: hidden;
+.quantity-wrapper {
+  border-radius: 5px;
+  width: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
 }
 
-.display {
-  display: inline-flex;
-  width: auto;
-}
-
-.quantity-selector-button {
+.quantity-button {
+  background-color: transparent;
   border: none;
-  background-color: white;
-  cursor: pointer;
   box-shadow: none;
-}
-
-.button-background-color {
-  background-color: white;
-  padding: 4px 8px;
+  outline: none;
+  color: inherit;
+  padding: 4px 6px;
 }
 
 .plus-color {
