@@ -78,6 +78,7 @@
 }
 
 .stats-value {
+  font-family: "Playfair Display", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1;
@@ -86,6 +87,7 @@
 }
 
 .stats-label {
+  font-family: "Playfair Display", sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
   color: #4B5563;
@@ -94,6 +96,7 @@
 }
 
 .stats-detail {
+  font-family: "Playfair Display", sans-serif;
   margin-top: 0.25rem;
   font-size: 0.8125rem;
   color: #6B7280;
