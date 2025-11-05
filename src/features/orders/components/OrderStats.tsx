@@ -30,15 +30,19 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <i className="bi bi-clock"></i>
             </div>
             <div className="stats-content">
-              <div className="stats-value">{activeOrders}</div>
+              <div className="stats-value-wrapper">
+                <div className="stats-value">{activeOrders}</div>
+              </div>
               <div className="stats-label">Active Orders</div>
-              <div className="stats-detail">
-                <span className="stats-detail-item">
-                  <i className="bi bi-cart"></i> {stats.pending} pending
-                </span>
-                <span className="stats-detail-item">
-                  <i className="bi bi-three-dots"></i> {stats.processing} processing
-                </span>
+              <div className="stats-detail-wrapper">
+                <div className="stats-detail">
+                  <span className="stats-detail-item">
+                    <i className="bi bi-cart"></i> {stats.pending} pending
+                  </span>
+                  <span className="stats-detail-item">
+                    <i className="bi bi-three-dots"></i> {stats.processing} processing
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -49,15 +53,19 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <i className="bi bi-check-lg"></i>
             </div>
             <div className="stats-content">
-              <div className="stats-value">{completionRate}%</div>
+              <div className="stats-value-wrapper">
+                <div className="stats-value">{completionRate}%</div>
+              </div>
               <div className="stats-label">Completion Rate</div>
-              <div className="stats-detail">
-                <span className="stats-detail-item">
-                  <i className="bi bi-check-lg"></i> {stats.completed} completed
-                </span>
-                <span className="stats-detail-item">
-                  <i className="bi bi-exclamation-lg"></i> {stats.cancelled} cancelled
-                </span>
+              <div className="stats-detail-wrapper">
+                <div className="stats-detail">
+                  <span className="stats-detail-item">
+                    <i className="bi bi-check-lg"></i> {stats.completed} completed
+                  </span>
+                  <span className="stats-detail-item">
+                    <i className="bi bi-exclamation-lg"></i> {stats.cancelled} cancelled
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -68,10 +76,14 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <i className="bi bi-boxes"></i>
             </div>
             <div className="stats-content">
-              <div className="stats-value">{stats.total}</div>
+              <div className="stats-value-wrapper">
+                <div className="stats-value">{stats.total}</div>
+              </div>
               <div className="stats-label">Total Orders</div>
-              <div className="stats-detail">
-                All time orders
+              <div className="stats-detail-wrapper">
+                <div className="stats-detail">
+                  All time orders
+                </div>
               </div>
             </div>
           </div>
@@ -82,10 +94,14 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <i className="bi bi-cash"></i>
             </div>
             <div className="stats-content">
-              <div className="stats-value">{stats.totalRevenue} kr</div>
+              <div className="stats-value-wrapper">
+                <div className="stats-value">{stats.totalRevenue} kr</div>
+              </div>
               <div className="stats-label">Total Revenue</div>
-              <div className="stats-detail">
-                Total earnings from all orders
+              <div className="stats-detail-wrapper">
+                <div className="stats-detail">
+                  Total earnings from all orders
+                </div>
               </div>
             </div>
           </div>

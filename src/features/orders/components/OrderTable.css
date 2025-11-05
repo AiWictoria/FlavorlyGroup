@@ -314,14 +314,7 @@
   line-height: 20px;
   font-weight: 450;
   vertical-align: middle;
-<<<<<<< HEAD
-=======
-  background-color: white !important;
-}
-
-.table > tbody > tr:hover > td {
-  background-color: #f9fafb !important;
->>>>>>> origin/dev
+  background-color: #ededed !important;
 }
 
 .table > tbody > tr:last-child > td:first-child {
