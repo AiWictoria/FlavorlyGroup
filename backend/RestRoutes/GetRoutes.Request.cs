@@ -11,7 +11,8 @@ public static partial class GetRoutes
     public static async Task<List<Dictionary<string, object>>> FetchCleanContent(
         string contentType,
         YesSql.ISession session,
-        bool populate = true)
+        bool populate = true,
+        bool denormalize = false)
     {
         // Fetch all content items for the given content type
         var contentItems = await session
@@ -62,7 +63,7 @@ public static partial class GetRoutes
 
                     foreach (var obj in plainObjects)
                     {
-                        PopulateContentItemIds(obj, itemsDictionary);
+                        PopulateContentItemIds(obj, itemsDictionary, denormalize);
                     }
                 }
             }
@@ -111,7 +112,9 @@ public static partial class GetRoutes
         }
 
         // Clean up the bullshit
-        var cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary)).ToList();
+        var cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary))
+            .Select(obj => RemoveMetadataFields(obj))
+            .ToList();
 
         // Second population pass: cleanup may have introduced new ID fields (e.g., from BagPart items)
         if (populate && cleanObjects.Count > 0)
@@ -161,11 +164,21 @@ public static partial class GetRoutes
                         }
 
                         // Populate the IDs in cleaned data with cleaned items
-                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary);
+                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary, denormalize);
+
+                        // Post-process RecipeIngredient objects to reduce ingredient/unit to {id, name}
+                        cleanObjects = PostProcessRecipeIngredients(cleanObjects);
                     }
                 }
             }
         }
+
+        // Post-process RecipeIngredient objects even if no new population was needed
+        cleanObjects = PostProcessRecipeIngredients(cleanObjects);
+
+        // Post-process Category taxonomy terms to expand with names
+        // Always run this (not just when populate=true) since it only looks up taxonomy terms
+        cleanObjects = await PostProcessCategoryTerms(cleanObjects, session);
 
         return cleanObjects;
     }
@@ -174,7 +187,8 @@ public static partial class GetRoutes
     public static async Task<(List<Dictionary<string, object>> cleanObjects, Dictionary<string, Dictionary<string, JsonElement>> rawById)> FetchCleanContentWithRaw(
         string contentType,
         YesSql.ISession session,
-        bool populate = true)
+        bool populate = true,
+        bool denormalize = false)
     {
         // Fetch all content items for the given content type
         var contentItems = await session
@@ -245,7 +259,7 @@ public static partial class GetRoutes
 
                     foreach (var obj in plainObjects)
                     {
-                        PopulateContentItemIds(obj, itemsDictionary);
+                        PopulateContentItemIds(obj, itemsDictionary, denormalize);
                     }
                 }
             }
@@ -294,7 +308,9 @@ public static partial class GetRoutes
         }
 
         // Clean up the bullshit
-        var cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary)).ToList();
+        var cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary))
+            .Select(obj => RemoveMetadataFields(obj))
+            .ToList();
 
         // Second population pass: cleanup may have introduced new ID fields (e.g., from BagPart items)
         if (populate && cleanObjects.Count > 0)
@@ -344,25 +360,279 @@ public static partial class GetRoutes
                         }
 
                         // Populate the IDs in cleaned data with cleaned items
-                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary);
+                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary, denormalize);
                     }
                 }
             }
         }
 
+        // Post-process Category taxonomy terms to expand with names
+        // Always run this (not just when populate=true) since it only looks up taxonomy terms
+        cleanObjects = await PostProcessCategoryTerms(cleanObjects, session);
+
         return (cleanObjects, rawById);
     }
 
-    // Helper to populate ID fields with already-cleaned items
-    private static List<Dictionary<string, object>> PopulateWithCleanedItems(
-        List<Dictionary<string, JsonElement>> objects,
-        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary)
+    // Post-process RecipeIngredient objects to reduce nested ingredient/unit to {id, name}
+    private static List<Dictionary<string, object>> PostProcessRecipeIngredients(List<Dictionary<string, object>> objects)
     {
         var result = new List<Dictionary<string, object>>();
 
         foreach (var obj in objects)
         {
-            var populated = PopulateObjectWithCleanedItems(obj, cleanedItemsDictionary);
+            var processed = PostProcessRecipeIngredientsRecursive(obj);
+            result.Add(processed);
+        }
+
+        return result;
+    }
+
+    private static Dictionary<string, object> PostProcessRecipeIngredientsRecursive(Dictionary<string, object> obj)
+    {
+        var processed = new Dictionary<string, object>();
+
+        foreach (var kvp in obj)
+        {
+            // Handle RecipeIngredient objects in ingredients array
+            if (kvp.Key == "ingredients" && kvp.Value is List<object> ingredientsList)
+            {
+                var processedIngredients = new List<object>();
+                foreach (var ingredient in ingredientsList)
+                {
+                    if (ingredient is Dictionary<string, object> ingDict)
+                    {
+                        var processedIng = new Dictionary<string, object>();
+
+                        // Copy all fields
+                        foreach (var ingKvp in ingDict)
+                        {
+                            if (ingKvp.Key == "ingredient" && ingKvp.Value is Dictionary<string, object> ingredientObj)
+                            {
+                                // Reduce to {id, name}
+                                var reduced = new Dictionary<string, object>();
+                                if (ingredientObj.TryGetValue("id", out var id))
+                                    reduced["id"] = id;
+                                if (ingredientObj.TryGetValue("title", out var title))
+                                    reduced["name"] = title;
+                                else if (ingredientObj.TryGetValue("name", out var name))
+                                    reduced["name"] = name;
+                                processedIng["ingredient"] = reduced;
+                            }
+                            else if (ingKvp.Key == "unit" && ingKvp.Value is Dictionary<string, object> unitObj)
+                            {
+                                // Reduce to {id, name}
+                                var reduced = new Dictionary<string, object>();
+                                if (unitObj.TryGetValue("id", out var id))
+                                    reduced["id"] = id;
+                                if (unitObj.TryGetValue("title", out var title))
+                                    reduced["name"] = title;
+                                else if (unitObj.TryGetValue("name", out var name))
+                                    reduced["name"] = name;
+                                processedIng["unit"] = reduced;
+                            }
+                            else
+                            {
+                                processedIng[ingKvp.Key] = ingKvp.Value;
+                            }
+                        }
+                        processedIngredients.Add(processedIng);
+                    }
+                    else
+                    {
+                        processedIngredients.Add(ingredient);
+                    }
+                }
+                processed["ingredients"] = processedIngredients;
+            }
+            else if (kvp.Value is Dictionary<string, object> nestedDict)
+            {
+                processed[kvp.Key] = PostProcessRecipeIngredientsRecursive(nestedDict);
+            }
+            else if (kvp.Value is List<object> list)
+            {
+                var processedList = new List<object>();
+                foreach (var item in list)
+                {
+                    if (item is Dictionary<string, object> itemDict)
+                    {
+                        processedList.Add(PostProcessRecipeIngredientsRecursive(itemDict));
+                    }
+                    else
+                    {
+                        processedList.Add(item);
+                    }
+                }
+                processed[kvp.Key] = processedList;
+            }
+            else
+            {
+                processed[kvp.Key] = kvp.Value;
+            }
+        }
+
+        return processed;
+    }
+
+    // Post-process Category taxonomy terms to expand with names
+    private static async Task<List<Dictionary<string, object>>> PostProcessCategoryTerms(
+        List<Dictionary<string, object>> objects,
+        YesSql.ISession session)
+    {
+        // Collect all category term IDs
+        var categoryTermIds = new HashSet<string>();
+        foreach (var obj in objects)
+        {
+            // Handle _categoryIds - can be various collection types
+            if (obj.TryGetValue("_categoryIds", out var idsObj) && idsObj != null)
+            {
+                // Try to enumerate as IEnumerable
+                if (idsObj is System.Collections.IEnumerable enumerable)
+                {
+                    foreach (var id in enumerable)
+                    {
+                        string? idStr = null;
+                        if (id is string str)
+                        {
+                            idStr = str;
+                        }
+                        else if (id != null)
+                        {
+                            idStr = id.ToString();
+                        }
+
+                        if (!string.IsNullOrEmpty(idStr))
+                        {
+                            categoryTermIds.Add(idStr);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (categoryTermIds.Count == 0)
+        {
+            return objects;
+        }
+
+        // Fetch taxonomy terms
+        var jsonOptions = new JsonSerializerOptions
+        {
+            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+        };
+
+        var terms = await session
+            .Query()
+            .For<ContentItem>()
+            .With<ContentItemIndex>(x => x.ContentItemId.IsIn(categoryTermIds) && x.Published)
+            .ListAsync();
+
+        var termsJson = JsonSerializer.Serialize(terms, jsonOptions);
+        var termsList = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(termsJson);
+
+        // Create dictionary of term ID -> {id, name}
+        var termsDict = new Dictionary<string, Dictionary<string, object>>();
+        if (termsList != null)
+        {
+            foreach (var term in termsList)
+            {
+                if (term.TryGetValue("ContentItemId", out var idElement))
+                {
+                    var termId = idElement.GetString();
+                    if (termId == null) continue;
+
+                    // Try to get name from DisplayText first, then TitlePart.Title
+                    string? termName = null;
+
+                    if (term.TryGetValue("DisplayText", out var displayText) &&
+                        displayText.ValueKind == JsonValueKind.String)
+                    {
+                        termName = displayText.GetString();
+                    }
+
+                    // Fallback to TitlePart.Title if DisplayText is not available
+                    if (string.IsNullOrEmpty(termName) &&
+                        term.TryGetValue("TitlePart", out var titlePart) &&
+                        titlePart.ValueKind == JsonValueKind.Object)
+                    {
+                        var titlePartDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(titlePart.GetRawText());
+                        if (titlePartDict != null &&
+                            titlePartDict.TryGetValue("Title", out var title) &&
+                            title.ValueKind == JsonValueKind.String)
+                        {
+                            termName = title.GetString();
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(termName))
+                    {
+                        termsDict[termId] = new Dictionary<string, object>
+                        {
+                            ["id"] = termId,
+                            ["name"] = termName
+                        };
+                    }
+                }
+            }
+        }
+
+        // Replace _categoryIds with expanded category objects
+        var result = new List<Dictionary<string, object>>();
+        foreach (var obj in objects)
+        {
+            var processed = new Dictionary<string, object>(obj);
+
+            // Handle _categoryIds - can be various collection types
+            if (processed.TryGetValue("_categoryIds", out var idsObj) && idsObj != null)
+            {
+                var categories = new List<Dictionary<string, object>>();
+
+                // Try to enumerate as IEnumerable
+                if (idsObj is System.Collections.IEnumerable enumerable)
+                {
+                    foreach (var id in enumerable)
+                    {
+                        string? idStr = null;
+                        if (id is string str)
+                        {
+                            idStr = str;
+                        }
+                        else if (id != null)
+                        {
+                            idStr = id.ToString();
+                        }
+
+                        if (!string.IsNullOrEmpty(idStr) && termsDict.TryGetValue(idStr, out var termObj))
+                        {
+                            categories.Add(termObj);
+                        }
+                    }
+                }
+
+                if (categories.Count > 0)
+                {
+                    processed["category"] = categories;
+                }
+
+                processed.Remove("_categoryIds");
+            }
+
+            result.Add(processed);
+        }
+
+        return result;
+    }
+
+    // Helper to populate ID fields with already-cleaned items
+    private static List<Dictionary<string, object>> PopulateWithCleanedItems(
+        List<Dictionary<string, JsonElement>> objects,
+        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary,
+        bool denormalize = false)
+    {
+        var result = new List<Dictionary<string, object>>();
+
+        foreach (var obj in objects)
+        {
+            var populated = PopulateObjectWithCleanedItems(obj, cleanedItemsDictionary, denormalize);
             result.Add(populated);
         }
 
@@ -371,7 +641,8 @@ public static partial class GetRoutes
 
     private static Dictionary<string, object> PopulateObjectWithCleanedItems(
         Dictionary<string, JsonElement> obj,
-        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary)
+        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary,
+        bool denormalize = false)
     {
         var result = new Dictionary<string, object>();
 
@@ -386,9 +657,14 @@ public static partial class GetRoutes
                 var idStr = value.GetString();
                 if (idStr != null && cleanedItemsDictionary.TryGetValue(idStr, out var cleanedItem))
                 {
-                    // Replace "ingredientId" with "ingredient" containing cleaned data
+                    // Remove "Id" suffix from key name
                     var newKey = key.Substring(0, key.Length - 2);
                     result[newKey] = cleanedItem;
+                    if (denormalize)
+                    {
+                        // Keep the original ID field when denormalizing
+                        result[key] = idStr;
+                    }
                     continue;
                 }
                 // If not found in dictionary, keep the original ID field
@@ -402,7 +678,7 @@ public static partial class GetRoutes
                 var nested = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(value.GetRawText());
                 if (nested != null)
                 {
-                    result[key] = PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary);
+                    result[key] = PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary, denormalize);
                 }
                 else
                 {
@@ -422,7 +698,7 @@ public static partial class GetRoutes
                         var nested = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
                         if (nested != null)
                         {
-                            array.Add(PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary));
+                            array.Add(PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary, denormalize));
                         }
                     }
                     else

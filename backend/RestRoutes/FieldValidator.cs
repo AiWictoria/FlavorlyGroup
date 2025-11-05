@@ -11,7 +11,7 @@ public static class FieldValidator
         YesSql.ISession session)
     {
         // Try to get existing items first
-        var cleanObjects = await GetRoutes.FetchCleanContent(contentType, session, populate: false);
+        var cleanObjects = await GetRoutes.FetchCleanContent(contentType, session, populate: false, denormalize: false);
 
         if (cleanObjects.Any())
         {
@@ -35,7 +35,7 @@ public static class FieldValidator
         await session.SaveChangesAsync();
 
         // Get the cleaned version to extract fields
-        cleanObjects = await GetRoutes.FetchCleanContent(contentType, session, populate: false);
+        cleanObjects = await GetRoutes.FetchCleanContent(contentType, session, populate: false, denormalize: false);
         var validFields = cleanObjects.First().Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         // Delete the temporary item

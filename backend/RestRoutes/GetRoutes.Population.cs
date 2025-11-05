@@ -80,7 +80,8 @@ public static partial class GetRoutes
 
     private static void PopulateContentItemIds(
         Dictionary<string, JsonElement> obj,
-        Dictionary<string, Dictionary<string, JsonElement>> itemsDictionary)
+        Dictionary<string, Dictionary<string, JsonElement>> itemsDictionary,
+        bool denormalize = false)
     {
         var keysToProcess = obj.Keys.ToList();
 
@@ -105,7 +106,10 @@ public static partial class GetRoutes
                 }
 
                 obj["Items"] = JsonSerializer.SerializeToElement(items);
-                obj.Remove("ContentItemIds");
+                if (!denormalize)
+                {
+                    obj.Remove("ContentItemIds");
+                }
             }
             // Handle singular ID fields (e.g., "ingredientId" -> "ingredient"), but skip "id" and "ContentItemId"
             else if (key != "id" && key != "ContentItemId" && key.EndsWith("Id") && value.ValueKind == JsonValueKind.String)
@@ -116,7 +120,10 @@ public static partial class GetRoutes
                     // Remove "Id" suffix from key name
                     var newKey = key.Substring(0, key.Length - 2);
                     obj[newKey] = JsonSerializer.SerializeToElement(item);
-                    obj.Remove(key);
+                    if (!denormalize)
+                    {
+                        obj.Remove(key);
+                    }
                 }
             }
             else if (value.ValueKind == JsonValueKind.Object)
@@ -124,7 +131,7 @@ public static partial class GetRoutes
                 var nested = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(value.GetRawText());
                 if (nested != null)
                 {
-                    PopulateContentItemIds(nested, itemsDictionary);
+                    PopulateContentItemIds(nested, itemsDictionary, denormalize);
                     obj[key] = JsonSerializer.SerializeToElement(nested);
                 }
             }
@@ -138,7 +145,7 @@ public static partial class GetRoutes
                         var nested = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
                         if (nested != null)
                         {
-                            PopulateContentItemIds(nested, itemsDictionary);
+                            PopulateContentItemIds(nested, itemsDictionary, denormalize);
                             populatedArray.Add(nested);
                         }
                     }
