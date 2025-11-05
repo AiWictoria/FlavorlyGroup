@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Form } from "react-bootstrap";
+import toast from "react-hot-toast";
 
 // Component which retrieves Ingredient object when the user searches
 
@@ -46,22 +47,34 @@ export default function IngredientSearch({
     onIngredientChange(undefined);
   }
 
-  // Search for ingredients when the user types
   useEffect(() => {
-    // Don't search if theres no text in textfield
+    // Don't search if there's no text
     if (!searchText) {
       setShow(false);
+      setSearchedIngredients([]);
       return;
     }
 
-    const fetchData = async () => {
-      const response = await fetch(
-        `/api/expand/Ingredient?where=titleLIKE${searchText}&limit=4`
-      );
-      const data: Ingredient[] = await response.json();
-      setSearchedIngredients(data);
+    const fetchIngredients = async () => {
+      try {
+        const res = await fetch(
+          `/api/expand/Ingredient?where=titleLIKE${searchText}&limit=4`
+        );
+
+        if (!res.ok) {
+          toast.error("Failed to load ingredients, try again later");
+          return;
+        }
+
+        const data: Ingredient[] = await res.json();
+        setSearchedIngredients(data);
+        setShow(true);
+      } catch {
+        toast.error("Network error, please try again later");
+      }
     };
-    fetchData();
+
+    fetchIngredients();
   }, [searchText]);
 
   return (
