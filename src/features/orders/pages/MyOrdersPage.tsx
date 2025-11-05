@@ -27,7 +27,6 @@ export default function MyOrdersPage() {
   return (
     <div className="mt-5 p-5">
       <h2 className="mt-3 mb-4">My Orders</h2>
-      <PayNowButton />
       <div className="d-flex flex-column gap-2">
         {orders.map((order) => (
           <OrderCard key={order.id} order={order} />
