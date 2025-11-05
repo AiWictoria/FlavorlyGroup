@@ -9,6 +9,7 @@ interface Product {
 
 interface TotalBoxProps {
   buttonLable: string;
+  onNext: () => void;
   products: Product[];
   deliveryPrice?: number;
   vatRate?: number;
@@ -16,6 +17,7 @@ interface TotalBoxProps {
 
 export default function TotalBox({
   buttonLable,
+  onNext,
   products,
   deliveryPrice,
   vatRate = 0.12,
@@ -60,7 +62,9 @@ export default function TotalBox({
           md={4}
           className="d-flex justify-content-center align-items-end px-5 px-md-0 mx-md-0 py-2"
         >
-          <Button className="w-100">{buttonLable}</Button>
+          <Button className="w-100" onClick={onNext}>
+            {buttonLable}
+          </Button>
         </Col>
       </Row>
     </>

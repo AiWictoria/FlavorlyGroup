@@ -18,7 +18,7 @@ export default function Confirmation() {
   );
   return (
     <>
-      <Row className="mt-3 g-2 justify-content-center">
+      <Row className="g-2 justify-content-center">
         <Col xs={10}>
           <OrderTitle name="Will" />
         </Col>

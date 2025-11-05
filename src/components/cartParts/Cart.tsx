@@ -7,13 +7,21 @@ interface CartProps {
 export default function Cart({ onNext }: CartProps) {
   return (
     <>
-      <Row>
+      <Row className="justify-content-center">
+        <Col xs={10} className="mb-3">
+          <h2>Cart</h2>
+        </Col>
+        <Col xs={10} className="mb-4">
+          <CartItem
+            name="Sugar (300g)"
+            productImage="images/start.jpg"
+            unitPrice={10}
+          />
+        </Col>
         <Col>
-          <h2>Detta är Cart</h2>
-          <CartItem></CartItem>
-          <button onClick={onNext}>Next</button>
           <TotalBox
             buttonLable="Delivery"
+            onNext={onNext}
             products={[
               { name: "Mjölk", price: 20, quantity: 2 },
               { name: "Banan", price: 10, quantity: 1 },
