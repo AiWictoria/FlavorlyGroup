@@ -11,9 +11,28 @@ export default function Cart({ onNext }: CartProps) {
         <Col xs={10} className="mb-3">
           <h2>Cart</h2>
         </Col>
-        <Col xs={12} sm={10} className="mb-sm-4 px-3 px-sm-0">
+        <Col xs={10} className="mb-sm-4">
           <CartItem
-            name="Arla Mellanmjölk 1.5% "
+            name="Arla Mellanmjölk 1.5%
+            "
+            productImage="images/start.jpg"
+            unitPrice={10}
+          />
+          <CartItem
+            name="Arla Mellanmjölk 1.5%
+            "
+            productImage="images/start.jpg"
+            unitPrice={10}
+          />
+          <CartItem
+            name="Arla Mellanmjölk 1.5%
+            "
+            productImage="images/start.jpg"
+            unitPrice={10}
+          />
+          <CartItem
+            name="Arla Mellanmjölk 1.5%
+            "
             productImage="images/start.jpg"
             unitPrice={10}
           />

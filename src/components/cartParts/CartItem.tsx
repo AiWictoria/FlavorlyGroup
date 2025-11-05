@@ -23,12 +23,12 @@ export default function CartItem({
 
   return (
     <>
-      <Row className="item-wrapper py-3 mb-3 align-items-top border-bottom">
-        <Col xs="auto">
+      <Row className="item-wrapper py-3 mb-3 justify-content-start border-bottom">
+        <Col xs="auto" className="p-0">
           <img src={productImage} alt={name}></img>
         </Col>
 
-        <Col className="d-flex flex-column">
+        <Col className="d-flex flex-column px-sm-4">
           <h6>{name}</h6>
           <div className="mt-auto">
             <QuantitySelector
@@ -38,8 +38,8 @@ export default function CartItem({
           </div>
         </Col>
 
-        <Col xs="auto" className="text-end">
-          <h5>{totalPrice}kr</h5>
+        <Col xs="auto" className="text-end p-0">
+          <h5 className="mb-4">{totalPrice}kr</h5>
         </Col>
       </Row>
     </>

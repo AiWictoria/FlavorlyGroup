@@ -70,16 +70,16 @@ main {
 }
 
 .item-wrapper img {
-  width: 75px;
-  height: 75px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
   object-position: center;
   border-radius: 8px;
 }
 
 
-@media (max-width: 450px) {
+@media (max-width: 500px) {
   .item-wrapper img {
-    width: 55px;
+    display: none;
   }
 }
