@@ -85,27 +85,26 @@ export function useRecipes() {
   }
 
   async function createRecipe(
-    recipe: Omit<Recipe, 'id'> & { image?: File | null }
+    recipe: { title: string; category?: string; ingredients?: string; instructions?: string; image?: File | null }
   ) {
     if (user === null) {
       toast.error('Please sign in to create recipes');
       return { success: false };
     }
     try {
-      // Exkludera image utan att skapa oanvänd variabel
-      const recipeData: Record<string, unknown> = { ...(recipe as Record<string, unknown>) };
-      delete (recipeData as { image?: unknown }).image;
-      // TODO: Anpassa POST mot backend PostRoutes om/när stöd finns
-      const res = await fetch('/api/recipes', {
+      // Minimal body for Orchard Core: only send title to avoid validation issues
+      const body = { title: recipe.title };
+      const res = await fetch('/api/Recipe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(recipeData),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
 
       if (res.ok) {
-        setRecipes((prev) => [...prev, data]);
-        const insertId = data.insertId;
+        const insertId = data.id as string;
+        // Optimistically add a minimal recipe stub to local state
+        setRecipes((prev) => [...prev, { id: insertId, title: data.title ?? recipe.title, slug: '', ingredients: [] } as unknown as Recipe]);
         toast.success('Recipe created');
         navigate(`/recipes/${insertId}`);
         return { success: true, insertId };
@@ -151,13 +150,12 @@ export function useRecipes() {
     }
   }
 
-  async function uploadImage(recipeId: string, image: File) {
+  async function uploadImage(image: File) {
     try {
       const formData = new FormData();
-      formData.append('id', recipeId.toString());
-      formData.append('image', image);
+      formData.append('file', image);
 
-      const res = await fetch('/api/imageUpload', {
+      const res = await fetch('/api/media-upload', {
         method: 'POST',
         body: formData,
       });
