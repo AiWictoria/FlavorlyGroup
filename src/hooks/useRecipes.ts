@@ -1,36 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export interface Ingredient {
   ingredientId: string;
-  amount: number;
-  unit: string;
-  ingredientName?: string;
+  ingredient: {
+    id: string;
+    name: string;
+  }
+  quantity: number;
+  unit: {
+    id: string;
+    name: string;
+  }
 }
 
 export interface Instruction {
-  content: string;
+  order?: number
+  text?: string;
 }
 
 export interface Comment {
-  content: string;
-  author: string;
-  createdAt: string;
-  userId: string;
-  recipeId: string;
+  text: string;
+  authorUsername: string;
 }
 
 export interface Recipe {
   id: string;
   title: string;
-  imageUrl?: string;
+  image?: string;
   slug: string;
   description?: string;
-  ingredients: Ingredient[];
   instructions?: Instruction[];
-  category?: string;
+  categoryId?: string;
+  prepTimeMinutes?: number;
+  cookTimeMinutes?: number;
+  servings?: number;
+  ingredients: Ingredient[];
   comments?: Comment[];
   userAuthor?: {
     userId: string;
@@ -65,24 +72,24 @@ export function useRecipes() {
     }
   }
 
-  async function fetchRecipeById(id: string) {
+  const fetchRecipeById = useCallback(async (id: string) => {
     try {
       // Prefer expanded single fetch so ingredientName can be derived
       const res = await fetch(`/api/expand/Recipe/${id}`);
       const data = await res.json();
 
       if (res.ok) {
-        return data as Recipe;
+        return { success: true, data: data as Recipe };
       } else {
         toast.error("We couldn't find that recipe");
         navigate('/recipes');
-        return { success: false };
+        return { success: false, data: null };
       }
     } catch {
       toast.error('Network error, please try again later');
-      return { success: false };
+      return { success: false, data: null };
     }
-  }
+  }, [navigate]);
 
   async function createRecipe(
     recipe: { title: string; category?: string; ingredients?: string; instructions?: string; image?: File | null }

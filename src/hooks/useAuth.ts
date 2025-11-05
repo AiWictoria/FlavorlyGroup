@@ -10,7 +10,9 @@ export interface User {
   firstName: string;
   lastName: string;
   phone: string;
+  roles: string[];
 }
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,8 +28,9 @@ export function useAuth() {
           setUser(data);
           return { success: true, data };
         }
-      } catch (err) {
-        toast.error('Something went wrong, try again later');
+      } catch (error) {
+        toast.error('Something went wrong, try again later',);
+        console.error(error);
         return { success: false };
       } finally {
         setLoading(false);

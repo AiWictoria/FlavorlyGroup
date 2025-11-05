@@ -20,7 +20,7 @@ export function RecipeInstructions({
 
   useEffect(() => {
     if (recipe?.instructions) {
-      setInstructionsList(recipe.instructions.map((instr) => instr.content));
+      setInstructionsList(recipe.instructions.map((instr) => instr.text ?? ""));
     } else {
       setInstructionsList([""]);
     }

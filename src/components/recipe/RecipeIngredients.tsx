@@ -28,9 +28,9 @@ export function RecipeIngredients({
     if (recipe?.ingredients) {
       const parts = recipe.ingredients.map((ing) => {
         const segments: string[] = [];
-        if (ing.amount !== undefined && ing.amount !== null) segments.push(String(ing.amount));
-        if (ing.unit) segments.push(ing.unit);
-        if (ing.ingredientName) segments.push(ing.ingredientName);
+        if (ing.quantity !== undefined && ing.quantity !== null) segments.push(String(ing.quantity));
+        if (ing.unit) segments.push(ing.unit.name);
+        if (ing.ingredient.name) segments.push(ing.ingredient.name);
         else if (ing.ingredientId) segments.push(`#${ing.ingredientId}`);
         return segments.join(" ");
       });

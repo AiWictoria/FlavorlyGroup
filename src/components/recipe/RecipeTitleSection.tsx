@@ -51,7 +51,7 @@ export function RecipeTitleSection({
       <>
         <div className="my-1 my-md-4">
           <h1 className="fs-1">{recipe?.title || "Title"}</h1>
-          <h4>{recipe?.category || "Category"}</h4>
+          <h4>{recipe?.categoryId || "Category"}</h4>
         </div>
       </>
     );
@@ -74,7 +74,7 @@ export function RecipeTitleSection({
         <Form.Label className="fs-2">Category</Form.Label>
         <Form.Select
           required
-          value={recipe?.category || ""}
+          value={recipe?.categoryId || ""}
           onChange={(e) => onChange?.("category", e.target.value)}
         >
           <option value="" disabled>
