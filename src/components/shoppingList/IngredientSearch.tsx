@@ -5,15 +5,19 @@ import toast from "react-hot-toast";
 // Component which retrieves Ingredient object when the user searches
 
 export interface Ingredient {
-  id: string;
-  title: string;
-  amount: number;
-  unit: Unit;
+  id?: string;
+  title?: string;
+  name?: string;
+  amount?: number;
+  baseUnit?: Unit;
 }
 
 export interface Unit {
-  id: string;
-  title: string;
+  id?: string,
+  title?: string,
+  description?: string,
+  baseUnitId?: string,
+  unitCode?: string,
 }
 
 interface IngredientSearchProps {
@@ -91,14 +95,14 @@ export default function IngredientSearch({
       <Dropdown.Menu style={{ width: "100%" }}>
         {searchedIngredients.map((ingredient) => (
           <Dropdown.Item
-            key={ingredient.id}
+            key={ingredient.id ?? ingredient.title ?? ingredient.name}
             onClick={() => {
               onIngredientChange(ingredient);
-              setSearchText(ingredient.title);
+              setSearchText(ingredient.title ?? ingredient.name ?? "");
               setShow(false);
             }}
           >
-            {ingredient.title}
+            {ingredient.title ?? ingredient.name}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

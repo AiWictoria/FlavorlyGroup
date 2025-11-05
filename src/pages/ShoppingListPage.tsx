@@ -17,8 +17,11 @@ ShoppingListPage.route = {
 
 interface ShoppingItem {
   id: string;
-  shoppingItemIngredient: Ingredient;
-  checked: boolean;
+  ingredient: Ingredient;
+  productName: string;
+  productPrice: number;
+  productQuantity: number;
+  productUnit: string;
 }
 
 export default function ShoppingListPage() {
@@ -45,8 +48,11 @@ export default function ShoppingListPage() {
 
     const newShoppingItem: ShoppingItem = {
       id: "",
-      shoppingItemIngredient: updatedIngredient,
-      checked: true,
+      ingredient: updatedIngredient,
+      productName: "",
+      productPrice: 0,
+      productQuantity: 0,
+      productUnit: ""
     };
 
     setSelectedIngredient(undefined);
@@ -93,7 +99,7 @@ export default function ShoppingListPage() {
                   <Form.Control
                     placeholder="Unit"
                     disabled
-                    value={selectedIngredient?.unit.title ?? ""}
+                    value={selectedIngredient?.baseUnit?.title ?? ""}
                   />
                 </Col>
                 <Col xs={12} xl={2}>
@@ -119,9 +125,9 @@ export default function ShoppingListPage() {
                           <span>
                             <b>Ingredient:</b>{" "}
                           </span>
-                          {item.shoppingItemIngredient.title}{" "}
-                          {item.shoppingItemIngredient.amount}{" "}
-                          {item.shoppingItemIngredient.unit.title}{" "}
+                          {item.ingredient.title}{" "}
+                          {item.ingredient.amount}{" "}
+                          {item.ingredient.baseUnit?.title}{" "}
                         </Col>
 
                         <Col

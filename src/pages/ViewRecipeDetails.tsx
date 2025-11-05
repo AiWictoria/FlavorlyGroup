@@ -22,10 +22,10 @@ export default function ViewRecipeDetails() {
     if (!id) return;
     fetchRecipeById(String(id)).then((data) => {
       if (data && ('success' in data ? (data as { success: boolean }).success : true)) {
-        setRecipe(data as Recipe);
+        setRecipe(data.data as Recipe | null);
       }
     });
-  }, [id, fetchRecipeById]);
+  }, [id]);
 
   async function handleDelete() {
     if (!recipe) return;

@@ -1,36 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export interface Ingredient {
   ingredientId: string;
-  amount: number;
-  unit: string;
-  ingredientName?: string;
+  ingredient: {
+    id: string;
+    name: string;
+  }
+  quantity: number;
+  unit: {
+    id: string;
+    name: string;
+  }
 }
 
 export interface Instruction {
-  content: string;
+  order?: number
+  text?: string;
 }
 
 export interface Comment {
-  content: string;
-  author: string;
-  createdAt: string;
-  userId: string;
-  recipeId: string;
+  text: string;
+  authorUsername: string;
 }
 
 export interface Recipe {
   id: string;
   title: string;
-  imageUrl?: string;
+  image?: string;
   slug: string;
   description?: string;
-  ingredients: Ingredient[];
   instructions?: Instruction[];
-  category?: string;
+  categoryId?: string;
+  prepTimeMinutes?: number;
+  cookTimeMinutes?: number;
+  servings?: number;
+  ingredients: Ingredient[];
   comments?: Comment[];
   userAuthor?: {
     userId: string;
@@ -65,47 +72,46 @@ export function useRecipes() {
     }
   }
 
-  async function fetchRecipeById(id: string) {
+  const fetchRecipeById = useCallback(async (id: string) => {
     try {
       // Prefer expanded single fetch so ingredientName can be derived
       const res = await fetch(`/api/expand/Recipe/${id}`);
       const data = await res.json();
 
       if (res.ok) {
-        return data as Recipe;
+        return { success: true, data: data as Recipe };
       } else {
         toast.error("We couldn't find that recipe");
         navigate('/recipes');
-        return { success: false };
+        return { success: false, data: null };
       }
     } catch {
       toast.error('Network error, please try again later');
-      return { success: false };
+      return { success: false, data: null };
     }
-  }
+  }, [navigate]);
 
   async function createRecipe(
-    recipe: Omit<Recipe, 'id'> & { image?: File | null }
+    recipe: { title: string; category?: string; ingredients?: string; instructions?: string; image?: File | null }
   ) {
     if (user === null) {
       toast.error('Please sign in to create recipes');
       return { success: false };
     }
     try {
-      // Exkludera image utan att skapa oanvänd variabel
-      const recipeData: Record<string, unknown> = { ...(recipe as Record<string, unknown>) };
-      delete (recipeData as { image?: unknown }).image;
-      // TODO: Anpassa POST mot backend PostRoutes om/när stöd finns
-      const res = await fetch('/api/recipes', {
+      // Minimal body for Orchard Core: only send title to avoid validation issues
+      const body = { title: recipe.title };
+      const res = await fetch('/api/Recipe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(recipeData),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
 
       if (res.ok) {
-        setRecipes((prev) => [...prev, data]);
-        const insertId = data.insertId;
+        const insertId = data.id as string;
+        // Optimistically add a minimal recipe stub to local state
+        setRecipes((prev) => [...prev, { id: insertId, title: data.title ?? recipe.title, slug: '', ingredients: [] } as unknown as Recipe]);
         toast.success('Recipe created');
         navigate(`/recipes/${insertId}`);
         return { success: true, insertId };
@@ -151,13 +157,12 @@ export function useRecipes() {
     }
   }
 
-  async function uploadImage(recipeId: string, image: File) {
+  async function uploadImage(image: File) {
     try {
       const formData = new FormData();
-      formData.append('id', recipeId.toString());
-      formData.append('image', image);
+      formData.append('file', image);
 
-      const res = await fetch('/api/imageUpload', {
+      const res = await fetch('/api/media-upload', {
         method: 'POST',
         body: formData,
       });
