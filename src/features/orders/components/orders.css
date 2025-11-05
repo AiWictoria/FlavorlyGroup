@@ -65,8 +65,7 @@ button {
     }
 
     .order-items-table .cell-amount .unit-inline {
-        display: block;
-
+        display: inline-block;
         font-size: 1.1rem;
         margin-top: 1px;
     }
