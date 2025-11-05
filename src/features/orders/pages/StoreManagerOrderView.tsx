@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Container, Alert, Button } from 'react-bootstrap';
+import { Container, Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { OrderTable } from '../components/OrderTable';
+import { OrderStats } from '../components/OrderStats';
 import type { Order } from '@models/order.types';
 import { fetchOrders, deleteOrder } from '../api/data.mock';
 
@@ -8,10 +9,12 @@ function StoreManagerOrderViewComponent() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedTab, setSelectedTab] = useState<'pending' | 'completed' | 'cancelled'>('pending');
 
   const loadOrders = async () => {
     try {
       setLoading(true);
+      // Fetch all orders without filtering by status
       const response = await fetchOrders();
       setOrders(response.orders);
       setError('');
@@ -50,22 +53,52 @@ function StoreManagerOrderViewComponent() {
       {error && <Alert variant="danger">{error}</Alert>}
       
       {orders.length === 0 ? (
-        <div className="text-center">Inga ordrar hittades</div>
+        <div className="text-center">No orders found</div>
       ) : (
-        <div className="table-wrapper">
-          <div className="table-container">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h2 className="mb-0">Ordrar</h2>
-              <Button variant="outline-primary">
-                Completed Orders
-              </Button>
+        <div>
+          <OrderStats orders={orders} />
+          <div className="table-wrapper">
+            <div className="table-container">
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+              <h2 className="mb-0 text-center text-md-start">
+                {selectedTab === 'completed' && 'Completed Orders'}
+                {selectedTab === 'pending' && 'Current Orders'}
+                {selectedTab === 'cancelled' && 'Cancelled Orders'}
+              </h2>
+              <ButtonGroup className="d-flex flex-wrap justify-content-center">
+                <Button 
+                  variant={selectedTab === 'pending' ? "primary" : "outline-primary"}
+                  onClick={() => setSelectedTab('pending')}
+                  className="flex-grow-0"
+                >
+                  Current
+                </Button>
+                <Button 
+                  variant={selectedTab === 'completed' ? "primary" : "outline-primary"}
+                  onClick={() => setSelectedTab('completed')}
+                  className="flex-grow-0"
+                >
+                  Completed
+                </Button>
+                <Button 
+                  variant={selectedTab === 'cancelled' ? "primary" : "outline-primary"}
+                  onClick={() => setSelectedTab('cancelled')}
+                  className="flex-grow-0"
+                >
+                  Cancelled
+                </Button>
+              </ButtonGroup>
             </div>
             <OrderTable 
-              orders={orders} 
+              orders={orders.filter(order => {
+                if (selectedTab === 'pending') return ['pending', 'processing'].includes(order.status);
+                return order.status === selectedTab;
+              })}
               onDelete={handleDeleteOrder}
             />
           </div>
         </div>
+      </div>
       )}
     </Container>
   );

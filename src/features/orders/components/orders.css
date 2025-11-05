@@ -1,5 +1,5 @@
 .ordersbody {
-    font-family: sans-serif;
+    font-family: "Playfair Display", sans-serif;
     max-width: 800px;
     padding-top: 1rem;
     margin: auto;
@@ -53,20 +53,51 @@ button {
     }
 }
 
-@media (max-width: 450px) {
-    .ordersbody {
+.unit-inline {
+    display: none;
+}
+
+@media (max-width: 640px) {
+
+    .order-items-table .col-units,
+    .order-items-table .cell-units {
+        display: none;
+    }
+
+    .order-items-table .cell-amount .unit-inline {
+        display: inline-block;
+        font-size: 1.1rem;
+        margin-top: 1px;
+    }
+
+}
+
+@media (max-width: 429px) {
+    .order-items-table {
+        max-width: 90%;
+        font-size: 11px;
+    }
+
+    th {
         padding: 0;
-        margin: 0;
+    }
+
+    tr {
+        padding: 0;
+    }
+
+    .order-items-table .cell-amount .unit-inline {
+        font-size: 10px;
     }
 
     .OrderHeader {
-        max-height: fit-content;
-        max-width: 100%;
+        width: 90%;
+        font-size: 12px;
     }
 
-    .icon-badge {
-        position: absolute;
-        top: 8rem;
-        right: 2rem;
+    h2 {
+        font-size: 20px;
     }
+
+
 }
