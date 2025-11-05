@@ -30,7 +30,7 @@ export default function QuantitySelector({
   };
 
   return (
-    <div className="d-flex align-items-center quantity-wrapper flavorly-shadow">
+    <div className="d-flex align-items-center justify-content-between quantity-wrapper flavorly-shadow">
       <button onClick={handleMinus} className="quantity-button">
         {count === 1 ? (
           <i className="bi bi-trash minus-color"></i>
@@ -39,7 +39,7 @@ export default function QuantitySelector({
         )}
       </button>
 
-      <span className="quantity-value">{count}</span>
+      <span className="pb-1">{count}</span>
 
       <button onClick={handlePlus} className="quantity-button">
         <i className="bi bi-plus plus-color"></i>
