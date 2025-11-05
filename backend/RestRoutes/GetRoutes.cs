@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using YesSql.Services;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using RestRoutes.Services.ContentQuery;
 
 public static partial class GetRoutes
 {
@@ -19,6 +20,7 @@ public static partial class GetRoutes
             string contentType,
             string id,
             [FromServices] YesSql.ISession session,
+            [FromServices] ContentQueryService queryService,
             HttpContext context) =>
         {
             // Check permissions
@@ -29,23 +31,14 @@ public static partial class GetRoutes
             var cleanObjects = await FetchCleanContent(contentType, session, populate: true, denormalize: true);
 
             // Find the item with matching id
-            var item = cleanObjects.FirstOrDefault(obj => obj.ContainsKey("id") && obj["id"]?.ToString() == id);
-
-            if (item == null)
-            {
-                context.Response.StatusCode = 404;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync("null");
-                return Results.Empty;
-            }
-
-            return Results.Json(item);
+            return queryService.FindItemById(cleanObjects, id);
         });
 
         // Get all items with population (with optional filters)
         app.MapGet("api/expand/{contentType}", async (
             string contentType,
             [FromServices] YesSql.ISession session,
+            [FromServices] ContentQueryService queryService,
             HttpContext context) =>
         {
             // Check permissions
@@ -58,7 +51,7 @@ public static partial class GetRoutes
             // Apply query filters
             var filteredData = ApplyQueryFilters(context.Request.Query, cleanObjects);
 
-            return Results.Json(filteredData);
+            return queryService.ReturnItems(filteredData);
         });
 
         // Get single item by ID (without population)
@@ -66,6 +59,7 @@ public static partial class GetRoutes
             string contentType,
             string id,
             [FromServices] YesSql.ISession session,
+            [FromServices] ContentQueryService queryService,
             HttpContext context) =>
         {
             // Check permissions
@@ -76,23 +70,14 @@ public static partial class GetRoutes
             var cleanObjects = await FetchCleanContent(contentType, session, populate: false);
 
             // Find the item with matching id
-            var item = cleanObjects.FirstOrDefault(obj => obj.ContainsKey("id") && obj["id"]?.ToString() == id);
-
-            if (item == null)
-            {
-                context.Response.StatusCode = 404;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync("null");
-                return Results.Empty;
-            }
-
-            return Results.Json(item);
+            return queryService.FindItemById(cleanObjects, id);
         });
 
         // Get all items without population (with optional filters)
         app.MapGet("api/{contentType}", async (
             string contentType,
             [FromServices] YesSql.ISession session,
+            [FromServices] ContentQueryService queryService,
             HttpContext context) =>
         {
             // Check permissions
@@ -105,7 +90,7 @@ public static partial class GetRoutes
             // Apply query filters
             var filteredData = ApplyQueryFilters(context.Request.Query, cleanObjects);
 
-            return Results.Json(filteredData);
+            return queryService.ReturnItems(filteredData);
         });
 
         // Get single raw item by ID (no cleanup, no population)
@@ -113,6 +98,7 @@ public static partial class GetRoutes
             string contentType,
             string id,
             [FromServices] YesSql.ISession session,
+            [FromServices] ContentQueryService queryService,
             HttpContext context) =>
         {
             // Check permissions
@@ -123,24 +109,14 @@ public static partial class GetRoutes
             var rawObjects = await FetchRawContent(contentType, session);
 
             // Find the item with matching ContentItemId
-            var item = rawObjects.FirstOrDefault(obj =>
-                obj.ContainsKey("ContentItemId") && obj["ContentItemId"]?.ToString() == id);
-
-            if (item == null)
-            {
-                context.Response.StatusCode = 404;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync("null");
-                return Results.Empty;
-            }
-
-            return Results.Json(item);
+            return queryService.FindItemByContentItemId(rawObjects, id);
         });
 
         // Get all raw items (no cleanup, no population, but with filters)
         app.MapGet("api/raw/{contentType}", async (
             string contentType,
             [FromServices] YesSql.ISession session,
+            [FromServices] ContentQueryService queryService,
             HttpContext context) =>
         {
             // Check permissions
@@ -153,7 +129,7 @@ public static partial class GetRoutes
             // Apply query filters (filtering works on raw data too)
             var filteredData = ApplyQueryFilters(context.Request.Query, rawObjects);
 
-            return Results.Json(filteredData);
+            return queryService.ReturnItems(filteredData);
         });
     }
 }
