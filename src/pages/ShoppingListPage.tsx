@@ -26,6 +26,7 @@ export default function ShoppingListPage() {
     Ingredient | undefined
   >(undefined);
 
+  const [clearSearchText, setClearSearchText] = useState(0);
   const [product, setProduct] = useState("");
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
@@ -48,6 +49,9 @@ export default function ShoppingListPage() {
       checked: true,
     };
 
+    setSelectedIngredient(undefined);
+    setClearSearchText((prev) => prev + 1);
+    setAmount("");
     setShoppingList((prevList) => [...prevList, newShoppingItem]);
   }
 
@@ -60,9 +64,10 @@ export default function ShoppingListPage() {
           <div className="shopping-list-container">
             <Form onSubmit={handleAdd}>
               <Row className="mt-4">
-                <Col xs={12} xl={4} className="mb-2">
+                <Col xs={12} xl={4} className="mb-3">
                   <Form.Group>
                     <IngredientSearch
+                      clearSearchText={clearSearchText}
                       onIngredientChange={(ingredient) =>
                         setSelectedIngredient(ingredient)
                       }
@@ -74,10 +79,11 @@ export default function ShoppingListPage() {
                     <Form.Control
                       placeholder="Add amount..."
                       value={amount}
+                      required
                       type="number"
-                      min={1}
+                      min={0.5}
                       max={99}
-                      step="any"
+                      step={0.5}
                       onChange={(e) => setAmount(e.target.value)}
                     />
                   </Form.Group>
@@ -91,7 +97,7 @@ export default function ShoppingListPage() {
                   />
                 </Col>
                 <Col xs={12} xl={2}>
-                  <div className="d-grid gap-2 mb-5">
+                  <div className="d-grid gap-2">
                     <Button variant="success" type="submit" className="w-auto">
                       Add ingredient
                     </Button>
@@ -102,7 +108,7 @@ export default function ShoppingListPage() {
 
             {shoppingList.length > 0 ? (
               <>
-                <Col className="m-2 fs-6">
+                <Col className="m-2 fs-6 mt-4">
                   {shoppingList.map((item, index) => (
                     <>
                       <Row

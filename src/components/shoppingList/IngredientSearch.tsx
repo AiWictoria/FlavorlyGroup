@@ -18,10 +18,12 @@ export interface Unit {
 interface IngredientSearchProps {
   // Sends back the Ingredient object
   onIngredientChange: (ingredient?: Ingredient) => void;
+  clearSearchText?: number;
 }
 
 export default function IngredientSearch({
   onIngredientChange,
+  clearSearchText,
 }: IngredientSearchProps) {
   // Controls whether the dropdown should be shown or not
   const [show, setShow] = useState(false);
@@ -29,6 +31,11 @@ export default function IngredientSearch({
   const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>(
     []
   );
+
+  // When the user adds an Ingredient successfully
+  useEffect(() => {
+    setSearchText("");
+  }, [clearSearchText]);
 
   function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchedIngredients([]);
@@ -64,6 +71,7 @@ export default function IngredientSearch({
           placeholder="Search ingredient..."
           value={searchText}
           onChange={handleSearch}
+          required
         />
       </Dropdown.Toggle>
 
