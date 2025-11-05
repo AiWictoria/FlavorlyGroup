@@ -2,7 +2,7 @@ import { useShoppingList } from "../hooks/useShoppingList";
 import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
-import Box from "../components/orderReceipt/Box.tsx";
+import Box from "../components/shared/Box.tsx";
 
 import IngredientSearch, {
   type Ingredient,
@@ -52,7 +52,7 @@ export default function ShoppingListPage() {
       productName: "",
       productPrice: 0,
       productQuantity: 0,
-      productUnit: ""
+      productUnit: "",
     };
 
     setSelectedIngredient(undefined);
@@ -125,8 +125,7 @@ export default function ShoppingListPage() {
                           <span>
                             <b>Ingredient:</b>{" "}
                           </span>
-                          {item.ingredient.title}{" "}
-                          {item.ingredient.amount}{" "}
+                          {item.ingredient.title} {item.ingredient.amount}{" "}
                           {item.ingredient.baseUnit?.title}{" "}
                         </Col>
 
