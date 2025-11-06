@@ -2,7 +2,7 @@ import OrderBox from "../components/orderReceipt/OrderBox";
 import Confirmation from "../components/orderReceipt/Confirmation";
 import { useState } from "react";
 import Cart from "../components/cartParts/Cart";
-import Delivery from "../components/orderReceipt/Delivery";
+import Delivery from "../components/deliveryParts/Delivery";
 import Payment from "../components/orderReceipt/Payment";
 
 OrderReceipt.route = { path: "/order", menuLabel: "Order", index: 6 };
@@ -13,7 +13,7 @@ export default function OrderReceipt() {
 
   const stepsContent = [
     <Cart onNext={() => nextStep()} />,
-    <Delivery onNext={() => nextStep()} onBack={() => prevStep()} />,
+    <Delivery onNext={() => nextStep()} />,
     <Payment onNext={() => nextStep()} onBack={() => prevStep()} />,
     <Confirmation />,
   ];
