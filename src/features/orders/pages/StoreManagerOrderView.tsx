@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Container, Alert, Button, ButtonGroup } from 'react-bootstrap';
+import { Container, Alert, Button, ButtonGroup, Row, Col } from 'react-bootstrap';
 import { OrderTable } from '../components/OrderTable';
 import { OrderStats } from '../components/OrderStats';
 import type { Order } from '@models/order.types';
 import { fetchOrders, deleteOrder } from '../api/data.mock';
+import toast from 'react-hot-toast';
 
 function StoreManagerOrderViewComponent() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -30,14 +31,37 @@ function StoreManagerOrderViewComponent() {
   }, []);
 
   const handleDeleteOrder = async (orderId: string) => {
-    if (window.confirm('Are you sure you want to delete this order?')) {
-      try {
-        await deleteOrder(orderId);
-        loadOrders();
-      } catch (err) {
-        setError('Failed to delete the order');
-      }
-    }
+    toast.custom((t) => (
+      <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2">
+        <Col>
+          <p>Are you sure you want to cancel this order?</p>
+          <div className="d-flex justify-content-end gap-2">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await deleteOrder(orderId);
+                  loadOrders();
+                } catch (err) {
+                  setError('Failed to cancel the order');
+                }
+              }}
+            >
+              Confirm
+            </Button>
+          </div>
+        </Col>
+      </Row>
+    ));
   };
 
   if (loading) {

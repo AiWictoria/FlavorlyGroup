@@ -206,7 +206,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
                       onClick={() => onDelete(order.id)}
                     >
                       <i className="bi bi-trash me-1"></i>
-                      <span>Delete</span>
+                      <span>Cancel</span>
                     </Button>
                   )}
                 </div>
