@@ -5,7 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 
 CreateRecipe.route = {
   path: "/createRecipe",
-  menuLabel: "Create Recipe",
+  menuLabel: "Skapa Recept",
   index: 2,
   protected: true,
 };

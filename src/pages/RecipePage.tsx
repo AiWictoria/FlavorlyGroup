@@ -9,7 +9,7 @@ import { useSavedRecipes } from "../hooks/useSavedRecipes";
 
 RecipePage.route = {
   path: "/recipes",
-  menuLabel: "Recipes",
+  menuLabel: "Recept",
   index: 1,
 };
 
