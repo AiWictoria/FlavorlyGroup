@@ -39,22 +39,22 @@ export default function SignupForm({ onBack }: SignupFormProps) {
   return (
     <Form onSubmit={handleSubmit} className="m-2">
       <Form.Group className="p-2">
-        <Form.Label>Username</Form.Label>
+        <Form.Label>Användarnamn</Form.Label>
         <Form.Control
           type="username"
           name="username"
-          placeholder="Enter username"
+          placeholder="Ange användarnamn"
           value={form.username}
           onChange={setProperty}
           required
         />
       </Form.Group>
       <Form.Group className="p-2">
-        <Form.Label>Email</Form.Label>
+        <Form.Label>Epost</Form.Label>
         <Form.Control
           type="email"
           name="email"
-          placeholder="Enter email"
+          placeholder="Ange epost"
           value={form.email}
           onChange={setProperty}
           required
@@ -62,33 +62,33 @@ export default function SignupForm({ onBack }: SignupFormProps) {
       </Form.Group>
 
       <Form.Group className="p-2">
-        <Form.Label>Password</Form.Label>
+        <Form.Label>Lösenord</Form.Label>
         <Form.Control
           type="password"
           name="password"
-          placeholder="Enter password"
+          placeholder="Ange lösenord"
           value={form.password}
           onChange={setProperty}
           required
         />
       </Form.Group>
       <Form.Group className="p-2">
-        <Form.Label>First Name</Form.Label>
+        <Form.Label>Förnamn</Form.Label>
         <Form.Control
           type="text"
           name="firstName"
-          placeholder="First Name"
+          placeholder="Ange förnamn"
           value={form.firstName}
           onChange={setProperty}
           required
         />
       </Form.Group>
       <Form.Group className="p-2">
-        <Form.Label>Last Name</Form.Label>
+        <Form.Label>Efternamn</Form.Label>
         <Form.Control
           type="text"
           name="lastName"
-          placeholder="Last Name"
+          placeholder="Ange efternamn"
           value={form.lastName}
           onChange={setProperty}
           required
@@ -96,11 +96,11 @@ export default function SignupForm({ onBack }: SignupFormProps) {
       </Form.Group>
 
       <Form.Group className="p-2">
-        <Form.Label>Phone</Form.Label>
+        <Form.Label>Telefonnummer</Form.Label>
         <Form.Control
           type="phone"
           name="phone"
-          placeholder="Phone number"
+          placeholder="Ange telefonnummer"
           value={form.phone}
           onChange={setProperty}
           required
@@ -109,10 +109,10 @@ export default function SignupForm({ onBack }: SignupFormProps) {
 
       <div className="d-flex justify-content-between m-3 p-2">
         <Button variant="outline-primary" onClick={onBack}>
-          Back
+          Tillbaka
         </Button>
         <Button variant="primary" type="submit">
-          Sign up
+          Registrera
         </Button>
       </div>
     </Form>
