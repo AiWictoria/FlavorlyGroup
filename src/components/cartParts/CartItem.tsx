@@ -7,6 +7,7 @@ interface CartItemProps {
   unitPrice: number;
   quantity: number;
   onQuantityChange: (newQuantity: number) => void;
+  onRemove: () => void;
 }
 
 export default function CartItem({
@@ -15,6 +16,7 @@ export default function CartItem({
   unitPrice,
   quantity,
   onQuantityChange,
+  onRemove,
 }: CartItemProps) {
   const totalPrice = unitPrice * quantity;
 
@@ -28,7 +30,11 @@ export default function CartItem({
         <Col className="d-flex flex-column px-sm-4">
           <h6>{name}</h6>
           <div className="mt-auto">
-            <QuantitySelector value={quantity} onChange={onQuantityChange} />
+            <QuantitySelector
+              value={quantity}
+              onChange={onQuantityChange}
+              onRemove={onRemove}
+            />
           </div>
         </Col>
 

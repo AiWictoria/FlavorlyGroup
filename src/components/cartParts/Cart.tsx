@@ -4,11 +4,13 @@ interface CartProps {
   onNext: () => void;
   products: { id: number; name: string; price: number; quantity: number }[];
   onQuantityChange: (productId: number, newQuantity: number) => void;
+  onRemoveProduct: (productId: number) => void;
 }
 export default function Cart({
   onNext,
   products,
   onQuantityChange,
+  onRemoveProduct,
 }: CartProps) {
   return (
     <>
@@ -27,6 +29,7 @@ export default function Cart({
               onQuantityChange={(newQuantity) =>
                 onQuantityChange(p.id, newQuantity)
               }
+              onRemove={() => onRemoveProduct(p.id)}
             />
           ))}
         </Col>

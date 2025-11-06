@@ -34,11 +34,16 @@ export default function OrderReceipt() {
     return "Nästa"; // fallback, ska inte visas
   };
 
+  const handleRemoveProduct = (productId: number) => {
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+  };
+
   const stepsContent = [
     <Cart
       onNext={() => nextStep()}
       products={products}
       onQuantityChange={handleQuantityChange}
+      onRemoveProduct={handleRemoveProduct}
     />,
     <Delivery onNext={() => nextStep()} />,
     <Payment onNext={() => nextStep()} onBack={() => prevStep()} />,
