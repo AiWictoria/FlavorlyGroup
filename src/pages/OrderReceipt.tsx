@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import Cart from "../components/cartParts/Cart";
 import Delivery from "../components/deliveryParts/Delivery";
 import Payment from "../components/orderReceipt/Payment";
+import TotalBox from "../components/cartParts/TotalBox";
 
 OrderReceipt.route = { path: "/order", menuLabel: "Order", index: 6 };
 
@@ -12,6 +13,18 @@ export default function OrderReceipt() {
   const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+  const [products, setProducts] = useState([
+    { id: 1, name: "Mjölk", price: 20, quantity: 2 },
+    { id: 2, name: "Ägg 6p frigående höns", price: 35, quantity: 1 },
+  ]);
+
+  const getButtonLabel = () => {
+    if (activeStep === 0) return "Leverans";
+    if (activeStep === 1) return "Betala";
+    if (activeStep === 2) return "Återuppta betalning";
+    return "Nästa"; // fallback, ska inte visas
+  };
 
   const stepsContent = [
     <Cart onNext={() => nextStep()} />,
@@ -31,7 +44,7 @@ export default function OrderReceipt() {
 
   const prevStep = () => setActiveStep((prev) => Math.max(prev - 1, 0));
 
-    useEffect(() => {
+  useEffect(() => {
     const status = searchParams.get("status");
     const step = searchParams.get("step");
 
@@ -64,6 +77,14 @@ export default function OrderReceipt() {
       }}
     >
       {stepsContent[activeStep]}
+      {activeStep < totalSteps - 1 && (
+        <TotalBox
+          buttonLable={getButtonLabel()}
+          onNext={nextStep}
+          products={products}
+          deliveryPrice={15}
+        />
+      )}
     </OrderBox>
   );
 }

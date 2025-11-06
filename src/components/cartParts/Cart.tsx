@@ -1,5 +1,4 @@
 import { Col, Row } from "react-bootstrap";
-import TotalBox from "./TotalBox";
 import CartItem from "./CartItem";
 interface CartProps {
   onNext: () => void;
@@ -35,17 +34,6 @@ export default function Cart({ onNext }: CartProps) {
             "
             productImage="images/start.jpg"
             unitPrice={10}
-          />
-        </Col>
-        <Col>
-          <TotalBox
-            buttonLable="Delivery"
-            onNext={onNext}
-            products={[
-              { name: "Mjölk", price: 20, quantity: 2 },
-              { name: "Banan", price: 10, quantity: 1 },
-            ]}
-            deliveryPrice={15}
           />
         </Col>
       </Row>

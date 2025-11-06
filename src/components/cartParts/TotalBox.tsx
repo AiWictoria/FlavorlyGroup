@@ -32,21 +32,21 @@ export default function TotalBox({
   return (
     <>
       <Divider />
-      <Row>
-        <Col md={6} className="px-5 mx-md-5 py-2">
+      <Row className="justify-content-center mx-5 mx-md-0">
+        <Col md={6} className="px-5 mx-2 py-2">
           <div className="d-flex justify-content-between">
-            <span>Subtotal:</span>
+            <span>Delsumma:</span>
             <span>{subtotalPrice.toFixed(2)} kr</span>
           </div>
 
           <div className="d-flex justify-content-between">
-            <span>VAT ({Math.round(vatRate * 100)}%):</span>
+            <span>Moms ({Math.round(vatRate * 100)}%):</span>
             <span>{vatAmount.toFixed(2)} kr</span>
           </div>
 
           {deliveryPrice !== undefined && (
             <div className="d-flex justify-content-between">
-              <span>Delivery:</span>
+              <span>Leverans:</span>
               <span>{deliveryPrice.toFixed(2)} kr</span>
             </div>
           )}
@@ -54,7 +54,7 @@ export default function TotalBox({
           <Divider />
 
           <div className="d-flex justify-content-between">
-            <h4>Total:</h4>
+            <h4>Totalt:</h4>
             <h4>{totalPrice.toFixed(2)} kr</h4>
           </div>
         </Col>
