@@ -27,12 +27,12 @@ export default function MyOrdersPage() {
   }, []);
 
   return (
-    <Row className="p-0 p-xl-5">
-      <Col className="mt-4 mx-xl-5 px-xl-5">
-        <h2>My Orders</h2>
-
+    <Row className="p-0 p-xl-3 justify-content-center">
+      <Col className="mx-xl-5 px-xl-5">
+        
         <Box size="l" className="order-table-container mt-4">
-          <div className="d-flex flex-column gap-2">
+          <h2>My Orders</h2>
+          <div className="m-5 d-flex flex-column gap-2">
             {orders.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))}
