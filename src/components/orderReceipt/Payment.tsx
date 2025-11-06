@@ -28,7 +28,7 @@ export default function Payment({ onBack }: PaymentProps) {
 
       <Row className="mt-3 g-2 justify-content-center">
         <Col>
-          <PayNowButton label="Återupta betalning" />
+          <PayNowButton label="Återuppta betalning" />
         </Col>
       </Row>
     </>
