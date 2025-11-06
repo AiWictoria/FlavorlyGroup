@@ -31,11 +31,21 @@ export default function OrderReceipt() {
     if (activeStep === 0) return "Leverans";
     if (activeStep === 1) return "Betala";
     if (activeStep === 2) return "Återuppta betalning";
-    return "Nästa"; // fallback, ska inte visas
+    return "Nästa";
   };
 
   const handleRemoveProduct = (productId: number) => {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
+  };
+
+  const [deliveryPrice, setDeliveryPrice] = useState<number | undefined>(
+    undefined
+  );
+  const [deliveryType, setDeliveryType] = useState("");
+
+  const handleDeliveryChange = (type: string, price: number) => {
+    setDeliveryType(type);
+    setDeliveryPrice(price);
   };
 
   const stepsContent = [
@@ -45,7 +55,10 @@ export default function OrderReceipt() {
       onQuantityChange={handleQuantityChange}
       onRemoveProduct={handleRemoveProduct}
     />,
-    <Delivery onNext={() => nextStep()} />,
+    <Delivery
+      onNext={() => nextStep()}
+      onDeliveryChange={handleDeliveryChange}
+    />,
     <Payment onNext={() => nextStep()} onBack={() => prevStep()} />,
     <Confirmation />,
   ];
@@ -99,7 +112,7 @@ export default function OrderReceipt() {
           buttonLable={getButtonLabel()}
           onNext={nextStep}
           products={products}
-          deliveryPrice={15}
+          deliveryPrice={deliveryPrice}
         />
       )}
     </OrderBox>

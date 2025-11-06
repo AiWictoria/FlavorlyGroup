@@ -32,14 +32,14 @@ export default function TotalBox({
   return (
     <>
       <Divider />
-      <Row className="justify-content-center mx-5 mx-md-0">
-        <Col md={6} className="px-5 mx-2 py-2">
+      <Row className="justify-content-center mx-4 mx-sm-5 mx-md-0">
+        <Col md={6} className="px-sm-4 mx-2 py-2">
           <div className="d-flex justify-content-between">
             <span>Delsumma:</span>
             <span>{subtotalPrice.toFixed(2)} kr</span>
           </div>
 
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between py-1">
             <span>Moms ({Math.round(vatRate * 100)}%):</span>
             <span>{vatAmount.toFixed(2)} kr</span>
           </div>
@@ -60,7 +60,7 @@ export default function TotalBox({
         </Col>
         <Col
           md={4}
-          className="d-flex justify-content-center align-items-end px-5 px-md-0 mx-md-0 py-2"
+          className="d-flex justify-content-center align-items-end px-sm-4 pe-md-3 mx-md-2 py-2"
         >
           <Button className="w-100" onClick={onNext}>
             {buttonLable}

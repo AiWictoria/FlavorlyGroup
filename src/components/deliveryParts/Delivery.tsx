@@ -4,9 +4,10 @@ import DeliveryForm from "./DeliveryForm";
 
 interface DeliveryProps {
   onNext: () => void;
+  onDeliveryChange: (deliveryType: string, deliveryPrice: number) => void;
 }
 
-export default function Delivery({ onNext }: DeliveryProps) {
+export default function Delivery({ onNext, onDeliveryChange }: DeliveryProps) {
   const [formData, setFormData] = useState({
     address: "",
     postcode: "",
@@ -16,12 +17,19 @@ export default function Delivery({ onNext }: DeliveryProps) {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+
+      if (name === "deliveryType") {
+        const price = value === "express" ? 119 : 49;
+        onDeliveryChange(value, price);
+      }
+
+      return updated;
     });
   };
+
   return (
     <>
       <Row className="justify-content-center">
