@@ -1,4 +1,6 @@
-export default function PayNowButton() {
+import { Button } from "react-bootstrap";
+
+export default function PayNowButton({ label = "Pay Now" }) {
   const handleClick = async () => {
     try {
       const res = await fetch("http://localhost:5001/api/stripe/create-checkout-session", {
@@ -12,12 +14,11 @@ export default function PayNowButton() {
         return;
       }
 
-      // Redirect direkt till Stripe Checkout
       window.location.href = data.url;
     } catch (error) {
       console.error("Failed to create checkout session:", error);
     }
   };
 
-  return <button onClick={handleClick}>Pay Now</button>;
+  return <Button onClick={handleClick}>{label}</Button>;
 }
