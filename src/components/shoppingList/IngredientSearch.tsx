@@ -10,6 +10,14 @@ export interface Ingredient {
   name?: string;
   amount?: number;
   baseUnit?: Unit;
+  productId?: Product[];
+}
+export interface Product {
+  id?: string;
+  name?: string;
+  price?: number;
+  quantity?: number;
+  unit?: Unit;
 }
 
 export interface Unit {

@@ -94,7 +94,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
   };
 
   return (
-    <Box size="xl" className="order-table-container">
+    <div className="order-table-container flavorly-shadow">
       <Table responsive variant="light" className="table-custom">
         <thead>
           <tr>
@@ -215,6 +215,6 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
           ))}
         </tbody>
       </Table>
-    </Box>
+    </div>
   );
 }
