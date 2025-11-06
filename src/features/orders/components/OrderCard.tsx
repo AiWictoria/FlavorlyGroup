@@ -9,14 +9,16 @@ export function OrderCard({ order }: { order: Order }) {
   const total = order.sum;
 
   return (
-    <Card className="shadow mb-3">
+    <Card className="flavorly-shadow">
       <Card.Body>
         <Row className="align-items-center">
           <Col xs={8}>
             <h5 className="mb-0 fw-bold">Order {order.orderNumber}</h5>
           </Col>
 
-          <Col xs={4} className="text-end d-flex justify-content-end align-items-center gap-2">
+          <Col
+            xs={4}
+            className="text-end d-flex justify-content-end align-items-center gap-2">
             <StatusBadge status={order.status} context="my-orders" />
             <Button
               variant=""
@@ -33,7 +35,8 @@ export function OrderCard({ order }: { order: Order }) {
         {open && (
           <Card className="mt-3">
             <ListGroup variant="flush">
-              {order.ingredients.map((item: Order['ingredients'][number], i: number) => (
+              {order.ingredients.map(
+                (item: Order["ingredients"][number], i: number) => (
                 <ListGroup.Item key={i} className="d-flex justify-content-between">
                   <span>
                     {item.amount} {item.unit} {item.ingredient}
