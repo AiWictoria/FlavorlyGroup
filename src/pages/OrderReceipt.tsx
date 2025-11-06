@@ -14,6 +14,14 @@ export default function OrderReceipt() {
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
+  const handleQuantityChange = (productId: number, newQuantity: number) => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.id === productId ? { ...p, quantity: newQuantity } : p
+      )
+    );
+  };
+
   const [products, setProducts] = useState([
     { id: 1, name: "Mjölk", price: 20, quantity: 2 },
     { id: 2, name: "Ägg 6p frigående höns", price: 35, quantity: 1 },
@@ -27,7 +35,11 @@ export default function OrderReceipt() {
   };
 
   const stepsContent = [
-    <Cart onNext={() => nextStep()} />,
+    <Cart
+      onNext={() => nextStep()}
+      products={products}
+      onQuantityChange={handleQuantityChange}
+    />,
     <Delivery onNext={() => nextStep()} />,
     <Payment onNext={() => nextStep()} onBack={() => prevStep()} />,
     <Confirmation />,

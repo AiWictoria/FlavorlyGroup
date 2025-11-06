@@ -1,24 +1,21 @@
 import { Col, Row } from "react-bootstrap";
 import QuantitySelector from "../QuantitySelector";
-import { useState } from "react";
 
 interface CartItemProps {
   name: string;
   productImage?: string;
   unitPrice: number;
+  quantity: number;
+  onQuantityChange: (newQuantity: number) => void;
 }
 
 export default function CartItem({
   name,
   productImage,
   unitPrice,
+  quantity,
+  onQuantityChange,
 }: CartItemProps) {
-  const [quantity, setQuantity] = useState(1);
-
-  const handleQuantityChange = (newValue: number) => {
-    setQuantity(newValue);
-  };
-
   const totalPrice = unitPrice * quantity;
 
   return (
@@ -31,10 +28,7 @@ export default function CartItem({
         <Col className="d-flex flex-column px-sm-4">
           <h6>{name}</h6>
           <div className="mt-auto">
-            <QuantitySelector
-              value={quantity}
-              onChange={handleQuantityChange}
-            />
+            <QuantitySelector value={quantity} onChange={onQuantityChange} />
           </div>
         </Col>
 
