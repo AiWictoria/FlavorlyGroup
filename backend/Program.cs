@@ -1,5 +1,6 @@
 using OrchardCore.Logging;
 using RestRoutes;
+using RestRoutes.Services;
 
 namespace backend
 {
@@ -12,6 +13,7 @@ namespace backend
             builder.Host.UseNLogHost();
 
             builder.Services.AddOrchardCms();
+            builder.Services.AddRestRouteServices();
 
             var app = builder.Build();
 

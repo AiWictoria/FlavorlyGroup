@@ -11,7 +11,7 @@ public static class PermissionsACL
         YesSql.ISession session)
     {
         // Fetch all RestPermissions
-        var permissions = await GetRoutes.FetchCleanContent("RestPermissions", session, populate: false);
+        var permissions = await GetRoutes.FetchCleanContent("RestPermissions", session, populate: false, denormalize: false);
 
         // Build permissions lookup: permissionsByRole[role][contentType][restMethod] = true
         var permissionsByRole = new Dictionary<string, Dictionary<string, Dictionary<string, bool>>>();

@@ -3,6 +3,7 @@ import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 import Box from "../components/orderReceipt/Box.tsx";
+import type { Product } from "../components/shoppingList/IngredientSearch";
 
 import IngredientSearch, {
   type Ingredient,
@@ -23,6 +24,7 @@ interface ShoppingItem {
   productQuantity: number;
   productUnit: string;
 }
+
 
 export default function ShoppingListPage() {
   const [selectedIngredient, setSelectedIngredient] = useState<
@@ -143,8 +145,13 @@ export default function ShoppingListPage() {
                             onChange={(e) => setProduct(e.target.value)}
                           >
                             <option value="">Choose product</option>
-                            <option>Cherry Tomatoes 500g</option>
-                            <option>Roma Tomatoes 1kg</option>
+                            {item.ingredient.productId?.map((product: Product) => (
+                              <>
+                              <option key={product.id} value={product.name}>
+                                {product.name ?? product.id}
+                              </option>
+                              </>
+                            ))}
                           </Form.Select>
                         </Col>
                         <Col xs={6} md={2} lg={2}>
