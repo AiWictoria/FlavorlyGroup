@@ -35,14 +35,14 @@ function StoreManagerOrderViewComponent() {
       <div className="fixed-top vh-100 vw-100 d-flex align-items-center justify-content-center" style={{ background: 'rgba(0, 0, 0, 0.5)', zIndex: 9999 }}>
         <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2 mx-3" style={{ minWidth: '300px', maxWidth: '400px' }}>
           <Col>
-            <p className="text-center mb-3">Are you sure you want to cancel this order?</p>
+            <p className="text-center mb-3">Är du säker på att du vill avbryta den här ordern?</p>
             <div className="d-flex justify-content-center gap-2">
               <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => toast.dismiss(t.id)}
               >
-                Cancel
+                Avbryt
               </Button>
               <Button
                 variant="danger"
@@ -77,7 +77,7 @@ function StoreManagerOrderViewComponent() {
   if (loading) {
     return (
       <Container fluid className="py-4">
-        <div className="text-center">Loading orders...</div>
+        <div className="text-center">Laddar ordrar...</div>
       </Container>
     );
   }
@@ -87,7 +87,7 @@ function StoreManagerOrderViewComponent() {
       {error && <Alert variant="danger">{error}</Alert>}
       
       {orders.length === 0 ? (
-        <div className="text-center">No orders found</div>
+        <div className="text-center">Inga ordrar hittades</div>
       ) : (
         <div>
           <OrderStats orders={orders} />
@@ -95,9 +95,9 @@ function StoreManagerOrderViewComponent() {
             <div className="table-container">
               <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
               <h2 className="mb-0 text-center text-md-start">
-                {selectedTab === 'completed' && 'Completed Orders'}
-                {selectedTab === 'pending' && 'Current Orders'}
-                {selectedTab === 'cancelled' && 'Cancelled Orders'}
+                {selectedTab === 'completed' && 'Färdiga ordrar'}
+                {selectedTab === 'pending' && 'Aktuella ordrar'}
+                {selectedTab === 'cancelled' && 'Avbrutna ordrar'}
               </h2>
               <ButtonGroup className="d-flex flex-wrap justify-content-center">
                 <Button 
@@ -105,21 +105,21 @@ function StoreManagerOrderViewComponent() {
                   onClick={() => setSelectedTab('pending')}
                   className="flex-grow-0"
                 >
-                  Current
+                  Aktuella
                 </Button>
                 <Button 
                   variant={selectedTab === 'completed' ? "primary" : "outline-primary"}
                   onClick={() => setSelectedTab('completed')}
                   className="flex-grow-0"
                 >
-                  Completed
+                  Färdiga
                 </Button>
                 <Button 
                   variant={selectedTab === 'cancelled' ? "primary" : "outline-primary"}
                   onClick={() => setSelectedTab('cancelled')}
                   className="flex-grow-0"
                 >
-                  Cancelled
+                  Avbrutna
                 </Button>
               </ButtonGroup>
             </div>
