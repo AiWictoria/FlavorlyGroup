@@ -32,36 +32,46 @@ function StoreManagerOrderViewComponent() {
 
   const handleDeleteOrder = async (orderId: string) => {
     toast.custom((t) => (
-      <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2">
-        <Col>
-          <p>Are you sure you want to cancel this order?</p>
-          <div className="d-flex justify-content-end gap-2">
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={() => toast.dismiss(t.id)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={async () => {
-                toast.dismiss(t.id);
-                try {
-                  await deleteOrder(orderId);
-                  loadOrders();
-                } catch (err) {
-                  setError('Failed to cancel the order');
-                }
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        </Col>
-      </Row>
-    ));
+      <div className="fixed-top vh-100 vw-100 d-flex align-items-center justify-content-center" style={{ background: 'rgba(0, 0, 0, 0.5)', zIndex: 9999 }}>
+        <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2 mx-3" style={{ minWidth: '300px', maxWidth: '400px' }}>
+          <Col>
+            <p className="text-center mb-3">Are you sure you want to cancel this order?</p>
+            <div className="d-flex justify-content-center gap-2">
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => toast.dismiss(t.id)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={async () => {
+                  toast.dismiss(t.id);
+                  try {
+                    await deleteOrder(orderId);
+                    loadOrders();
+                  } catch (err) {
+                    setError('Failed to cancel the order');
+                  }
+                }}
+              >
+                Confirm
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      </div>
+    ), {
+      duration: Infinity,
+      style: {
+        background: 'transparent',
+        boxShadow: 'none',
+        maxWidth: '100%',
+        padding: 0,
+      }
+    });
   };
 
   if (loading) {
