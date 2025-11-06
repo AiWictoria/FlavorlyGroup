@@ -56,7 +56,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
 
   function formatDate(dateString: string) {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB", {
+    return date.toLocaleDateString("sv-SE", {
       year: "numeric",
       month: "short",
       day: "numeric",
