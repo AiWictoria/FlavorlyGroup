@@ -8,7 +8,7 @@ NotAuthorizedPage.route = {
 export default function NotAuthorizedPage() {
   return (
     <>
-      <Row className="d-flex justify-content-center align-items-center p-5 mt-5">
+      <Row className="d-flex justify-content-center align-items-center p-5">
         <Col>
           <h2 className="mt-3">Access Denied</h2>
           <p className="mt-4">

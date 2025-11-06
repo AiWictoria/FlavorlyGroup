@@ -8,7 +8,7 @@ NotFoundPage.route = {
 export default function NotFoundPage() {
   return (
     <>
-      <Row className="d-flex justify-content-center align-items-center p-5 mt-5">
+      <Row className="d-flex justify-content-center align-items-center p-5">
         <Col>
           <h2 className="mt-3">Not Found: 404</h2>
           <p className="mt-4">
