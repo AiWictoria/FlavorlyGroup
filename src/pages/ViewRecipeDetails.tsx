@@ -19,11 +19,12 @@ export default function ViewRecipeDetails() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (id) {
-      fetchRecipeById(Number(id)).then((data) => {
-        if (data) setRecipe(data);
-      });
-    }
+    if (!id) return;
+    fetchRecipeById(String(id)).then((data) => {
+      if (data && ('success' in data ? (data as { success: boolean }).success : true)) {
+        setRecipe(data.data as Recipe | null);
+      }
+    });
   }, [id]);
 
   async function handleDelete() {
@@ -57,9 +58,16 @@ export default function ViewRecipeDetails() {
     ));
   }
 
-  if (!recipe) return;
+  if (!recipe) return null;
 
-  const isOwner = user && recipe.userId === user.id;
+  const isOwner = Boolean(
+    user &&
+    recipe.userAuthor &&
+    typeof recipe.userAuthor === 'object' &&
+    'userIds' in (recipe.userAuthor as Record<string, unknown>) &&
+    Array.isArray((recipe.userAuthor as { userIds?: string[] }).userIds) &&
+    ((recipe.userAuthor as { userIds?: string[] }).userIds as string[]).includes(user.username)
+  );
   return (
     <>
       <RecipeLayout mode="view" recipe={recipe} />
@@ -77,7 +85,7 @@ export default function ViewRecipeDetails() {
         </div>
       )}
       <Row className="bg-secondary border-top border-primary">
-        <Col>{recipe && <RecipeComments recipeId={recipe.id} />}</Col>
+        <Col>{recipe && <RecipeComments recipeId={Number(recipe.id)} />}</Col>
       </Row>
     </>
   );

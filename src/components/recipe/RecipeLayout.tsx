@@ -7,7 +7,7 @@ import type { Recipe } from "../../hooks/useRecipes";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
-  recipe?: Recipe;
+  recipe?: Recipe | null;
   onSubmit?: (recipe: Recipe) => void;
   onChange?: (field: string, value: string) => void;
   onFileSelect?: (file: File | null) => void;
@@ -27,17 +27,17 @@ export default function RecipeLayout({
 
   return (
     <>
-      <Form onSubmit={handleSubmit} className="mt-4 pt-4">
+      <Form onSubmit={handleSubmit}>
         <Row className="bg-secondary border-top border-primary">
           <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4">
             <RecipeImageSection
               mode={mode}
-              recipe={recipe}
+              recipe={recipe ?? undefined}
               onFileSelect={onFileSelect}
             />
           </Col>
 
-          <Col md={6} className="mt-3 mb-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
+          <Col md={6} className="mb-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
             <RecipeTitleSection
               mode={mode}
               recipe={recipe}

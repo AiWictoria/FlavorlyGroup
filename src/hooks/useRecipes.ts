@@ -1,19 +1,48 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
+export interface Ingredient {
+  ingredientId: string;
+  ingredient: {
+    id: string;
+    name: string;
+  }
+  quantity: number;
+  unit: {
+    id: string;
+    name: string;
+  }
+}
+
+export interface Instruction {
+  order?: number
+  text?: string;
+}
+
+export interface Comment {
+  text: string;
+  authorUsername: string;
+}
+
 export interface Recipe {
-  id: number;
-  userId: number;
+  id: string;
   title: string;
-  category: string;
-  ingredients: string;
-  instructions: string;
-  imageUrl?: string;
-  author?: string;
-  averageRating?: number;
-  commentsCount?: number;
+  image?: string;
+  slug: string;
+  description?: string;
+  instructions?: Instruction[];
+  categoryId?: string;
+  prepTimeMinutes?: number;
+  cookTimeMinutes?: number;
+  servings?: number;
+  ingredients: Ingredient[];
+  comments?: Comment[];
+  userAuthor?: {
+    userId: string;
+    username: string;
+  };
 }
 
 export function useRecipes() {
@@ -23,69 +52,66 @@ export function useRecipes() {
 
   async function fetchRecipes() {
     try {
-      const res = await fetch('/api/Recipe', {
+      // Use expanded endpoint so relations (ingredients) are populated
+      const res = await fetch('/api/expand/Recipe', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
 
       if (res.ok) {
-        const mapped = data.map((r: any) => ({
-          ...r,
-          id: r.recipeId,
-          userId: Number(r.userId),
-        }));
-        setRecipes(mapped);
+        setRecipes(data as Recipe[]);
         return { success: true };
       } else {
         toast.error('Failed loading recipes');
         return { success: false };
       }
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
 
-  async function fetchRecipeById(id: number) {
+  const fetchRecipeById = useCallback(async (id: string) => {
     try {
-      const res = await fetch(`/api/recipes/${id}`);
+      // Prefer expanded single fetch so ingredientName can be derived
+      const res = await fetch(`/api/expand/Recipe/${id}`);
       const data = await res.json();
 
       if (res.ok) {
-        return { ...data, id: data.recipeId ?? data.id };
+        return { success: true, data: data as Recipe };
       } else {
         toast.error("We couldn't find that recipe");
         navigate('/recipes');
-        return { success: false };
+        return { success: false, data: null };
       }
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
-      return { success: false };
+      return { success: false, data: null };
     }
-  }
+  }, [navigate]);
 
   async function createRecipe(
-    recipe: Omit<Recipe, 'recipeId' | 'userId'> & { image?: File | null }
+    recipe: { title: string; category?: string; ingredients?: string; instructions?: string; image?: File | null }
   ) {
     if (user === null) {
       toast.error('Please sign in to create recipes');
       return { success: false };
     }
     try {
-      const { image, ...recipeData } = recipe;
-      const recipeWithUserId = { ...recipeData, userId: user.id };
-
-      const res = await fetch('/api/recipes', {
+      // Minimal body for Orchard Core: only send title to avoid validation issues
+      const body = { title: recipe.title };
+      const res = await fetch('/api/Recipe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(recipeWithUserId),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
 
       if (res.ok) {
-        setRecipes((prev) => [...prev, data]);
-        const insertId = data.insertId;
+        const insertId = data.id as string;
+        // Optimistically add a minimal recipe stub to local state
+        setRecipes((prev) => [...prev, { id: insertId, title: data.title ?? recipe.title, slug: '', ingredients: [] } as unknown as Recipe]);
         toast.success('Recipe created');
         navigate(`/recipes/${insertId}`);
         return { success: true, insertId };
@@ -93,13 +119,13 @@ export function useRecipes() {
         toast.error('Could not create recipe, try again later');
         return { success: false };
       }
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
   async function updateRecipe(
-    id: number,
+    id: string,
     recipe: Partial<Recipe>
   ): Promise<{ success: boolean }> {
     if (user === null) {
@@ -125,19 +151,18 @@ export function useRecipes() {
       }
       toast.error('Could not update recipe, try again');
       return { success: false };
-    } catch (error) {
+    } catch {
       toast.error('Network error, please try again later');
       return { success: false };
     }
   }
 
-  async function uploadImage(recipeId: number, image: File) {
+  async function uploadImage(image: File) {
     try {
       const formData = new FormData();
-      formData.append('id', recipeId.toString());
-      formData.append('image', image);
+      formData.append('file', image);
 
-      const res = await fetch('/api/imageUpload', {
+      const res = await fetch('/api/media-upload', {
         method: 'POST',
         body: formData,
       });
@@ -154,7 +179,7 @@ export function useRecipes() {
     }
   }
 
-  async function deleteRecipe(id: number): Promise<{ success: boolean }> {
+  async function deleteRecipe(id: string): Promise<{ success: boolean }> {
     if (user === null) {
       toast.error('Sign it to delete recipe');
       return { success: false };

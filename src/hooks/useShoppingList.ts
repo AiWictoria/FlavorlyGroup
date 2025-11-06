@@ -1,26 +1,36 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import toast from "react-hot-toast";
+import type { Ingredient } from "./useRecipes";
 
 export interface ShoppingItem {
-  id: number;
-  userId: number;
-  ingredient: string;
-  checked: boolean;
+  id: string;
+  ingredient: Ingredient;
+  productName: string;
+  productPrice: number;
+  productQuantity: number;
+  productUnit: string;
 }
 
+export interface ShoppingList {
+  id: string;
+  shoppingItems: ShoppingItem[];
+  totalCost: number;
+  totalQuantity: number;
+  totalUnits: string;
+}
 export function useShoppingList() {
   const { user } = useAuth();
-  const [items, setItems] = useState<ShoppingItem[]>([]);
+  const [items, setItems] = useState<ShoppingList[]>([]);
 
   async function fetchList() {
     if (!user) return { success: false };
 
     try {
-      const res = await fetch(`/api/shoppingList?where=userId=${user.id}`);
+      const res = await fetch(`/api/shoppingList?where=userId=${user.userId}`);
       const data = await res.json();
       if (res.ok) {
-        setItems(data);
+        setItems(data as ShoppingList[]);
         return { success: true };
       } else {
         toast.error("Failed to load shopping list, try again later");
@@ -38,7 +48,7 @@ export function useShoppingList() {
       const res = await fetch("/api/shoppingList", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, ingredient }),
+        body: JSON.stringify({ userId: user.userId, ingredient }),
       });
       if (res.ok) {
         toast.success("Successfully added to shopping list");
@@ -54,7 +64,7 @@ export function useShoppingList() {
     }
   }
 
-  async function toggleItemChecked(id: number, checked: boolean) {
+  async function toggleItemChecked(id: string, checked: boolean) {
     try {
       const res = await fetch(`/api/shoppingList/${id}`, {
         method: "PUT",

@@ -1,6 +1,13 @@
-// import { useShoppingList } from "../hooks/useShoppingList";
-import { Form, Button, ListGroup, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useShoppingList } from "../hooks/useShoppingList";
+import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import QuantitySelector from "../components/QuantitySelector";
+import Box from "../components/shared/Box.tsx";
+import type { Product } from "../components/shoppingList/IngredientSearch";
+
+import IngredientSearch, {
+  type Ingredient,
+} from "../components/shoppingList/IngredientSearch";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
@@ -9,145 +16,175 @@ ShoppingListPage.route = {
   protected: true,
 };
 
-// Future interface for useShoppingList could look like this
-
-//  interface ShoppingItem {
-//   id: number;
-//   userId: number;
-//   ingredient: string;
-//   checked: boolean;
-//   amount: number;
-//   unit: string;
-// }
+interface ShoppingItem {
+  id: string;
+  ingredient: Ingredient;
+  productName: string;
+  productPrice: number;
+  productQuantity: number;
+  productUnit: string;
+}
 
 export default function ShoppingListPage() {
-  ////////////////////////////////////////
-  // MOCK UNTIL PROPER DB IS IMPLEMENTED//
-  function useShoppingListMock() {
-    const [items, setItems] = useState([
-      { id: "1", ingredient: "Eggs", checked: false, unit: "g", amount: "500" },
-      {
-        id: "2",
-        ingredient: "Milk",
-        checked: true,
-        unit: "ml",
-        amount: "1000",
-      },
-    ]);
-    ////////////////////////////////////////
+  const [selectedIngredient, setSelectedIngredient] = useState<
+    Ingredient | undefined
+  >(undefined);
 
-    const addItem = async (ingredient: string) => {
-      setItems((prev) => [
-        ...prev,
-        {
-          id: Math.random().toString(),
-          ingredient,
-          checked: false,
-          unit: "",
-          amount: "",
-        },
-      ]);
-    };
+  const [clearSearchText, setClearSearchText] = useState(0);
+  const [product, setProduct] = useState("");
+  const [amount, setAmount] = useState("");
+  const numberAmount = Number(amount);
 
-    const removeItem = (id: string) => {
-      setItems((prev) => prev.filter((item) => item.id !== id));
-    };
-
-    const toggleItemChecked = (id: string, checked: boolean) => {
-      setItems((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, checked } : item))
-      );
-    };
-
-    const fetchList = async () => {}; // no-op for mock
-
-    return { items, addItem, removeItem, toggleItemChecked, fetchList };
-  }
-
-  const { items, addItem, removeItem, toggleItemChecked, fetchList } =
-    /////////////////////////////////////////////////
-    //Change this to useShoppingList when done mocking
-    /////////////////////////////////////////////////
-    useShoppingListMock();
-
-  const [newItem, setNewItem] = useState("");
+  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
-    if (!newItem.trim()) return;
-    await addItem(newItem.trim());
-    await fetchList();
-    setNewItem("");
+
+    if (numberAmount <= 0 || selectedIngredient == undefined) return;
+
+    const updatedIngredient = {
+      ...selectedIngredient,
+      amount: numberAmount,
+    };
+
+    const newShoppingItem: ShoppingItem = {
+      id: "",
+      ingredient: updatedIngredient,
+      productName: "",
+      productPrice: 0,
+      productQuantity: 0,
+      productUnit: "",
+    };
+
+    setSelectedIngredient(undefined);
+    setClearSearchText((prev) => prev + 1);
+    setAmount("");
+    setShoppingList((prevList) => [...prevList, newShoppingItem]);
   }
 
   return (
-    <Row className="mt-5 p-3 p-xl-5">
-      <Col className="mt-4 mx-xl-5 px-xl-5">
-        <h2>Shopping List</h2>
-        <Form onSubmit={handleAdd}>
-          <Row className="mt-4">
-            <Col xs={12} xl={7} className="mb-2">
-              <Form.Group>
-                <Form.Control
-                  placeholder="Add ingredient..."
-                  onChange={(e) => setNewItem(e.target.value)}
-                ></Form.Control>
-              </Form.Group>
-            </Col>
-            <Col xs={6} xl={3} className="mb-2">
-              <Form.Group>
-                <Form.Control
-                  placeholder="Add amount..."
-                  type="number"
-                  onChange={(e) => setNewItem(e.target.value)}
-                ></Form.Control>
-              </Form.Group>
-            </Col>
+    <Box size="l" className="custom-class">
+      <Row className="p-0">
+        <Col className="mt-4 mx-xl-5">
+          <h2>Shopping List</h2>
 
-            <Col xs={6} xl={1}>
-              <Form.Control placeholder="Unit" disabled></Form.Control>
-            </Col>
-            <Col xs={12} xl={1}>
-              <div className="d-grid gap-2 mb-4 mb-xl-5">
-                <Button variant="success" type="submit" className="w-auto">
-                  Add
-                </Button>
-              </div>
-            </Col>
-          </Row>
-        </Form>
+          <div className="shopping-list-container">
+            <Form onSubmit={handleAdd}>
+              <Row className="mt-4">
+                <Col xs={12} xl={4} className="mb-3">
+                  <Form.Group>
+                    <IngredientSearch
+                      clearSearchText={clearSearchText}
+                      onIngredientChange={(ingredient) =>
+                        setSelectedIngredient(ingredient)
+                      }
+                    />
+                  </Form.Group>
+                </Col>
+                <Col xs={6} xl={4} className="mb-2">
+                  <Form.Group>
+                    <Form.Control
+                      placeholder="Add amount..."
+                      value={amount}
+                      required
+                      type="number"
+                      min={0.5}
+                      max={99}
+                      step={0.5}
+                      onChange={(e) => setAmount(e.target.value)}
+                    />
+                  </Form.Group>
+                </Col>
 
-        <ListGroup>
-          {items.map((item) => (
-            <ListGroup.Item
-              key={item.id}
-              className="d-flex align-items-center justify-content-between"
-            >
-              <Form.Check
-                id={`check-${item.id}`}
-                type="checkbox"
-                checked={item.checked}
-                onChange={(e) => toggleItemChecked(item.id, e.target.checked)}
-                label={
-                  <>
-                    {item.ingredient}
-                    <span className="ms-1">{item.amount}</span>
-                    <span className="ms-1">{item.unit}</span>
-                  </>
-                }
-              />
+                <Col xs={6} xl={2}>
+                  <Form.Control
+                    placeholder="Unit"
+                    disabled
+                    value={selectedIngredient?.baseUnit?.title ?? ""}
+                  />
+                </Col>
+                <Col xs={12} xl={2}>
+                  <div className="d-grid gap-2">
+                    <Button variant="success" type="submit" className="w-auto">
+                      Add ingredient
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </Form>
 
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={() => removeItem(item.id)}
+            {shoppingList.length > 0 ? (
+              <>
+                <Col className="m-2 fs-6 mt-4">
+                  {shoppingList.map((item, index) => (
+                    <>
+                      <Row
+                        key={index}
+                        className="shopping-list-item d-flex align-items-center pt-2 pb-2 "
+                      >
+                        <Col xs={12} md={12} lg={3} className="mb-2">
+                          <span>
+                            <b>Ingredient:</b>{" "}
+                          </span>
+                          {item.ingredient.title} {item.ingredient.amount}{" "}
+                          {item.ingredient.baseUnit?.title}{" "}
+                        </Col>
+
+                        <Col
+                          xs={12}
+                          md={8}
+                          lg={6}
+                          className="mt-1 mb-2 d-flex align-items-center"
+                        >
+                          <b className="me-2">Product:</b>
+                          <Form.Select
+                            size="sm"
+                            value={product}
+                            onChange={(e) => setProduct(e.target.value)}
+                          >
+                            <option value="">Choose product</option>
+                            {item.ingredient.productId?.map(
+                              (product: Product) => (
+                                <>
+                                  <option key={product.id} value={product.name}>
+                                    {product.name ?? product.id}
+                                  </option>
+                                </>
+                              )
+                            )}
+                          </Form.Select>
+                        </Col>
+                        <Col xs={6} md={2} lg={2}>
+                          <b>Total cost:</b> 5 kr
+                        </Col>
+                        <Col
+                          xs={6}
+                          md={2}
+                          lg={1}
+                          className="d-flex justify-content-end"
+                        >
+                          <QuantitySelector value={1}></QuantitySelector>
+                        </Col>
+                      </Row>
+                    </>
+                  ))}
+                </Col>
+
+                <div className="d-grid gap-3 mt-3 mb-4">
+                  <Button>Add products to cart</Button>
+                </div>
+              </>
+            ) : (
+              <div
+                className="d-flex justify-content-center align-items-center mt-5 mb-5"
+                style={{ color: "#9b9d9eff" }}
               >
-                -
-              </Button>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      </Col>
-    </Row>
+                <h1>Shopping list is empty...</h1>
+              </div>
+            )}
+          </div>
+        </Col>
+      </Row>
+    </Box>
   );
 }

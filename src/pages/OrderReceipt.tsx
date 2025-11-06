@@ -2,7 +2,7 @@ import OrderBox from "../components/orderReceipt/OrderBox";
 import Confirmation from "../components/orderReceipt/Confirmation";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import Cart from "../components/orderReceipt/Cart";
+import Cart from "../components/cartParts/Cart";
 import Delivery from "../components/orderReceipt/Delivery";
 import Payment from "../components/orderReceipt/Payment";
 

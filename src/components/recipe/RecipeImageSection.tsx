@@ -21,15 +21,15 @@ export function RecipeImageSection({
   const { savedRecipes, saveRecipe, removeSaved } = useSavedRecipes();
 
   const isSaved = recipe
-    ? savedRecipes.some((r) => r.recipeId === recipe.id)
+    ? savedRecipes.some((r) => r.recipeId === String(recipe.id))
     : false;
 
   return (
     <div>
       <div className="ratio ratio-16x9 rounded">
         <img
-          src={recipe?.imageUrl || "/images/recipes/placeholder.png"}
-          alt={recipe?.title || "Recipe image"}
+          src={`/media/${recipe?.image}`}
+          alt={recipe?.image || "Recipe image"}
           className="object-fit-cover w-100"
         />
       </div>

@@ -1,7 +1,7 @@
 import { Col, Row } from "react-bootstrap";
 import OrderTitle from "./OrderTitle";
 import OrderInfoSection from "./OrderInfoSection";
-import Divider from "./Divider";
+import Divider from "../shared/Divider";
 import ProductInfo from "./ProductInfo";
 
 const sampleProducts = [
@@ -18,7 +18,7 @@ export default function Confirmation() {
   );
   return (
     <>
-      <Row className="mt-3 g-2 justify-content-center">
+      <Row className="g-2 justify-content-center">
         <Col xs={10}>
           <OrderTitle name="Will" />
         </Col>
@@ -34,7 +34,7 @@ export default function Confirmation() {
         <Col xs={10} sm={4}>
           <OrderInfoSection title="Pay method:" paymethod="Apple Pay" />
         </Col>
-        <Divider />
+        <Divider color="orange" />
         <Col xs={10}>
           <div className="d-flex justify-content-between align-items-center fs-5 py-2 fw-bold">
             <p className="fw-bold">Product</p>
@@ -58,7 +58,7 @@ export default function Confirmation() {
             />
           </Col>
         ))}
-        <Divider />
+        <Divider color="orange" />
         <Col xs={10} className="d-flex justify-content-end">
           <h4 className="fw-bold">Total: {total} kr</h4>
         </Col>

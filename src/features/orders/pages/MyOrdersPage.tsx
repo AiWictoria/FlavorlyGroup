@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { Col, Row } from "react-bootstrap";
 import { OrderCard } from "@orders/components/OrderCard";
 import { fetchOrders } from "@orders/api/data.mock";
+import Box from "../../../components/shared/Box";
 import type { Order } from "@models/order.types";
 import PayNowButton from "../components/PayNowButton";
 
@@ -25,13 +27,18 @@ export default function MyOrdersPage() {
   }, []);
 
   return (
-    <div className="mt-5 p-5">
-      <h2 className="mt-3 mb-4">My Orders</h2>
-      <div className="d-flex flex-column gap-2">
-        {orders.map((order) => (
-          <OrderCard key={order.id} order={order} />
-        ))}
-      </div>
-    </div>
+    <Row className="p-0 p-xl-5">
+      <Col className="mt-4 mx-xl-5 px-xl-5">
+        <h2>My Orders</h2>
+
+        <Box size="l" className="order-table-container mt-4">
+          <div className="d-flex flex-column gap-2">
+            {orders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
+        </Box>
+      </Col>
+    </Row>
   );
 }

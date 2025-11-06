@@ -6,7 +6,7 @@ interface DeliveryProps {
 export default function Delivery({ onNext, onBack }: DeliveryProps) {
   return (
     <>
-      <Row className="mt-3 g-2 justify-content-center">
+      <Row>
         <Col>
           <h2>Detta är Delivery</h2>
           <button onClick={onNext}>Next</button>
