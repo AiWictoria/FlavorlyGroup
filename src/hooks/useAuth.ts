@@ -29,7 +29,7 @@ export function useAuth() {
           return { success: true, data };
         }
       } catch (error) {
-        toast.error('Something went wrong, try again later',);
+        toast.error('Något gick fel, försök igen senare',);
         console.error(error);
         return { success: false };
       } finally {
@@ -55,15 +55,15 @@ export function useAuth() {
 
       if (res.ok) {
         setUser(data);
-        toast.success('Logged in successfully');
+        toast.success('Inloggning lyckades');
         window.location.reload();
         return { success: true, data };
       } else {
-        toast.error('Login failed, try again');
+        toast.error('Inloggningen misslyckades, försök igen');
         return { success: false };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
@@ -77,15 +77,15 @@ export function useAuth() {
 
       if (res.ok) {
         setUser(null);
-        toast.success('You have been logged out');
+        toast.success('Du har blivit utloggad');
         navigate('/');
         return { success: true };
       } else {
-        toast.error('Logout failed, try again');
+        toast.error('Utloggning misslyckades, försök igen');
         return { success: false };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
@@ -113,15 +113,15 @@ export function useAuth() {
       });
 
       if (res.ok) {
-        toast.success('Account has been created');
+        toast.success('Kontot har skapats');
         await login(email, password);
         return { success: true };
       } else {
-        toast.error("Couldn't create account, please try again later");
+        toast.error("Kunde inte skapa kontot, försök igen senare.");
         return { success: false };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
