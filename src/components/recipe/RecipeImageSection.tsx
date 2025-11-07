@@ -29,7 +29,7 @@ export function RecipeImageSection({
       <div className="ratio ratio-16x9 rounded">
         <img
           src={`/media/${recipe?.image}`}
-          alt={recipe?.image || "Recipe image"}
+          alt={recipe?.image || "Recept bild"}
           className="object-fit-cover w-100"
         />
       </div>
