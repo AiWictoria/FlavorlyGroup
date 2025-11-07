@@ -66,7 +66,7 @@ export default function ShoppingListPage() {
     <Box size="l" className="custom-class">
       <Row className="p-0">
         <Col className="mt-4 mx-xl-5">
-          <h2>Shopping List</h2>
+          <h2>Inköpslista</h2>
 
           <div className="shopping-list-container">
             <Form onSubmit={handleAdd}>
@@ -81,10 +81,10 @@ export default function ShoppingListPage() {
                     />
                   </Form.Group>
                 </Col>
-                <Col xs={6} xl={4} className="mb-2">
+                <Col xs={6} xl={3} className="mb-2">
                   <Form.Group>
                     <Form.Control
-                      placeholder="Add amount..."
+                      placeholder="Välj mängd..."
                       value={amount}
                       required
                       type="number"
@@ -98,15 +98,15 @@ export default function ShoppingListPage() {
 
                 <Col xs={6} xl={2}>
                   <Form.Control
-                    placeholder="Unit"
+                    placeholder="Enhet"
                     disabled
                     value={selectedIngredient?.baseUnit?.title ?? ""}
                   />
                 </Col>
-                <Col xs={12} xl={2}>
+                <Col xs={12} xl={3}>
                   <div className="d-grid gap-2">
                     <Button variant="success" type="submit" className="w-auto">
-                      Add ingredient
+                      Lägg till ingrediens
                     </Button>
                   </div>
                 </Col>
@@ -124,7 +124,7 @@ export default function ShoppingListPage() {
                       >
                         <Col xs={12} md={12} lg={3} className="mb-2">
                           <span>
-                            <b>Ingredient:</b>{" "}
+                            <b>Ingrediens:</b>{" "}
                           </span>
                           {item.ingredient.title} {item.ingredient.amount}{" "}
                           {item.ingredient.baseUnit?.title}{" "}
@@ -136,13 +136,13 @@ export default function ShoppingListPage() {
                           lg={6}
                           className="mt-1 mb-2 d-flex align-items-center"
                         >
-                          <b className="me-2">Product:</b>
+                          <b className="me-2">Produkt:</b>
                           <Form.Select
                             size="sm"
                             value={product}
                             onChange={(e) => setProduct(e.target.value)}
                           >
-                            <option value="">Choose product</option>
+                            <option value="">Välj produkt</option>
                             {item.ingredient.productId?.map(
                               (product: Product) => (
                                 <>
@@ -155,7 +155,7 @@ export default function ShoppingListPage() {
                           </Form.Select>
                         </Col>
                         <Col xs={6} md={2} lg={2}>
-                          <b>Total cost:</b> 5 kr
+                          <b>Total kostnad:</b> 5 kr
                         </Col>
                         <Col
                           xs={6}
@@ -171,7 +171,7 @@ export default function ShoppingListPage() {
                 </Col>
 
                 <div className="d-grid gap-3 mt-3 mb-4">
-                  <Button>Add products to cart</Button>
+                  <Button>Lägg till produkter i varukorg</Button>
                 </div>
               </>
             ) : (
@@ -179,7 +179,7 @@ export default function ShoppingListPage() {
                 className="d-flex justify-content-center align-items-center mt-5 mb-5"
                 style={{ color: "#9b9d9eff" }}
               >
-                <h1>Shopping list is empty...</h1>
+                <h1>Inköpslistan är tom...</h1>
               </div>
             )}
           </div>
