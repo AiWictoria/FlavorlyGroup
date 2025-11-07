@@ -1,3 +1,5 @@
+import { Col, Row } from "react-bootstrap";
+
 interface ProductInfoProps {
   product: string;
   quantity?: number;
@@ -11,14 +13,17 @@ export default function ProductInfo({
 }: ProductInfoProps) {
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center">
-        <p>{product}</p>
-
-        <span className="d-flex justify-content-end gap-5">
+      <Row className="d-flex justify-content-between align-items-center py-2">
+        <Col xs={6} sm={8}>
+          <p>{product}</p>
+        </Col>
+        <Col xs="auto" className="d-flex justify-content-end gap-5 text-end">
           {quantity !== undefined && <p>{quantity}</p>}
+        </Col>
+        <Col xs="auto" className=" text-end">
           <p>{price} kr</p>
-        </span>
-      </div>
+        </Col>
+      </Row>
     </>
   );
 }

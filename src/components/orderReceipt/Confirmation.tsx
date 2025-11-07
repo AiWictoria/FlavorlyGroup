@@ -46,14 +46,20 @@ export default function Confirmation({
         </Col>
         <Divider color="orange" />
         <Col xs={10}>
-          <div className="d-flex justify-content-between align-items-center fs-5 py-2 fw-bold">
-            <p className="fw-bold">Produkt</p>
-
-            <span className="d-flex justify-content-end gap-4">
+          <Row className="d-flex justify-content-between align-items-center py-2">
+            <Col xs={6} sm={8}>
+              <p className="fw-bold">Produkt</p>
+            </Col>
+            <Col
+              xs="auto"
+              className="d-flex justify-content-end gap-5 text-end"
+            >
               <p>Antal</p>
+            </Col>
+            <Col xs="auto" className=" text-end">
               <p>Pris</p>
-            </span>
-          </div>
+            </Col>
+          </Row>
         </Col>
         {products.map((p) => (
           <Col key={p.id} xs={10} className="border-bottom">
