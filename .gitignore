@@ -48,7 +48,7 @@ bld/
 # Orchard Core specific
 # Ignore runtime App_Data (gets restored from seed)
 backend/App_Data/
-
+backend.Tests
 # But keep the seed data committed to git
 !backend/App_Data.seed/
 
