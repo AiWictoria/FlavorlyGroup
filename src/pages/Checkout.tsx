@@ -147,6 +147,9 @@ export default function Checkout() {
         const maxCompletedStep = completedSteps.length
           ? Math.max(...completedSteps)
           : -1;
+
+        if (activeStep === stepsContent.length - 1) return;
+
         const nextStepIndex = maxCompletedStep + 1;
 
         if (

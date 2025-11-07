@@ -34,7 +34,7 @@ export default function Confirmation({
         </Col>
         <Col xs={10} sm={6}>
           <OrderInfoSection
-            title="Delivery address:"
+            title="Leverans adress:"
             adress={deliveryData.address}
             postcode={deliveryData.postcode}
             city={deliveryData.city}
@@ -47,15 +47,15 @@ export default function Confirmation({
         <Divider color="orange" />
         <Col xs={10}>
           <div className="d-flex justify-content-between align-items-center fs-5 py-2 fw-bold">
-            <p className="fw-bold">Product</p>
+            <p className="fw-bold">Produkt</p>
 
             <span className="d-flex justify-content-end gap-4">
-              <p>Quantity</p>
-              <p>Price</p>
+              <p>Antal</p>
+              <p>Pris</p>
             </span>
           </div>
         </Col>
-        {products.map((p, i) => (
+        {products.map((p) => (
           <Col key={p.id} xs={10} className="border-bottom">
             <ProductInfo
               product={p.name}
@@ -73,7 +73,7 @@ export default function Confirmation({
         </Col>
         <Divider color="orange" />
         <Col xs={10} className="d-flex justify-content-end">
-          <h4 className="fw-bold">Total: {total} kr</h4>
+          <h4 className="fw-bold">Totalt: {total} kr</h4>
         </Col>
       </Row>
     </>
