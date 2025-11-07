@@ -2,13 +2,24 @@ namespace RestRoutes;
 
 using OrchardCore.ContentManagement;
 using Microsoft.AspNetCore.Mvc;
-using RestRoutes.Constants;
-using RestRoutes.Services.ContentMutation;
-using RestRoutes.Services.Response;
-using System.Linq;
+using System.Text.Json;
 
 public static class PostRoutes
 {
+    private static readonly HashSet<string> RESERVED_FIELDS = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "id",
+        "contentItemId",
+        "title",
+        "displayText",
+        "createdUtc",
+        "modifiedUtc",
+        "publishedUtc",
+        "contentType",
+        "published",
+        "latest"
+    };
+
     public static void MapPostRoutes(this WebApplication app)
     {
         app.MapPost("api/{contentType}", async (
@@ -16,7 +27,6 @@ public static class PostRoutes
             [FromBody] Dictionary<string, object>? body,
             [FromServices] IContentManager contentManager,
             [FromServices] YesSql.ISession session,
-            [FromServices] ContentMutationService mutationService,
             HttpContext context) =>
         {
             try
@@ -28,36 +38,70 @@ public static class PostRoutes
                 // Check if body is null or empty
                 if (body == null || body.Count == 0)
                 {
-                    return ResponseBuilder.Error("Cannot read request body", 400);
+                    return Results.Json(new {
+                        error = "Cannot read request body"
+                    }, statusCode: 400);
                 }
 
                 // Validate fields
                 var validFields = await FieldValidator.GetValidFieldsAsync(contentType, contentManager, session);
-                var (isValid, invalidFields) = FieldValidator.ValidateFields(body, validFields, ReservedFields.Fields, contentType);
+                var (isValid, invalidFields) = FieldValidator.ValidateFields(body, validFields, RESERVED_FIELDS);
 
                 if (!isValid)
                 {
-                    return ResponseBuilder.ValidationError(invalidFields, validFields.ToList());
+                    return Results.Json(new {
+                        error = "Invalid fields provided",
+                        invalidFields = invalidFields,
+                        validFields = validFields.OrderBy(f => f).ToList()
+                    }, statusCode: 400);
                 }
 
                 var contentItem = await contentManager.NewAsync(contentType);
 
-                // Set metadata and apply fields
-                mutationService.SetContentItemMetadata(contentItem, body, context.User?.Identity?.Name);
-                mutationService.ApplyFieldsToContentItem(contentItem, contentType, body);
+                // Extract and handle special fields explicitly
+                contentItem.DisplayText = body.ContainsKey("title")
+                    ? body["title"].ToString()
+                    : "Untitled";
+
+                contentItem.Owner = context.User?.Identity?.Name ?? "anonymous";
+                contentItem.Author = contentItem.Owner;
+
+                // Build content directly into the content item using FieldMapper
+                foreach (var kvp in body)
+                {
+                    // Skip all reserved fields
+                    if (RESERVED_FIELDS.Contains(kvp.Key))
+                        continue;
+
+                    FieldMapper.MapFieldToContentItem(contentItem, contentType, kvp.Key, kvp.Value);
+                }
 
                 await contentManager.CreateAsync(contentItem, VersionOptions.Published);
                 await session.SaveChangesAsync();
 
-                return ResponseBuilder.Created(new
+                // Build and return clean, populated response
+                var cleanResponse = await ResponseBuilder.BuildCleanResponse(
+                    contentType,
+                    contentItem.ContentItemId,
+                    session,
+                    populate: true);
+
+                if (cleanResponse == null)
                 {
-                    id = contentItem.ContentItemId,
-                    title = contentItem.DisplayText
-                });
+                    // Fallback if response builder fails (shouldn't happen, but safety check)
+                    return Results.Json(new {
+                        id = contentItem.ContentItemId,
+                        title = contentItem.DisplayText
+                    }, statusCode: 201);
+                }
+
+                return Results.Json(cleanResponse, statusCode: 201);
             }
             catch (Exception ex)
             {
-                return ResponseBuilder.InternalServerError(ex.Message);
+                return Results.Json(new {
+                    error = ex.Message
+                }, statusCode: 500);
             }
         });
     }
