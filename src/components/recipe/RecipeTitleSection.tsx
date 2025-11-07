@@ -50,7 +50,7 @@ export function RecipeTitleSection({
     return (
       <>
         <div className="my-1 my-md-4">
-          <h1 className="fs-1">{recipe?.title || "Title"}</h1>
+          <h1 className="fs-1">{recipe?.title || "Titel"}</h1>
           <h4>{recipe?.categoryId || "Category"}</h4>
         </div>
       </>
@@ -60,7 +60,7 @@ export function RecipeTitleSection({
   return (
     <>
       <Form.Group>
-        <Form.Label className="fs-1">Title</Form.Label>
+        <Form.Label className="fs-1">Titel</Form.Label>
         <Form.Control
           required
           type="text"
