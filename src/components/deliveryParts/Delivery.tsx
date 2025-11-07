@@ -22,12 +22,10 @@ export default function Delivery({ onDeliveryChange }: DeliveryProps) {
     const { name, value } = e.target;
     setFormData((prev) => {
       const updated = { ...prev, [name]: value };
-
       if (name === "deliveryType") {
         const price = value === "express" ? 119 : 49;
         onDeliveryChange(value, price, updated);
       }
-
       return updated;
     });
   };

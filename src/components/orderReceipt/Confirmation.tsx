@@ -4,18 +4,28 @@ import OrderInfoSection from "./OrderInfoSection";
 import Divider from "../shared/Divider";
 import ProductInfo from "./ProductInfo";
 
-const sampleProducts = [
-  { id: "p1", product: "Sugar", quantity: 1, price: 20 },
-  { id: "p2", product: "Apples", quantity: 2, price: 39 },
-  { id: "p3", product: "Banana", quantity: 1, price: 25 },
-  { id: "p4", product: "Express delivery", price: 119 },
-];
+interface ConfirmationProps {
+  products: { id: number; name: string; quantity: number; price: number }[];
+  deliveryData: {
+    address: string;
+    postcode: string;
+    city: string;
+    deliveryType: string;
+    deliveryPrice: number;
+  };
+}
 
-export default function Confirmation() {
-  const total = sampleProducts.reduce(
+export default function Confirmation({
+  products,
+  deliveryData,
+}: ConfirmationProps) {
+  const totalProducts = products.reduce(
     (sum, p) => sum + p.price * (p.quantity ?? 1),
     0
   );
+
+  const total = totalProducts + (deliveryData.deliveryPrice ?? 0);
+
   return (
     <>
       <Row className="g-2 justify-content-center">
@@ -24,10 +34,10 @@ export default function Confirmation() {
         </Col>
         <Col xs={10} sm={6}>
           <OrderInfoSection
-            title="Delivery adress:"
-            adress="Willgata 13B"
-            postcode="123 34"
-            city="Willköping"
+            title="Delivery address:"
+            adress={deliveryData.address}
+            postcode={deliveryData.postcode}
+            city={deliveryData.city}
           />
         </Col>
 
@@ -45,19 +55,22 @@ export default function Confirmation() {
             </span>
           </div>
         </Col>
-        {sampleProducts.map((p, i) => (
-          <Col
-            key={p.id}
-            xs={10}
-            className={i !== sampleProducts.length - 1 ? "border-bottom" : ""}
-          >
+        {products.map((p, i) => (
+          <Col key={p.id} xs={10} className="border-bottom">
             <ProductInfo
-              product={p.product}
+              product={p.name}
               quantity={p.quantity}
               price={p.price}
             />
           </Col>
         ))}
+        <Col xs={10}>
+          <ProductInfo
+            product={`Leverans ${deliveryData.deliveryType}`}
+            quantity={undefined}
+            price={deliveryData.deliveryPrice}
+          />
+        </Col>
         <Divider color="orange" />
         <Col xs={10} className="d-flex justify-content-end">
           <h4 className="fw-bold">Total: {total} kr</h4>
