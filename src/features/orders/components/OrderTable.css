@@ -1,6 +1,5 @@
 /* Basic responsive container */
 .table-wrapper {
-  min-height: 100vh;
   padding: 24px 0;
 }
 
