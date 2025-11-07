@@ -4,54 +4,137 @@ using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Records;
 using YesSql.Services;
 using System.Text.Json;
-using RestRoutes.Services.ContentFetching;
-using RestRoutes.Services.ContentPopulation;
-using RestRoutes.Services.PostProcessing;
 
 public static partial class GetRoutes
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
-
     // Extract existing logic into reusable method
     public static async Task<List<Dictionary<string, object>>> FetchCleanContent(
         string contentType,
         YesSql.ISession session,
         bool populate = true,
-        bool denormalize = false)
+        bool useNewCleaner = true,
+        int maxPopulationDepth = 2)
     {
-        var fetchingService = new ContentFetchingService();
-        var plainObjects = await fetchingService.FetchRawContentItemsAsync(contentType, session);
-        if (plainObjects.Count == 0) return new List<Dictionary<string, object>>();
+        var contentItems = await session
+            .Query()
+            .For<ContentItem>()
+            .With<ContentItemIndex>(x => x.ContentType == contentType && x.Published)
+            .ListAsync();
 
-        var result = await ProcessContentItemsAsync(plainObjects, contentType, session, populate, denormalize, includeRecipeIngredientPostProcess: true);
-        return result.cleanObjects;
-    }
-
-    private static async Task<(List<Dictionary<string, object>> cleanObjects, Dictionary<string, JsonElement>? usersDictionary)> ProcessContentItemsAsync(
-        List<Dictionary<string, JsonElement>> plainObjects,
-        string contentType,
-        YesSql.ISession session,
-        bool populate,
-        bool denormalize,
-        bool includeRecipeIngredientPostProcess = true)
-    {
+        var jsonOptions = new JsonSerializerOptions
+        {
+            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+        };
+        var jsonString = JsonSerializer.Serialize(contentItems, jsonOptions);
+        var plainObjects = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(jsonString);
+        if (plainObjects == null) return new List<Dictionary<string, object>>();
 
         // Only populate if requested
+        if (populate)
+        {
+            var allReferencedIds = new HashSet<string>();
+            foreach (var obj in plainObjects)
+            {
+                CollectContentItemIds(obj, allReferencedIds);
+            }
+
+            if (allReferencedIds.Count > 0)
+            {
+
+                // Fetch ALL referenced items (including unpublished taxonomy terms!)
+                var referencedItems = await session
+                    .Query()
+                    .For<ContentItem>(false)  // false = include drafts/unpublished
+                    .With<ContentItemIndex>(x => x.ContentItemId.IsIn(allReferencedIds))
+                    .ListAsync();
+
+
+                var refJsonString = JsonSerializer.Serialize(referencedItems, jsonOptions);
+                var plainRefItems = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(refJsonString);
+                if (plainRefItems != null)
+                {
+                    var itemsDictionary = new Dictionary<string, Dictionary<string, JsonElement>>();
+                    foreach (var item in plainRefItems)
+                    {
+                        if (item.TryGetValue("ContentItemId", out var idElement))
+                        {
+                            var id = idElement.GetString();
+                            if (id != null) itemsDictionary[id] = item;
+                        }
+                    }
+
+                    // Check which IDs are missing
+                    var missingIds = allReferencedIds.Where(id => !itemsDictionary.ContainsKey(id)).ToList();
+                    if (missingIds.Any())
+                    {
+                    }
+
+                    foreach (var obj in plainObjects)
+                    {
+                        PopulateContentItemIds(obj, itemsDictionary, 1, maxPopulationDepth);
+                    }
+                }
+            }
+        }
+
+        // Collect all UserIds for enrichment
         Dictionary<string, JsonElement>? usersDictionary = null;
         if (populate)
         {
-            var populationService = new PopulationService();
-            await populationService.PopulateReferencedItemsAsync(plainObjects, session, denormalize);
-            usersDictionary = await populationService.PopulateUserDataAsync(plainObjects, session);
+            var allUserIds = new HashSet<string>();
+            foreach (var obj in plainObjects)
+            {
+                CollectUserIds(obj, allUserIds);
+            }
+
+            if (allUserIds.Count > 0)
+            {
+                // Query UserIndex to get user data
+                var users = await session
+                    .Query()
+                    .For<OrchardCore.Users.Models.User>()
+                    .With<OrchardCore.Users.Indexes.UserIndex>(x => x.UserId.IsIn(allUserIds))
+                    .ListAsync();
+
+                if (users.Any())
+                {
+                    var usersJsonString = JsonSerializer.Serialize(users, jsonOptions);
+                    var plainUsers = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(usersJsonString);
+                    if (plainUsers != null)
+                    {
+                        usersDictionary = new Dictionary<string, JsonElement>();
+                        foreach (var user in plainUsers)
+                        {
+                            if (user.TryGetValue("UserId", out var userIdElement))
+                            {
+                                var userId = userIdElement.GetString();
+                                if (userId != null)
+                                {
+                                    usersDictionary[userId] = JsonSerializer.SerializeToElement(user);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Clean up the bullshit
-        var cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary))
-            .Select(obj => RemoveMetadataFields(obj))
-            .ToList();
+        List<Dictionary<string, object>> cleanObjects;
+
+        if (useNewCleaner)
+        {
+            // Use new configurable cleaner with depth awareness
+            var config = new CleaningConfiguration();
+            cleanObjects = plainObjects.Select(obj =>
+                ConfigurableContentCleaner.CleanWithDepth(obj, contentType, config, 1, maxPopulationDepth, usersDictionary)
+            ).ToList();
+        }
+        else
+        {
+            // Use legacy cleaner (backup)
+            cleanObjects = plainObjects.Select(obj => CleanObject(obj, contentType, usersDictionary)).ToList();
+        }
 
         // Second population pass: cleanup may have introduced new ID fields (e.g., from BagPart items)
         if (populate && cleanObjects.Count > 0)
@@ -66,7 +149,7 @@ public static partial class GetRoutes
                 var newReferencedIds = new HashSet<string>();
                 foreach (var obj in cleanPlainObjects)
                 {
-                    IdCollector.CollectContentItemIds(obj, newReferencedIds);
+                    CollectContentItemIds(obj, newReferencedIds);
                 }
 
                 if (newReferencedIds.Count > 0)
@@ -78,7 +161,7 @@ public static partial class GetRoutes
                         .With<ContentItemIndex>(x => x.ContentItemId.IsIn(newReferencedIds))
                         .ListAsync();
 
-                    var newRefJsonString = JsonSerializer.Serialize(newReferencedItems, JsonOptions);
+                    var newRefJsonString = JsonSerializer.Serialize(newReferencedItems, jsonOptions);
                     var plainNewRefItems = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(newRefJsonString);
 
                     if (plainNewRefItems != null)
@@ -95,68 +178,40 @@ public static partial class GetRoutes
                                 if (id != null && type != null)
                                 {
                                     // Clean the item before adding to dictionary
-                                    newItemsDictionary[id] = CleanObject(item, type, usersDictionary);
+                                    if (useNewCleaner)
+                                    {
+                                        var config = new CleaningConfiguration();
+                                        newItemsDictionary[id] = ConfigurableContentCleaner.CleanWithDepth(
+                                            item, type, config, 2, maxPopulationDepth, usersDictionary);
+                                    }
+                                    else
+                                    {
+                                        newItemsDictionary[id] = CleanObject(item, type, usersDictionary);
+                                    }
                                 }
                             }
                         }
 
                         // Populate the IDs in cleaned data with cleaned items
-                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary, denormalize);
-
-                        // Post-process RecipeIngredient objects to reduce ingredient/unit to {id, name}
-                        if (includeRecipeIngredientPostProcess)
-                        {
-                            cleanObjects = PostProcessingService.ProcessRecipeIngredientsStatic(cleanObjects);
-                        }
+                        cleanObjects = PopulateWithCleanedItems(cleanPlainObjects, newItemsDictionary);
                     }
                 }
             }
         }
 
-        // Post-process RecipeIngredient objects even if no new population was needed
-        if (includeRecipeIngredientPostProcess)
-        {
-            cleanObjects = PostProcessingService.ProcessRecipeIngredientsStatic(cleanObjects);
-        }
-
-        // Post-process Category taxonomy terms to expand with names
-        // Always run this (not just when populate=true) since it only looks up taxonomy terms
-        var categoryProcessor = new PostProcessingService();
-        cleanObjects = await categoryProcessor.ProcessCategoryTermsAsync(cleanObjects, session);
-
-        return (cleanObjects, usersDictionary);
+        return cleanObjects;
     }
-
-    // Fetch clean content and also return raw data keyed by ContentItemId
-    public static async Task<(List<Dictionary<string, object>> cleanObjects, Dictionary<string, Dictionary<string, JsonElement>> rawById)> FetchCleanContentWithRaw(
-        string contentType,
-        YesSql.ISession session,
-        bool populate = true,
-        bool denormalize = false)
-    {
-        var fetchingService = new ContentFetchingService();
-        var plainObjects = await fetchingService.FetchRawContentItemsAsync(contentType, session);
-        if (plainObjects.Count == 0) return (new List<Dictionary<string, object>>(), new Dictionary<string, Dictionary<string, JsonElement>>());
-
-        // Build rawById dictionary before any modifications
-        var rawById = fetchingService.BuildRawByIdDictionary(plainObjects);
-
-        var result = await ProcessContentItemsAsync(plainObjects, contentType, session, populate, denormalize, includeRecipeIngredientPostProcess: false);
-        return (result.cleanObjects, rawById);
-    }
-
 
     // Helper to populate ID fields with already-cleaned items
     private static List<Dictionary<string, object>> PopulateWithCleanedItems(
         List<Dictionary<string, JsonElement>> objects,
-        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary,
-        bool denormalize = false)
+        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary)
     {
         var result = new List<Dictionary<string, object>>();
 
         foreach (var obj in objects)
         {
-            var populated = PopulateObjectWithCleanedItems(obj, cleanedItemsDictionary, denormalize);
+            var populated = PopulateObjectWithCleanedItems(obj, cleanedItemsDictionary);
             result.Add(populated);
         }
 
@@ -165,8 +220,7 @@ public static partial class GetRoutes
 
     private static Dictionary<string, object> PopulateObjectWithCleanedItems(
         Dictionary<string, JsonElement> obj,
-        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary,
-        bool denormalize = false)
+        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary)
     {
         var result = new Dictionary<string, object>();
 
@@ -181,14 +235,9 @@ public static partial class GetRoutes
                 var idStr = value.GetString();
                 if (idStr != null && cleanedItemsDictionary.TryGetValue(idStr, out var cleanedItem))
                 {
-                    // Remove "Id" suffix from key name
+                    // Replace "ingredientId" with "ingredient" containing cleaned data
                     var newKey = key.Substring(0, key.Length - 2);
                     result[newKey] = cleanedItem;
-                    if (denormalize)
-                    {
-                        // Keep the original ID field when denormalizing
-                        result[key] = idStr;
-                    }
                     continue;
                 }
                 // If not found in dictionary, keep the original ID field
@@ -202,7 +251,7 @@ public static partial class GetRoutes
                 var nested = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(value.GetRawText());
                 if (nested != null)
                 {
-                    result[key] = PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary, denormalize);
+                    result[key] = PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary);
                 }
                 else
                 {
@@ -222,7 +271,7 @@ public static partial class GetRoutes
                         var nested = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(item.GetRawText());
                         if (nested != null)
                         {
-                            array.Add(PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary, denormalize));
+                            array.Add(PopulateObjectWithCleanedItems(nested, cleanedItemsDictionary));
                         }
                     }
                     else
@@ -252,7 +301,11 @@ public static partial class GetRoutes
             .With<ContentItemIndex>(x => x.ContentType == contentType && x.Published)
             .ListAsync();
 
-        var jsonString = JsonSerializer.Serialize(contentItems, JsonOptions);
+        var jsonOptions = new JsonSerializerOptions
+        {
+            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+        };
+        var jsonString = JsonSerializer.Serialize(contentItems, jsonOptions);
 
         // Deserialize to JsonElement first, then convert to object
         var jsonDoc = JsonDocument.Parse(jsonString);
