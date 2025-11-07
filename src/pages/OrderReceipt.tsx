@@ -48,18 +48,36 @@ export default function OrderReceipt() {
     setDeliveryPrice(price);
   };
 
+  const handlePayNow = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:5001/api/stripe/create-checkout-session",
+        {
+          method: "POST",
+        }
+      );
+
+      const data = await res.json();
+
+      if (!data?.url) {
+        console.error("No checkout URL returned from backend");
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Failed to create checkout session:", error);
+    }
+  };
+
   const stepsContent = [
     <Cart
-      onNext={() => nextStep()}
       products={products}
       onQuantityChange={handleQuantityChange}
       onRemoveProduct={handleRemoveProduct}
     />,
-    <Delivery
-      onNext={() => nextStep()}
-      onDeliveryChange={handleDeliveryChange}
-    />,
-    <Payment onNext={() => nextStep()} onBack={() => prevStep()} />,
+    <Delivery onDeliveryChange={handleDeliveryChange} />,
+    <Payment />,
     <Confirmation />,
   ];
 
@@ -71,8 +89,6 @@ export default function OrderReceipt() {
     );
     setActiveStep((prev) => Math.min(prev + 1, totalSteps - 1));
   };
-
-  const prevStep = () => setActiveStep((prev) => Math.max(prev - 1, 0));
 
   useEffect(() => {
     const status = searchParams.get("status");
@@ -110,7 +126,9 @@ export default function OrderReceipt() {
       {activeStep < totalSteps - 1 && (
         <TotalBox
           buttonLable={getButtonLabel()}
-          onNext={nextStep}
+          onNext={
+            activeStep === 1 || activeStep === 2 ? handlePayNow : nextStep
+          }
           products={products}
           deliveryPrice={deliveryPrice}
         />

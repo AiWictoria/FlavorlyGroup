@@ -1,13 +1,11 @@
 import { Col, Row } from "react-bootstrap";
 import CartItem from "./CartItem";
 interface CartProps {
-  onNext: () => void;
   products: { id: number; name: string; price: number; quantity: number }[];
   onQuantityChange: (productId: number, newQuantity: number) => void;
   onRemoveProduct: (productId: number) => void;
 }
 export default function Cart({
-  onNext,
   products,
   onQuantityChange,
   onRemoveProduct,

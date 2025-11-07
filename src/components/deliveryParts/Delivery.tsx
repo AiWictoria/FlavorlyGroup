@@ -3,11 +3,10 @@ import { Col, Row } from "react-bootstrap";
 import DeliveryForm from "./DeliveryForm";
 
 interface DeliveryProps {
-  onNext: () => void;
   onDeliveryChange: (deliveryType: string, deliveryPrice: number) => void;
 }
 
-export default function Delivery({ onNext, onDeliveryChange }: DeliveryProps) {
+export default function Delivery({ onDeliveryChange }: DeliveryProps) {
   const [formData, setFormData] = useState({
     address: "",
     postcode: "",
