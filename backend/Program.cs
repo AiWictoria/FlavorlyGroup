@@ -2,7 +2,6 @@ using OrchardCore.Logging;
 using RestRoutes;
 using DotNetEnv;
 using Stripe;
-using RestRoutes.Services;
 
 namespace backend
 {
@@ -30,7 +29,6 @@ namespace backend
                           .AllowAnyMethod();
                 });
             });
-            builder.Services.AddRestRouteServices();
 
             var app = builder.Build();
 
