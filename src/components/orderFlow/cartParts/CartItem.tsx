@@ -1,5 +1,5 @@
 import { Col, Row } from "react-bootstrap";
-import QuantitySelector from "../QuantitySelector";
+import QuantitySelector from "../../QuantitySelector";
 
 interface CartItemProps {
   name: string;

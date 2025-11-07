@@ -1,5 +1,5 @@
 import { Button, Col, Row } from "react-bootstrap";
-import Divider from "../shared/Divider";
+import Divider from "../../shared/Divider";
 
 interface Product {
   name: string;
