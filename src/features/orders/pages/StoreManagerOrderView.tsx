@@ -68,7 +68,7 @@ function StoreManagerOrderViewComponent() {
   return (
     <Container fluid className="py-4">
       {error && <Alert variant="danger">{error}</Alert>}
-      
+
       {orders.length === 0 ? (
         <div className="text-center">Inga ordrar hittades</div>
       ) : (
@@ -77,45 +77,45 @@ function StoreManagerOrderViewComponent() {
           <div className="table-wrapper">
             <div className="table-container">
               <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-              <h2 className="mb-0 text-center text-md-start">
-                {selectedTab === 'completed' && 'Färdiga ordrar'}
-                {selectedTab === 'pending' && 'Aktuella ordrar'}
-                {selectedTab === 'cancelled' && 'Avbrutna ordrar'}
-              </h2>
-              <ButtonGroup className="d-flex flex-wrap justify-content-center">
-                <Button 
-                  variant={selectedTab === 'pending' ? "primary" : "outline-primary"}
-                  onClick={() => setSelectedTab('pending')}
-                  className="flex-grow-0"
-                >
-                  Aktuella
-                </Button>
-                <Button 
-                  variant={selectedTab === 'completed' ? "primary" : "outline-primary"}
-                  onClick={() => setSelectedTab('completed')}
-                  className="flex-grow-0"
-                >
-                  Färdiga
-                </Button>
-                <Button 
-                  variant={selectedTab === 'cancelled' ? "primary" : "outline-primary"}
-                  onClick={() => setSelectedTab('cancelled')}
-                  className="flex-grow-0"
-                >
-                  Avbrutna
-                </Button>
-              </ButtonGroup>
+                <h2 className="mb-0 text-center text-md-start">
+                  {selectedTab === 'completed' && 'Färdiga ordrar'}
+                  {selectedTab === 'pending' && 'Aktuella ordrar'}
+                  {selectedTab === 'cancelled' && 'Avbrutna ordrar'}
+                </h2>
+                <ButtonGroup className="d-flex flex-wrap justify-content-center">
+                  <Button
+                    variant={selectedTab === 'pending' ? "primary" : "outline-primary"}
+                    onClick={() => setSelectedTab('pending')}
+                    className="flex-grow-0"
+                  >
+                    Aktuella
+                  </Button>
+                  <Button
+                    variant={selectedTab === 'completed' ? "primary" : "outline-primary"}
+                    onClick={() => setSelectedTab('completed')}
+                    className="flex-grow-0"
+                  >
+                    Färdiga
+                  </Button>
+                  <Button
+                    variant={selectedTab === 'cancelled' ? "primary" : "outline-primary"}
+                    onClick={() => setSelectedTab('cancelled')}
+                    className="flex-grow-0"
+                  >
+                    Avbrutna
+                  </Button>
+                </ButtonGroup>
+              </div>
+              <OrderTable
+                orders={orders.filter(order => {
+                  if (selectedTab === 'pending') return ['pending', 'processing'].includes(order.status);
+                  return order.status === selectedTab;
+                })}
+                onDelete={handleDeleteOrder}
+              />
             </div>
-            <OrderTable 
-              orders={orders.filter(order => {
-                if (selectedTab === 'pending') return ['pending', 'processing'].includes(order.status);
-                return order.status === selectedTab;
-              })}
-              onDelete={handleDeleteOrder}
-            />
           </div>
         </div>
-      </div>
       )}
     </Container>
   );
@@ -123,7 +123,7 @@ function StoreManagerOrderViewComponent() {
 
 StoreManagerOrderViewComponent.route = {
   path: '/store-manager/orders',
-  menuLabel: 'Store Manager',
+  menuLabel: 'Orderhantering',
   protected: true,
   index: 5
 };

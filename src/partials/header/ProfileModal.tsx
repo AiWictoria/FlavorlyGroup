@@ -28,9 +28,9 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
           className="bg-primary text-light custom-close"
         >
           <Modal.Title className="p-2 p-sm-2">
-            {view === "default" && "Welcome to Flavorly"}
-            {view === "login" && "Sign In"}
-            {view === "signup" && "Create Account"}
+            {view === "default" && "Välkommen till Flavorly"}
+            {view === "login" && "Logga in"}
+            {view === "signup" && "Skapa ett konto"}
           </Modal.Title>
         </Modal.Header>
 
@@ -38,20 +38,19 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
           {view === "default" && (
             <>
               <h5 className="p-2 p-sm-0 m-sm-4">
-                Sign in or create an account to:{" "}
+                Logga in eller skapa ett konto för att:{" "}
               </h5>
               <div className="p-2 mx-sm-4 p-sm-2 fs-6">
                 <p>
-                  <i className="bi bi-heart-fill mx-1 mx-sm-2" /> Save and share
-                  your favorite recipes
+                  <i className="bi bi-heart-fill mx-1 mx-sm-2" /> Spara och dela dina favoritrecept
                 </p>
                 <p>
                   <i className="bi bi-basket2-fill mx-1 mx-sm-2" />
-                  Generate shopping list
+                  Generera inköpslista
                 </p>
                 <p>
                   <i className="bi bi-chat-heart mx-1 mx-sm-2" />
-                  Comment, rate and discuss
+                  Kommentera, betygsätt och diskutera
                 </p>
               </div>
               <div className="d-flex gap-2 gap-sm-5 mb-sm-4 justify-content-evenly">
@@ -59,10 +58,10 @@ export default function ProfileModal({ show, onHide }: ProfileModalProps) {
                   variant="outline-primary"
                   onClick={() => setView("signup")}
                 >
-                  Sign Up
+                  Registrera
                 </Button>
                 <Button variant="primary" onClick={() => setView("login")}>
-                  Sign in
+                  Logga in
                 </Button>
               </div>
             </>

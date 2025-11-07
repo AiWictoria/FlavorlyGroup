@@ -11,7 +11,7 @@ import PayNowButton from "../components/PayNowButton";
 
 MyOrdersPage.route = {
   path: "/MyOrders",
-  menuLabel: "My Orders",
+  menuLabel: "Mina beställningar",
   index: 15,
 };
 
@@ -29,8 +29,7 @@ export default function MyOrdersPage() {
   return (
     <Row className="p-0 p-xl-5">
       <Col className="mt-4 mx-xl-5 px-xl-5">
-        <h2>My Orders</h2>
-
+        <h2>Mina beställningar</h2>
         <Box size="l" className="order-table-container mt-4">
           <div className="d-flex flex-column gap-2">
             {orders.map((order) => (

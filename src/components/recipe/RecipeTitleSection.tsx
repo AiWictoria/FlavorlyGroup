@@ -50,8 +50,8 @@ export function RecipeTitleSection({
     return (
       <>
         <div className="my-1 my-md-4">
-          <h1 className="fs-1">{recipe?.title || "Title"}</h1>
-          <h4>{recipe?.categoryId || "Category"}</h4>
+          <h1 className="fs-1">{recipe?.title || "Titel"}</h1>
+          <h4>{recipe?.categoryId || "Kategori"}</h4>
         </div>
       </>
     );
@@ -60,25 +60,25 @@ export function RecipeTitleSection({
   return (
     <>
       <Form.Group>
-        <Form.Label className="fs-1">Title</Form.Label>
+        <Form.Label className="fs-1">Titel</Form.Label>
         <Form.Control
           required
           type="text"
-          placeholder={isCreate ? "Enter new title" : "Update title"}
+          placeholder={isCreate ? "Ange ny titel" : "Uppdatera titeln"}
           value={recipe?.title || ""}
           onChange={(e) => onChange?.("title", e.target.value)}
         />
       </Form.Group>
 
       <Form.Group className="mt-3">
-        <Form.Label className="fs-2">Category</Form.Label>
+        <Form.Label className="fs-2">Kategori</Form.Label>
         <Form.Select
           required
           value={recipe?.categoryId || ""}
           onChange={(e) => onChange?.("category", e.target.value)}
         >
           <option value="" disabled>
-            {isCreate ? "Select category" : "Choose category"}
+            {isCreate ? "Välj kategori" : "Välj kategori"}
           </option>
           {categories.map((c) => (
             <option key={c.id} value={c.title}>

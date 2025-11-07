@@ -11,7 +11,7 @@ import IngredientSearch, {
 
 ShoppingListPage.route = {
   path: "/shoppingList",
-  menuLabel: "Shopping List",
+  menuLabel: "Inköpslistan",
   index: 4,
   protected: true,
 };

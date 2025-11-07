@@ -25,11 +25,11 @@ export default function LoginForm({ onBack }: LoginFormProps) {
   return (
     <Form onSubmit={handleSubmit} className="m-2">
       <Form.Group className="p-2">
-        <Form.Label>Email</Form.Label>
+        <Form.Label>Epost</Form.Label>
         <Form.Control
           type="email"
           name="email"
-          placeholder="Enter email"
+          placeholder="Ange epost"
           value={form.email}
           onChange={setProperty}
           required
@@ -37,11 +37,11 @@ export default function LoginForm({ onBack }: LoginFormProps) {
       </Form.Group>
 
       <Form.Group className="p-2">
-        <Form.Label>Password</Form.Label>
+        <Form.Label>Lösenord</Form.Label>
         <Form.Control
           type="password"
           name="password"
-          placeholder="Enter password"
+          placeholder="Ange lösenord"
           value={form.password}
           onChange={setProperty}
           required
@@ -50,10 +50,10 @@ export default function LoginForm({ onBack }: LoginFormProps) {
 
       <div className="d-flex justify-content-between m-3 p-2">
         <Button variant="outline-primary" onClick={onBack}>
-          Back
+          Tillbaka
         </Button>
         <Button variant="primary" type="submit">
-          Sign In
+          Logga in
         </Button>
       </div>
     </Form>

@@ -9,7 +9,7 @@ import { useSavedRecipes } from "../hooks/useSavedRecipes";
 
 RecipePage.route = {
   path: "/recipes",
-  menuLabel: "Recipes",
+  menuLabel: "Recept",
   index: 1,
 };
 
@@ -53,7 +53,7 @@ export default function RecipePage() {
       <div className="mb-5">
         <Row className="d-flex align-items-center mx-4 m-2 pe-2">
           <Col xs={12} md={4} lg={3}>
-            <h2 className="fs-1 ps-0 ps-md-3">Search</h2>
+            <h2 className="fs-1 ps-0 ps-md-3">Sök</h2>
           </Col>
           <Col xs={12} md={8} lg={9} className="mt-2 mt-md-5">
             <RecipeSearchBar onSearch={setSearch} />
@@ -67,38 +67,38 @@ export default function RecipePage() {
                 className="w-100 overflow-hidden p-1"
                 variant="secondary"
               >
-                Sort
+                Sortera
               </Dropdown.Toggle>
 
               <Dropdown.Menu className="w-100">
-                <Dropdown.Header>Field</Dropdown.Header>
+                <Dropdown.Header>Fält</Dropdown.Header>
                 <Dropdown.Item
                   active={sortField === "title"}
                   onClick={() => setSortField("title")}
                 >
-                  Name
+                  Namn
                 </Dropdown.Item>
                 <Dropdown.Item
                   active={sortField === "averageRating"}
                   onClick={() => setSortField("averageRating")}
                 >
-                  Rating
+                  Betyg
                 </Dropdown.Item>
 
                 <Dropdown.Divider />
 
-                <Dropdown.Header>Order</Dropdown.Header>
+                <Dropdown.Header>Ordning</Dropdown.Header>
                 <Dropdown.Item
                   active={sortOrder === "asc"}
                   onClick={() => setSortOrder("asc")}
                 >
-                  Ascending ↑
+                  Stigande ↑
                 </Dropdown.Item>
                 <Dropdown.Item
                   active={sortOrder === "desc"}
                   onClick={() => setSortOrder("desc")}
                 >
-                  Descending ↓
+                  Fallande ↓
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -109,7 +109,7 @@ export default function RecipePage() {
                 className="w-100 overflow-hidden p-1"
                 variant="secondary"
               >
-                Filter
+                Filtrera
               </Dropdown.Toggle>
 
               <Dropdown.Menu className="w-100">
@@ -117,7 +117,7 @@ export default function RecipePage() {
                   active={filterType === "all"}
                   onClick={() => setFilterType("all")}
                 >
-                  All Recipes
+                  Alla Recept
                 </Dropdown.Item>
 
                 {user && (
@@ -126,13 +126,13 @@ export default function RecipePage() {
                       active={filterType === "saved"}
                       onClick={() => setFilterType("saved")}
                     >
-                      Saved
+                      Sparade
                     </Dropdown.Item>
                     <Dropdown.Item
                       active={filterType === "mine"}
                       onClick={() => setFilterType("mine")}
                     >
-                      My Recipes
+                      Mina Recept
                     </Dropdown.Item>
                   </>
                 )}

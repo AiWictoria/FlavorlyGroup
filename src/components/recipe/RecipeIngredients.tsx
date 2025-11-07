@@ -69,7 +69,7 @@ export function RecipeIngredients({
 
   return (
     <div className="pt-4 pt-md-5">
-      <h2>Ingredients</h2>
+      <h2>Ingredienser</h2>
 
       {isView && ingredientList.length > 0 && (
         <>
@@ -94,7 +94,7 @@ export function RecipeIngredients({
             </ul>
             {user && (
               <Button variant="success" onClick={handleAddToList}>
-                Add to shopping list
+                Lägg till i inköpslistan
               </Button>
             )}
           </div>
@@ -107,7 +107,7 @@ export function RecipeIngredients({
             <Form.Group key={i} className="d-flex align-items-center mb-2">
               <Form.Control
                 required
-                placeholder={"Add ingredient"}
+                placeholder={"Lägg till ingrediens"}
                 value={ingredient}
                 onChange={(e) => handleIngredientChange(i, e.target.value)}
               />
@@ -128,7 +128,7 @@ export function RecipeIngredients({
             size="sm"
             onClick={addIngredient}
           >
-            + Add ingredient
+            + Lägg till ingrediens
           </Button>
         </>
       )}
