@@ -27,7 +27,7 @@ export default function RecipeLayout({
 
   return (
     <>
-      <Form onSubmit={handleSubmit} className="mt-4 pt-4">
+      <Form onSubmit={handleSubmit}>
         <Row className="bg-secondary border-top border-primary">
           <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4">
             <RecipeImageSection
@@ -37,7 +37,7 @@ export default function RecipeLayout({
             />
           </Col>
 
-          <Col md={6} className="mt-3 mb-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
+          <Col md={6} className="mb-3 pt-4 px-5 p-xxl-5 ps-xxl-5">
             <RecipeTitleSection
               mode={mode}
               recipe={recipe}
@@ -67,7 +67,7 @@ export default function RecipeLayout({
         {(mode === "create" || mode === "edit") && (
           <div className="text-end pb-4 px-5">
             <Button type="submit" className="bg-success">
-              {mode === "create" ? "Create Recipe" : "Save Changes"}
+              {mode === "create" ? "Skapa recept" : "Spara ändringar"}
             </Button>
           </div>
         )}

@@ -21,11 +21,11 @@ export function OrderItemsTable({ items,
         <table className="order-items-table">
             <thead className=" text-black text-center">
                 <tr>
-                    <th className="col-amount">Amount</th>
-                    <th className="col-units">Units</th>
-                    <th>Ingredients</th>
-                    <th>Cost</th>
-                    {showCheckboxes && <th>Check</th>}
+                    <th className="col-amount">Antal</th>
+                    <th className="col-units">Enhet</th>
+                    <th>Ingredienser</th>
+                    <th>Belopp</th>
+                    {showCheckboxes && <th>Checka</th>}
                 </tr>
             </thead>
 

@@ -235,11 +235,12 @@ export async function deleteOrder(orderId: string): Promise<OrderResponse> {
     };
   }
 
-  mockOrders.splice(orderIndex, 1);
+  mockOrders[orderIndex].status = "cancelled";
+  mockOrders[orderIndex].updatedAt = new Date().toISOString();
 
   return {
     success: true,
-    message: "Order borttagen",
+    message: "Order avbruten",
   };
 }
 

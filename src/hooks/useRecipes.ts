@@ -63,11 +63,11 @@ export function useRecipes() {
         setRecipes(data as Recipe[]);
         return { success: true };
       } else {
-        toast.error('Failed loading recipes');
+        toast.error('Det gick inte att läsa in recept');
         return { success: false };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
@@ -81,12 +81,12 @@ export function useRecipes() {
       if (res.ok) {
         return { success: true, data: data as Recipe };
       } else {
-        toast.error("We couldn't find that recipe");
+        toast.error("Vi kunde inte hitta det receptet");
         navigate('/recipes');
         return { success: false, data: null };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false, data: null };
     }
   }, [navigate]);
@@ -95,7 +95,7 @@ export function useRecipes() {
     recipe: { title: string; category?: string; ingredients?: string; instructions?: string; image?: File | null }
   ) {
     if (user === null) {
-      toast.error('Please sign in to create recipes');
+      toast.error('Vänligen logga in för att skapa recept');
       return { success: false };
     }
     try {
@@ -116,11 +116,11 @@ export function useRecipes() {
         navigate(`/recipes/${insertId}`);
         return { success: true, insertId };
       } else {
-        toast.error('Could not create recipe, try again later');
+        toast.error('Kunde inte skapa receptet, försök igen senare');
         return { success: false };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
@@ -129,7 +129,7 @@ export function useRecipes() {
     recipe: Partial<Recipe>
   ): Promise<{ success: boolean }> {
     if (user === null) {
-      toast.error('Please sign it to update recipe');
+      toast.error('Vänligen signera för att uppdatera receptet');
       return { success: false };
     }
 
@@ -145,14 +145,14 @@ export function useRecipes() {
         setRecipes((prev) =>
           prev.map((r) => (r.id === id ? { ...r, ...data } : r))
         );
-        toast.success('The recipe has been updated');
+        toast.success('Receptet har uppdaterats');
         navigate(`/recipes/${id}`);
         return { success: true };
       }
-      toast.error('Could not update recipe, try again');
+      toast.error('Kunde inte uppdatera receptet, försök igen');
       return { success: false };
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
@@ -170,18 +170,18 @@ export function useRecipes() {
       if (res.ok) {
         return { success: true };
       } else {
-        toast.error('Could not upload image, try again later');
+        toast.error('Kunde inte ladda upp bilden, försök igen senare');
         return { success: false };
       }
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }
 
   async function deleteRecipe(id: string): Promise<{ success: boolean }> {
     if (user === null) {
-      toast.error('Sign it to delete recipe');
+      toast.error('Signera för att radera recept');
       return { success: false };
     }
 
@@ -196,10 +196,10 @@ export function useRecipes() {
         navigate('/recipes');
         return { success: true };
       }
-      toast.error('Failed to delete recipe, try again');
+      toast.error('Misslyckades med att ta bort receptet, försök igen');
       return { success: false };
     } catch {
-      toast.error('Network error, please try again later');
+      toast.error('Nätverksfel, försök igen senare');
       return { success: false };
     }
   }

@@ -56,7 +56,7 @@ export function RecipeImageSection({
             }}
           >
             <i className={`bi ${isSaved ? "bi-heart-fill" : "bi-heart-fill"}`}>
-              {isSaved ? " Saved" : " Save"}
+              {isSaved ? " Sparad" : "Spara"}
             </i>
           </Button>
         </div>
@@ -64,7 +64,7 @@ export function RecipeImageSection({
 
       {mode !== "view" && (
         <Form.Group className=" m-5">
-          <Form.Label>Upload Image</Form.Label>
+          <Form.Label>Ladda upp bild</Form.Label>
           <Form.Control
             type="file"
             name="image"

@@ -26,7 +26,7 @@ export default function RecipeSearchBar({ onSearch }: RecipeSearchBarProps) {
           <Form.Control
             type="text"
             aria-label="Search recipes"
-            placeholder="Search recipes, ingredients, categories..."
+            placeholder="Sök recept, ingredienser, kategorier..."
             value={value}
             onChange={handleChange}
             className="pe-5 ps-3"

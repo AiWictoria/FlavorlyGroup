@@ -8,14 +8,14 @@ NotAuthorizedPage.route = {
 export default function NotAuthorizedPage() {
   return (
     <>
-      <Row className="d-flex justify-content-center align-items-center p-5 mt-5">
+      <Row className="d-flex justify-content-center align-items-center p-5">
         <Col>
-          <h2 className="mt-3">Access Denied</h2>
+          <h2 className="mt-3">Åtkomst nekad</h2>
           <p className="mt-4">
-            You don’t have permission to view this page or perform this action
+            Du har inte behörighet att visa den här sidan eller utföra den här åtgärden
           </p>
           <Button as={Link as any} to="/" className="p-2 mt-3">
-            Back to start page
+            Tillbaka till start
           </Button>
         </Col>
       </Row>

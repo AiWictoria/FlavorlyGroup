@@ -1,58 +1,46 @@
-.orderbox-s {
-  border: 1px solid #ddd;
+.orderbox {
+  border: 1px solid #ddddddc2;
   border-radius: 12px;
   padding: 32px 24px;
-  max-width: 768px;
   margin: 34px auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.137);
+}
+
+.orderbox-s {
+  max-width: 768px;
 }
 
 .orderbox-m {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 32px 24px;
   max-width: 1024px;
-  margin: 34px auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .orderbox-l {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 32px 24px;
   max-width: 1280px;
-  margin: 34px auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 .orderbox-xl {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 32px 24px;
   max-width: 1440px;
-  margin: 34px auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 783px) {
-  .orderbox-s {
+  .orderbox.orderbox-s {
     margin: 34px 10px;
     padding: 32px 10px;
   }
 }
 @media (max-width: 1039px) {
-  .orderbox-m {
+  .orderbox.orderbox-m {
     margin: 34px 10px;
     padding: 32px 10px;
   }
 }
 @media (max-width: 1295px) {
-  .orderbox-l {
+  .orderbox.orderbox-l {
     margin: 34px 10px;
     padding: 32px 10px;
   }
 }
 @media (max-width: 1455px) {
-  .orderbox-xl {
+  .orderbox.orderbox-xl {
     margin: 34px 10px;
     padding: 32px 10px;
   }
@@ -97,8 +85,4 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.233);
 .orderbox-circle.inactive {
   border-color: #ccc;
   background: #fff;
-}
-
-.orderbox-content {
-  margin-top: 2rem;
 }

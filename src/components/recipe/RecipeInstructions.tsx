@@ -45,7 +45,7 @@ export function RecipeInstructions({
 
   return (
     <div className="py-4 text-lg-center">
-      <h2 className="py-4 text-lg-center">Instructions</h2>
+      <h2 className="py-4 text-lg-center">Instruktioner</h2>
 
       {isView && instructionsList.length > 0 && (
         <ul className="list-unstyled">
@@ -68,7 +68,7 @@ export function RecipeInstructions({
             <Form.Group key={i} className="d-flex align-items-center mb-2">
               <Form.Control
                 required
-                placeholder="Add step"
+                placeholder="Lägg till steg"
                 value={instr}
                 onChange={(e) => handleInstructionChange(i, e.target.value)}
               />
@@ -89,7 +89,7 @@ export function RecipeInstructions({
             size="sm"
             onClick={addInstruction}
           >
-            + Add step
+            + Lägg till steg
           </Button>
         </>
       )}
