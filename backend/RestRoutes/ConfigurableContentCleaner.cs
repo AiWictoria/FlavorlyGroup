@@ -116,37 +116,6 @@ public static class ConfigurableContentCleaner
             }
         }
 
-        // Special handling for Recipe: rename "user" → "author"
-        if (contentType == "Recipe")
-        {
-            // Rename "user" to "author"
-            if (clean.ContainsKey("user") && !clean.ContainsKey("author"))
-            {
-                clean["author"] = clean["user"];
-                clean.Remove("user");
-            }
-        }
-
-        // Special handling for Comment: rename "user" → "author"
-        if (contentType == "Comment")
-        {
-            if (clean.ContainsKey("user") && !clean.ContainsKey("author"))
-            {
-                clean["author"] = clean["user"];
-                clean.Remove("user");
-            }
-        }
-
-        // Special handling for Ingredient: rename "unit" → "baseUnit"
-        if (contentType == "Ingredient")
-        {
-            if (clean.ContainsKey("unit") && !clean.ContainsKey("baseUnit"))
-            {
-                clean["baseUnit"] = clean["unit"];
-                clean.Remove("unit");
-            }
-        }
-
         // Special handling for OrderItem: extract Price from OrderItemPart.Price
         if (contentType == "OrderItem")
         {
