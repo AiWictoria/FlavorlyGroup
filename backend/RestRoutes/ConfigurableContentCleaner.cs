@@ -54,7 +54,8 @@ public static class ConfigurableContentCleaner
 
         if (typeSection.HasValue)
         {
-            var typeDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(typeSection.Value.GetRawText());
+            var typeSectionRawText = typeSection.Value.GetRawText();
+            var typeDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(typeSectionRawText);
             if (typeDict != null)
             {
                 foreach (var kvp in typeDict)
@@ -229,7 +230,6 @@ public static class ConfigurableContentCleaner
 
         // Handle named BagParts (Ingredients, RecipeInstructions, Comments, etc.)
         // These function like BagPart but with specific names
-        var processedNamedBags = false;
         foreach (var kvp in obj)
         {
             // Skip if this is already handled or not an object
@@ -280,7 +280,6 @@ public static class ConfigurableContentCleaner
                         {
                             clean["items"] = itemsList;
                         }
-                        processedNamedBags = true;
                     }
                 }
             }
@@ -371,7 +370,9 @@ public static class ConfigurableContentCleaner
         // Handle Text fields: { "Text": "value" } → "value"
         if (element.ValueKind == JsonValueKind.Object)
         {
-            var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(element.GetRawText());
+            var rawText = element.GetRawText();
+            var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(rawText);
+
             if (dict != null)
             {
                 // Handle Taxonomy reference objects (categories)
@@ -415,6 +416,8 @@ public static class ConfigurableContentCleaner
                 if (dict.ContainsKey("Paths") && dict.ContainsKey("MediaTexts"))
                 {
                     var mediaObj = new Dictionary<string, object>();
+                    var hasPaths = false;
+                    var hasTexts = false;
 
                     if (dict["Paths"].ValueKind == JsonValueKind.Array)
                     {
@@ -423,10 +426,18 @@ public static class ConfigurableContentCleaner
                         {
                             if (path.ValueKind == JsonValueKind.String)
                             {
-                                paths.Add(path.GetString() ?? "");
+                                var pathStr = path.GetString();
+                                if (!string.IsNullOrEmpty(pathStr))
+                                {
+                                    paths.Add(pathStr);
+                                    hasPaths = true;
+                                }
                             }
                         }
-                        mediaObj["paths"] = paths.ToArray();
+                        if (hasPaths)
+                        {
+                            mediaObj["paths"] = paths.ToArray();
+                        }
                     }
 
                     if (dict["MediaTexts"].ValueKind == JsonValueKind.Array)
@@ -436,10 +447,24 @@ public static class ConfigurableContentCleaner
                         {
                             if (text.ValueKind == JsonValueKind.String)
                             {
-                                texts.Add(text.GetString() ?? "");
+                                var textStr = text.GetString();
+                                if (!string.IsNullOrEmpty(textStr))
+                                {
+                                    texts.Add(textStr);
+                                    hasTexts = true;
+                                }
                             }
                         }
-                        mediaObj["mediaTexts"] = texts.ToArray();
+                        if (hasTexts)
+                        {
+                            mediaObj["mediaTexts"] = texts.ToArray();
+                        }
+                    }
+
+                    // If MediaField has no actual content, return null instead of empty object
+                    if (mediaObj.Count == 0)
+                    {
+                        return (null, false);
                     }
 
                     return (mediaObj, false);
@@ -543,10 +568,12 @@ public static class ConfigurableContentCleaner
                     }
                 }
 
-                // Handle MediaField (paths and mediaTexts)
+                // Handle MediaField (paths and mediaTexts) - duplicate check (shouldn't reach here if first check matched)
+                // This is a fallback, but should handle empty MediaFields the same way
                 if (dict.ContainsKey("Paths") && dict.ContainsKey("MediaTexts"))
                 {
                     var mediaObj = new Dictionary<string, object>();
+                    var hasContent = false;
 
                     if (dict.TryGetValue("Paths", out var pathsEl) && pathsEl.ValueKind == JsonValueKind.Array)
                     {
@@ -556,10 +583,17 @@ public static class ConfigurableContentCleaner
                             if (path.ValueKind == JsonValueKind.String)
                             {
                                 var pathStr = path.GetString();
-                                if (pathStr != null) paths.Add(pathStr);
+                                if (!string.IsNullOrEmpty(pathStr))
+                                {
+                                    paths.Add(pathStr);
+                                    hasContent = true;
+                                }
                             }
                         }
-                        mediaObj["paths"] = paths;
+                        if (paths.Count > 0)
+                        {
+                            mediaObj["paths"] = paths;
+                        }
                     }
 
                     if (dict.TryGetValue("MediaTexts", out var textsEl) && textsEl.ValueKind == JsonValueKind.Array)
@@ -570,10 +604,23 @@ public static class ConfigurableContentCleaner
                             if (text.ValueKind == JsonValueKind.String)
                             {
                                 var textStr = text.GetString();
-                                if (textStr != null) mediaTexts.Add(textStr);
+                                if (!string.IsNullOrEmpty(textStr))
+                                {
+                                    mediaTexts.Add(textStr);
+                                    hasContent = true;
+                                }
                             }
                         }
-                        mediaObj["mediaTexts"] = mediaTexts;
+                        if (mediaTexts.Count > 0)
+                        {
+                            mediaObj["mediaTexts"] = mediaTexts;
+                        }
+                    }
+
+                    // If MediaField has no actual content, return null instead of empty object
+                    if (!hasContent || mediaObj.Count == 0)
+                    {
+                        return (null, false);
                     }
 
                     return (mediaObj, false);
@@ -583,14 +630,23 @@ public static class ConfigurableContentCleaner
                 if (dict.ContainsKey("Value") && dict.Count == 1)
                 {
                     var valueElement = dict["Value"];
+
+                    // Handle JsonElement (from deserialized JSON)
                     if (valueElement.ValueKind == JsonValueKind.Number)
                     {
-                        return (valueElement.GetDouble(), false);
+                        var num = valueElement.GetDouble();
+                        return (num, false);
                     }
                     else if (valueElement.ValueKind == JsonValueKind.True || valueElement.ValueKind == JsonValueKind.False)
                     {
                         return (valueElement.GetBoolean(), false);
                     }
+                }
+
+                // Check if the object is completely empty - return null instead of empty object
+                if (dict.Count == 0)
+                {
+                    return (null, false);
                 }
 
                 // Otherwise return the whole object cleaned (for complex nested structures)
@@ -602,6 +658,12 @@ public static class ConfigurableContentCleaner
                     {
                         cleaned[ToCamelCase(kvp.Key)] = value;
                     }
+                }
+
+                // If after cleaning we have an empty dictionary, return null
+                if (cleaned.Count == 0)
+                {
+                    return (null, false);
                 }
 
                 // Unwrap single-property objects
