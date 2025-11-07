@@ -26,18 +26,18 @@ export function useRatings() {
         setRatings(data);
         return { success: true, data };
       } else {
-        toast.error("Failed to load ratings");
+        toast.error("Det gick inte att ladda betyg");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
 
   async function addRating(recipeId: number, rating: number) {
     if (!user) {
-      toast.error("Please log in to rate");
+      toast.error("Vänligen logga in för att betygsätta");
       return { success: false };
     }
 
@@ -57,15 +57,15 @@ export function useRatings() {
       });
 
       if (res.ok) {
-        toast.success("Rating saved!");
+        toast.success("Betyget har sparats!");
         await fetchRatings(recipeId);
         return { success: true };
       } else {
-        toast.error("Could not save rating");
+        toast.error("Det gick inte att spara betyget");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
@@ -79,17 +79,17 @@ export function useRatings() {
       });
 
       if (res.ok) {
-        toast.success("Rating updated!");
+        toast.success("Betyg uppdaterat!");
         setRatings((prev) =>
           prev.map((r) => (r.id === id ? { ...r, rating } : r))
         );
         return { success: true };
       } else {
-        toast.error("Could not update rating");
+        toast.error("Kunde inte uppdatera betyget");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }

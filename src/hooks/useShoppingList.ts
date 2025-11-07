@@ -33,11 +33,11 @@ export function useShoppingList() {
         setItems(data as ShoppingList[]);
         return { success: true };
       } else {
-        toast.error("Failed to load shopping list, try again later");
+        toast.error("Misslyckades med att ladda inköpslistan, försök igen senare");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
@@ -51,15 +51,15 @@ export function useShoppingList() {
         body: JSON.stringify({ userId: user.userId, ingredient }),
       });
       if (res.ok) {
-        toast.success("Successfully added to shopping list");
+        toast.success("Lagt till i inköpslistan");
         await fetchList();
         return { success: true };
       } else {
-        toast.error("Failed to att to shopping list, try again");
+        toast.error("Misslyckades med att registrera inköpslistan, försök igen");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
@@ -77,11 +77,11 @@ export function useShoppingList() {
         );
         return { success: true };
       } else {
-        toast.error("Failed to update item status");
+        toast.error("Misslyckades med att uppdatera objektets status");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
@@ -91,14 +91,14 @@ export function useShoppingList() {
       const res = await fetch(`/api/shoppingList/${id}`, { method: "DELETE" });
       if (res.ok) {
         setItems((prev) => prev.filter((i) => i.id !== id));
-        toast.success("Successfully removed item");
+        toast.success("Objektet har tagits bort");
         return { success: true };
       } else {
-        toast.error("Failed to remove item, try again");
+        toast.error("Misslyckades med att ta bort objektet, försök igen");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }

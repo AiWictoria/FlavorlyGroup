@@ -12,25 +12,25 @@ export const STATUS_THEME: Record<OrderStatus, StatusTheme> = {
         surface: "bg-danger text-white",
         button: "btn btn-danger text-white",
         iconClass: "bi-cart",
-        buttonText: "Begin processing"
+        buttonText: "Börja bearbeta"
     },
     processing: {
         surface: "bg-warning text-white",
         button: "btn btn-warning text-white",
         iconClass: "bi-three-dots",
-        buttonText: "Mark as completed"
+        buttonText: "Markera som klar"
     },
     completed: {
         surface: "bg-success text-white",
         button: "btn btn-success text-white",
         iconClass: "bi-check-lg",
-        buttonText: "Notify customer"
+        buttonText: "Notifiera kunden"
     },
     cancelled: {
         surface: "bg-secondary-subtle text-danger border-bottom border-danger",
         button: "btn btn-outline-danger",
         iconClass: "bi-x-lg",
-        buttonText: "Order cancelled"
+        buttonText: "Order Makulerad"
     }
 } as const;
 

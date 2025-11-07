@@ -33,14 +33,14 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <div className="stats-value-wrapper">
                 <div className="stats-value">{activeOrders}</div>
               </div>
-              <div className="stats-label">Active Orders</div>
+              <div className="stats-label">Aktiva ordrar</div>
               <div className="stats-detail-wrapper">
                 <div className="stats-detail">
                   <span className="stats-detail-item">
-                    <i className="bi bi-cart"></i> {stats.pending} pending
+                    <i className="bi bi-cart"></i> {stats.pending} väntar
                   </span>
                   <span className="stats-detail-item">
-                    <i className="bi bi-three-dots"></i> {stats.processing} processing
+                    <i className="bi bi-three-dots"></i> {stats.processing} pågående
                   </span>
                 </div>
               </div>
@@ -56,14 +56,14 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <div className="stats-value-wrapper">
                 <div className="stats-value">{completionRate}%</div>
               </div>
-              <div className="stats-label">Completion Rate</div>
+              <div className="stats-label">Slutförda</div>
               <div className="stats-detail-wrapper">
                 <div className="stats-detail">
                   <span className="stats-detail-item">
-                    <i className="bi bi-check-lg"></i> {stats.completed} completed
+                    <i className="bi bi-check-lg"></i> {stats.completed} levererade
                   </span>
                   <span className="stats-detail-item">
-                    <i className="bi bi-exclamation-lg"></i> {stats.cancelled} cancelled
+                    <i className="bi bi-exclamation-lg"></i> {stats.cancelled} avbrutna
                   </span>
                 </div>
               </div>
@@ -79,10 +79,10 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <div className="stats-value-wrapper">
                 <div className="stats-value">{stats.total}</div>
               </div>
-              <div className="stats-label">Total Orders</div>
+              <div className="stats-label">Totalt antal ordrar</div>
               <div className="stats-detail-wrapper">
                 <div className="stats-detail">
-                  All time orders
+                  Alla ordrar
                 </div>
               </div>
             </div>
@@ -97,10 +97,10 @@ export function OrderStats({ orders }: OrderStatsProps) {
               <div className="stats-value-wrapper">
                 <div className="stats-value">{stats.totalRevenue} kr</div>
               </div>
-              <div className="stats-label">Total Revenue</div>
+              <div className="stats-label">Total försäljning</div>
               <div className="stats-detail-wrapper">
                 <div className="stats-detail">
-                  Total earnings from all orders
+                  Totalt intjänat från alla ordrar
                 </div>
               </div>
             </div>

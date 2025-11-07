@@ -29,10 +29,10 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
     <>
       <Row className="mx-4 my-5 d-flex justify-content-center">
         <Col md={8}>
-          <h3 className="mb-3 text-start">Comments</h3>
+          <h3 className="mb-3 text-start">Kommentarer</h3>
 
           {comments.length === 0 && (
-            <p className="text-center text-muted">No comments yet.</p>
+            <p className="text-center text-muted">Inga kommentarer ännu.</p>
           )}
 
           <div className="mb-3">
@@ -51,7 +51,7 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
                 <Form.Control
                   as="textarea"
                   rows={2}
-                  placeholder="Write a comment..."
+                  placeholder="Skriv en kommentar..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   className="mt-3"
@@ -59,7 +59,7 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
                 />
               </Form.Group>
               <Button type="submit" variant="primary" className="w-100">
-                Post Comment
+                Ladda upp kommentar
               </Button>
             </Form>
           )}
