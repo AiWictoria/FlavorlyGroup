@@ -61,6 +61,13 @@ public static class ConfigurableContentCleaner
                 {
                     var fieldName = ToCamelCase(kvp.Key);
 
+                    // Special handling for Comment: prioritize 'User' over 'Author'
+                    if (contentType == "Comment" && fieldName.Equals("author", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Skip 'Author' field - we'll use 'User' instead
+                        continue;
+                    }
+
                     // Check if field is allowed in whitelist (if whitelist exists)
                     if (hasWhitelist && !allowedFields.Contains(fieldName))
                         continue;
@@ -78,13 +85,22 @@ public static class ConfigurableContentCleaner
 
                     if (value != null)
                     {
-                        // If it's an ID reference from ContentItemIds, append "Id" to field name
-                        if (isIdReference)
+                        // Special handling for Comment: rename 'user' field to ensure it's used
+                        if (contentType == "Comment" && fieldName.Equals("user", StringComparison.OrdinalIgnoreCase))
                         {
-                            fieldName = fieldName + "Id";
+                            // Ensure it's called 'user' (not 'userId' or anything else)
+                            clean["user"] = value;
                         }
+                        else
+                        {
+                            // If it's an ID reference from ContentItemIds, append "Id" to field name
+                            if (isIdReference)
+                            {
+                                fieldName = fieldName + "Id";
+                            }
 
-                        clean[fieldName] = value;
+                            clean[fieldName] = value;
+                        }
                     }
                 }
             }
@@ -270,6 +286,24 @@ public static class ConfigurableContentCleaner
             }
         }
 
+        // Special handling for AutoroutePart: convert to 'slug' instead of full object
+        if (obj.TryGetValue("AutoroutePart", out var autoroutePart) && autoroutePart.ValueKind == JsonValueKind.Object)
+        {
+            var autorouteDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(autoroutePart.GetRawText());
+            if (autorouteDict != null && autorouteDict.TryGetValue("Path", out var pathEl))
+            {
+                var path = pathEl.GetString();
+                if (!string.IsNullOrEmpty(path))
+                {
+                    // Only add slug if whitelist allows it (or no whitelist exists)
+                    if (!hasWhitelist || allowedFields.Contains("slug"))
+                    {
+                        clean["slug"] = path;
+                    }
+                }
+            }
+        }
+
         // Handle any generic Part fields that might be in the whitelist
         foreach (var kvp in obj)
         {
@@ -280,6 +314,7 @@ public static class ConfigurableContentCleaner
             if (kvp.Key.EndsWith("Part", StringComparison.OrdinalIgnoreCase) &&
                 kvp.Key != "BagPart" && // Already handled
                 kvp.Key != "TitlePart" && // Handled via DisplayText
+                kvp.Key != "AutoroutePart" && // Handled separately as 'slug'
                 !isContentTypePart && // Already handled as type section
                 kvp.Value.ValueKind == JsonValueKind.Object)
             {
