@@ -1,6 +1,7 @@
 import OrderBox from "../components/orderReceipt/OrderBox";
 import Confirmation from "../components/orderReceipt/Confirmation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Cart from "../components/cartParts/Cart";
 import Delivery from "../components/orderReceipt/Delivery";
 import Payment from "../components/orderReceipt/Payment";
@@ -8,6 +9,7 @@ import Payment from "../components/orderReceipt/Payment";
 OrderReceipt.route = { path: "/order", menuLabel: "Order", index: 6 };
 
 export default function OrderReceipt() {
+  const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
@@ -28,6 +30,19 @@ export default function OrderReceipt() {
   };
 
   const prevStep = () => setActiveStep((prev) => Math.max(prev - 1, 0));
+
+    useEffect(() => {
+    const status = searchParams.get("status");
+    const step = searchParams.get("step");
+
+    if (status === "success" && step === "confirmation") {
+      setCompletedSteps([0, 1, 2]);
+      setActiveStep(3);
+    } else if (status === "cancelled" && step === "payment") {
+      setCompletedSteps([0, 1]);
+      setActiveStep(2);
+    }
+  }, [searchParams]);
 
   return (
     <OrderBox
