@@ -15,10 +15,36 @@ export default function CancelConfirmationToast({
   cancelText = "Cancel"
 }: CancelConfirmationToastProps) {
   return (
-    <div className="fixed-top vh-100 vw-100 d-flex align-items-center justify-content-center" 
-         style={{ background: 'rgba(0, 0, 0, 0.5)', zIndex: 9999 }}>
-      <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2 mx-3" 
-           style={{ minWidth: '300px', maxWidth: '400px' }}>
+    <div style={{
+      position: 'absolute',
+      top: '50vh',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: 9999,
+      width: 'fit-content'
+    }}>
+      <div style={{
+        position: 'absolute',
+        background: 'rgba(0, 0, 0, 0.15)',
+        width: '600px',
+        height: '400px',
+        borderRadius: '16px',
+        filter: 'blur(40px)',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: -1
+      }} />
+      <Row 
+        className="p-3 rounded d-flex flex-column gap-2"
+        style={{ 
+          minWidth: '300px', 
+          maxWidth: '400px',
+          background: '#fff',
+          border: '1px solid #dee2e6',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)'
+        }}
+      >
         <Col>
           <p className="text-center mb-3">{message}</p>
           <div className="d-flex justify-content-center gap-2">
