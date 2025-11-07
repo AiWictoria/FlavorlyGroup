@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Container, Alert, Button, ButtonGroup, Row, Col } from 'react-bootstrap';
+import { Container, Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { OrderTable } from '../components/OrderTable';
 import { OrderStats } from '../components/OrderStats';
 import type { Order } from '@models/order.types';
 import { fetchOrders, deleteOrder } from '../api/data.mock';
 import toast from 'react-hot-toast';
+import CancelConfirmationToast from '../../../components/shared/CancelConfirmationToast';
 
 function StoreManagerOrderViewComponent() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -31,38 +32,19 @@ function StoreManagerOrderViewComponent() {
   }, []);
 
   const handleDeleteOrder = async (orderId: string) => {
-    toast.custom((t) => (
-      <div className="fixed-top vh-100 vw-100 d-flex align-items-center justify-content-center" style={{ background: 'rgba(0, 0, 0, 0.5)', zIndex: 9999 }}>
-        <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2 mx-3" style={{ minWidth: '300px', maxWidth: '400px' }}>
-          <Col>
-            <p className="text-center mb-3">Are you sure you want to cancel this order?</p>
-            <div className="d-flex justify-content-center gap-2">
-              <Button
-                variant="outline-primary"
-                size="sm"
-                onClick={() => toast.dismiss(t.id)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={async () => {
-                  toast.dismiss(t.id);
-                  try {
-                    await deleteOrder(orderId);
-                    loadOrders();
-                  } catch (err) {
-                    setError('Failed to cancel the order');
-                  }
-                }}
-              >
-                Confirm
-              </Button>
-            </div>
-          </Col>
-        </Row>
-      </div>
+    toast.custom(() => (
+      <CancelConfirmationToast
+        message="Are you sure you want to cancel this order?"
+        onConfirm={async () => {
+          try {
+            await deleteOrder(orderId);
+            loadOrders();
+          } catch (err) {
+            setError('Failed to cancel the order');
+          }
+        }}
+        confirmText="Confirm"
+      />
     ), {
       duration: Infinity,
       style: {
