@@ -3,7 +3,11 @@ import { Col, Row } from "react-bootstrap";
 import DeliveryForm from "./DeliveryForm";
 
 interface DeliveryProps {
-  onDeliveryChange: (deliveryType: string, deliveryPrice: number) => void;
+  onDeliveryChange: (
+    deliveryType: string,
+    deliveryPrice: number,
+    formData: any
+  ) => void;
 }
 
 export default function Delivery({ onDeliveryChange }: DeliveryProps) {
@@ -11,7 +15,6 @@ export default function Delivery({ onDeliveryChange }: DeliveryProps) {
     address: "",
     postcode: "",
     city: "",
-    country: "",
     deliveryType: "",
   });
 
@@ -22,7 +25,7 @@ export default function Delivery({ onDeliveryChange }: DeliveryProps) {
 
       if (name === "deliveryType") {
         const price = value === "express" ? 119 : 49;
-        onDeliveryChange(value, price);
+        onDeliveryChange(value, price, updated);
       }
 
       return updated;

@@ -38,14 +38,16 @@ export default function OrderReceipt() {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
-  const [deliveryPrice, setDeliveryPrice] = useState<number | undefined>(
-    undefined
-  );
-  const [deliveryType, setDeliveryType] = useState("");
+  const [deliveryData, setDeliveryData] = useState({
+    address: "",
+    postcode: "",
+    city: "",
+    deliveryType: "",
+    deliveryPrice: undefined,
+  });
 
-  const handleDeliveryChange = (type: string, price: number) => {
-    setDeliveryType(type);
-    setDeliveryPrice(price);
+  const handleDeliveryChange = (type: string, price: number, formData: any) => {
+    setDeliveryData({ ...formData, deliveryType: type, deliveryPrice: price });
   };
 
   const handlePayNow = async () => {
@@ -130,7 +132,7 @@ export default function OrderReceipt() {
             activeStep === 1 || activeStep === 2 ? handlePayNow : nextStep
           }
           products={products}
-          deliveryPrice={deliveryPrice}
+          deliveryPrice={deliveryData.deliveryPrice}
         />
       )}
     </OrderBox>
