@@ -53,10 +53,10 @@ export default function IngredientSearch({
   function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchedIngredients([]);
     setSearchText(event.target.value);
-    setShow(true);
 
     // Clear ingredient when user starts searching ingredients again
     onIngredientChange(undefined);
+    setShow(true);
   }
 
   useEffect(() => {
@@ -82,7 +82,6 @@ export default function IngredientSearch({
 
         const data: Ingredient[] = await res.json();
         setSearchedIngredients(data);
-        setShow(true);
       } catch {
         toast.error("Nätverksfel, försök igen senare");
       }
