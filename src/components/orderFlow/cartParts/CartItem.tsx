@@ -1,24 +1,23 @@
 import { Col, Row } from "react-bootstrap";
-import QuantitySelector from "../QuantitySelector";
-import { useState } from "react";
+import QuantitySelector from "../../QuantitySelector";
 
 interface CartItemProps {
   name: string;
   productImage?: string;
   unitPrice: number;
+  quantity: number;
+  onQuantityChange: (newQuantity: number) => void;
+  onRemove: () => void;
 }
 
 export default function CartItem({
   name,
   productImage,
   unitPrice,
+  quantity,
+  onQuantityChange,
+  onRemove,
 }: CartItemProps) {
-  const [quantity, setQuantity] = useState(1);
-
-  const handleQuantityChange = (newValue: number) => {
-    setQuantity(newValue);
-  };
-
   const totalPrice = unitPrice * quantity;
 
   return (
@@ -33,7 +32,8 @@ export default function CartItem({
           <div className="mt-auto">
             <QuantitySelector
               value={quantity}
-              onChange={handleQuantityChange}
+              onChange={onQuantityChange}
+              onRemove={onRemove}
             />
           </div>
         </Col>
