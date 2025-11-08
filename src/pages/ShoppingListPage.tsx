@@ -1,13 +1,15 @@
-import { useShoppingList } from "../hooks/useShoppingList";
+import {
+  useShoppingList,
+  type Ingredient,
+  type ShoppingItem,
+  type Product,
+} from "../hooks/useShoppingList";
 import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 import Box from "../components/shared/Box.tsx";
-import type { Product } from "../components/shoppingList/IngredientSearch";
 
-import IngredientSearch, {
-  type Ingredient,
-} from "../components/shoppingList/IngredientSearch";
+import IngredientSearch from "../components/shoppingList/IngredientSearch";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
@@ -16,16 +18,9 @@ ShoppingListPage.route = {
   protected: true,
 };
 
-interface ShoppingItem {
-  id: string;
-  ingredient: Ingredient;
-  productName: string;
-  productPrice: number;
-  productQuantity: number;
-  productUnit: string;
-}
-
 export default function ShoppingListPage() {
+  const { items } = useShoppingList();
+
   const [selectedIngredient, setSelectedIngredient] = useState<
     Ingredient | undefined
   >(undefined);

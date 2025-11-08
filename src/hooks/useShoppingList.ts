@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import toast from "react-hot-toast";
-import type { Ingredient } from "./useRecipes";
+
+export interface ShoppingList {
+  id: string;
+  shoppingItems: ShoppingItem[];
+  totalCost: number;
+  totalQuantity: number;
+  totalUnits: string;
+}
 
 export interface ShoppingItem {
   id: string;
@@ -12,12 +19,28 @@ export interface ShoppingItem {
   productUnit: string;
 }
 
-export interface ShoppingList {
-  id: string;
-  shoppingItems: ShoppingItem[];
-  totalCost: number;
-  totalQuantity: number;
-  totalUnits: string;
+export interface Ingredient {
+  id?: string;
+  title?: string;
+  name?: string;
+  amount?: number;
+  baseUnit?: Unit;
+  productId?: Product[];
+}
+export interface Product {
+  id?: string;
+  name?: string;
+  price?: number;
+  quantity?: number;
+  unit?: Unit;
+}
+
+export interface Unit {
+  id?: string;
+  title?: string;
+  description?: string;
+  baseUnitId?: string;
+  unitCode?: string;
 }
 export function useShoppingList() {
   const { user } = useAuth();
@@ -27,13 +50,19 @@ export function useShoppingList() {
     if (!user) return { success: false };
 
     try {
-      const res = await fetch(`/api/shoppingList?where=userId=${user.userId}`);
+      const res = await fetch(
+        `/api/expand/shoppingList?where=id=${user.userId}`
+      );
+      console.log(user);
       const data = await res.json();
+      console.log(data);
       if (res.ok) {
         setItems(data as ShoppingList[]);
         return { success: true };
       } else {
-        toast.error("Misslyckades med att ladda inköpslistan, försök igen senare");
+        toast.error(
+          "Misslyckades med att ladda inköpslistan, försök igen senare"
+        );
         return { success: false };
       }
     } catch {
@@ -55,29 +84,9 @@ export function useShoppingList() {
         await fetchList();
         return { success: true };
       } else {
-        toast.error("Misslyckades med att registrera inköpslistan, försök igen");
-        return { success: false };
-      }
-    } catch {
-      toast.error("Nätverksfel, försök igen senare");
-      return { success: false };
-    }
-  }
-
-  async function toggleItemChecked(id: string, checked: boolean) {
-    try {
-      const res = await fetch(`/api/shoppingList/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ checked }),
-      });
-      if (res.ok) {
-        setItems((prev) =>
-          prev.map((i) => (i.id === id ? { ...i, checked } : i))
+        toast.error(
+          "Misslyckades med att registrera inköpslistan, försök igen"
         );
-        return { success: true };
-      } else {
-        toast.error("Misslyckades med att uppdatera objektets status");
         return { success: false };
       }
     } catch {
@@ -107,5 +116,5 @@ export function useShoppingList() {
     fetchList();
   }, [user]);
 
-  return { items, addItem, removeItem, toggleItemChecked, fetchList };
+  return { items, addItem, removeItem, fetchList };
 }
