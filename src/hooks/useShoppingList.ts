@@ -51,7 +51,7 @@ export function useShoppingList() {
 
     try {
       const res = await fetch(
-        `/api/expand/shoppingList?where=id=${user.userId}`
+        `/api/expand/ShoppingList?where=user.id==${user.userId}`
       );
       console.log(user);
       const data = await res.json();
