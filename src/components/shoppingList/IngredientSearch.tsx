@@ -21,11 +21,11 @@ export interface Product {
 }
 
 export interface Unit {
-  id?: string,
-  title?: string,
-  description?: string,
-  baseUnitId?: string,
-  unitCode?: string,
+  id?: string;
+  title?: string;
+  description?: string;
+  baseUnitId?: string;
+  unitCode?: string;
 }
 
 interface IngredientSearchProps {
@@ -74,7 +74,9 @@ export default function IngredientSearch({
         );
 
         if (!res.ok) {
-          toast.error("Failed to load ingredients, try again later");
+          toast.error(
+            "Misslyckades med att ladda ingredienser, försök igen senare"
+          );
           return;
         }
 
@@ -82,7 +84,7 @@ export default function IngredientSearch({
         setSearchedIngredients(data);
         setShow(true);
       } catch {
-        toast.error("Network error, please try again later");
+        toast.error("Nätverksfel, försök igen senare");
       }
     };
 
@@ -93,7 +95,7 @@ export default function IngredientSearch({
     <Dropdown show={show && searchedIngredients.length > 0}>
       <Dropdown.Toggle as="div" bsPrefix="p-0">
         <Form.Control
-          placeholder="Search ingredient..."
+          placeholder="Sök ingrediens..."
           value={searchText}
           onChange={handleSearch}
           required
