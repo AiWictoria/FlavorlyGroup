@@ -9,8 +9,6 @@ import type { Order } from "@models/order.types";
 
 MyOrdersPage.route = {
   path: "/MyOrders",
-  menuLabel: "Mina beställningar",
-  
 };
 
 export default function MyOrdersPage() {
