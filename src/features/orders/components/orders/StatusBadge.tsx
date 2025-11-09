@@ -9,11 +9,11 @@ interface StatusBadgeProps {
 export function StatusBadge({ status, context = 'store-manager' }: StatusBadgeProps): ReactElement {
   
   const storeManagerTooltips: Record<string, string> = {
-    pending: "New Order",
-    processing: "In Progress", 
-    completed: "Delivered",
-    cancelled: "Cancelled",
-    avbruten: "Cancelled"
+    pending: "Ny order",
+    processing: "Pågående", 
+    completed: "Levererad",
+    cancelled: "Avbruten",
+    avbruten: "Avbruten"
   };
 
   const storeManagerIcons: Record<string, string> = {
@@ -26,14 +26,14 @@ export function StatusBadge({ status, context = 'store-manager' }: StatusBadgePr
 
   // Simplified tooltips and icons for my orders
   const myOrdersTooltips: Record<string, string> = {
-    pending: "Not Ready",
-    processing: "Not Ready",
-    "in progress": "Not Ready", 
-    "new order": "Not Ready",
-    completed: "Ready",
-    delivered: "Ready",
-    cancelled: "Cancelled",
-    avbruten: "Cancelled"
+    pending: "Inte klar",
+    processing: "Inte klar",
+    "in progress": "Inte klar", 
+    "new order": "Inte klar",
+    completed: "Klar",
+    delivered: "Klar",
+    cancelled: "Avbruten",
+    avbruten: "Avbruten"
   };
 
   const myOrdersIcons: Record<string, string> = {

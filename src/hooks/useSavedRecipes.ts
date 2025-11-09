@@ -22,18 +22,18 @@ export function useSavedRecipes() {
         setSavedRecipes(data);
         return { success: true };
       } else {
-        toast.error("Failed to load saved recipes");
+        toast.error("Misslyckades med att ladda sparade recept");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
 
   async function saveRecipe(recipeId: number) {
     if (!user) {
-      toast.error("Please log in to save recipes");
+      toast.error("Vänligen logga in för att spara recept");
       return { success: false };
     }
     try {
@@ -46,11 +46,11 @@ export function useSavedRecipes() {
         fetchSavedRecipes();
         return { success: true };
       } else {
-        toast.error("Could not save recipe, try again later");
+        toast.error("Kunde inte spara receptet, försök igen senare");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
@@ -62,11 +62,11 @@ export function useSavedRecipes() {
         setSavedRecipes((prev) => prev.filter((r) => r.id !== id));
         return { success: true };
       } else {
-        toast.error("Could not delete saved recipe, try again later");
+        toast.error("Kunde inte ta bort sparat recept, försök igen senare.");
         return { success: false };
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }

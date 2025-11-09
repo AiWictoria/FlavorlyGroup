@@ -84,7 +84,7 @@ export default function OrderDetailsPage() {
                         <OrderItemsTable items={order.ingredients} status={order.status} onToggleChecked={handleToggleChecked} showWhenStatuses={["processing", "completed"]} />
                     </div>
                     <div className="text-black text-center fw-semibold p-2 border-bottom p-3">
-                        Grand total: {formatSek(order.sum)}
+                        Totalsumma: {formatSek(order.sum)}
                     </div>
                 </div>
                 <div className="mt-4 text-center">

@@ -33,7 +33,7 @@ export default function ViewRecipeDetails() {
     toast.custom((t) => (
       <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2">
         <Col>
-          <p>Are you sure you want to delete this recipe?</p>
+          <p>Är du säker på att du vill ta bort det här receptet?</p>
           <div className="d-flex justify-content-end gap-2">
             <Button
               variant="outline-primary"

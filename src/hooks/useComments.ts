@@ -21,10 +21,10 @@ export function useComments() {
         setComments(data);
         return { success: true, data };
       } else {
-        toast.error("Could not load comments, try again later");
+        toast.error("Kunde inte ladda kommentarer, försök igen senare");
       }
     } catch {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
@@ -39,14 +39,14 @@ export function useComments() {
 
       if (res.ok) {
         await fetchComments(recipeId);
-        toast.success("Comment has been saved");
+        toast.success("Kommentaren har sparats");
         return { success: true };
       } else {
-        toast.error("Could not save comment, try again later");
+        toast.error("Kunde inte spara kommentaren, försök igen senare.");
         return { success: false };
       }
     } catch (err) {
-      toast.error("Network error, please try again later");
+      toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }

@@ -1,5 +1,5 @@
 import { Button, Col, Row } from "react-bootstrap";
-import Divider from "../shared/Divider";
+import Divider from "../../shared/Divider";
 
 interface Product {
   name: string;
@@ -32,21 +32,21 @@ export default function TotalBox({
   return (
     <>
       <Divider />
-      <Row>
-        <Col md={6} className="px-5 mx-md-5 py-2">
+      <Row className="justify-content-center mx-4 mx-sm-5 mx-md-0">
+        <Col md={6} className="px-sm-4 mx-2 py-2">
           <div className="d-flex justify-content-between">
-            <span>Subtotal:</span>
+            <span>Delsumma:</span>
             <span>{subtotalPrice.toFixed(2)} kr</span>
           </div>
 
-          <div className="d-flex justify-content-between">
-            <span>VAT ({Math.round(vatRate * 100)}%):</span>
+          <div className="d-flex justify-content-between py-1">
+            <span>Moms ({Math.round(vatRate * 100)}%):</span>
             <span>{vatAmount.toFixed(2)} kr</span>
           </div>
 
           {deliveryPrice !== undefined && (
             <div className="d-flex justify-content-between">
-              <span>Delivery:</span>
+              <span>Leverans:</span>
               <span>{deliveryPrice.toFixed(2)} kr</span>
             </div>
           )}
@@ -54,13 +54,13 @@ export default function TotalBox({
           <Divider />
 
           <div className="d-flex justify-content-between">
-            <h4>Total:</h4>
+            <h4>Totalt:</h4>
             <h4>{totalPrice.toFixed(2)} kr</h4>
           </div>
         </Col>
         <Col
           md={4}
-          className="d-flex justify-content-center align-items-end px-5 px-md-0 mx-md-0 py-2"
+          className="d-flex justify-content-center align-items-end px-sm-4 pe-md-3 mx-md-2 py-2"
         >
           <Button className="w-100" onClick={onNext}>
             {buttonLable}

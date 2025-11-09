@@ -67,7 +67,7 @@ export default function RecipeLayout({
         {(mode === "create" || mode === "edit") && (
           <div className="text-end pb-4 px-5">
             <Button type="submit" className="bg-success">
-              {mode === "create" ? "Create Recipe" : "Save Changes"}
+              {mode === "create" ? "Skapa recept" : "Spara ändringar"}
             </Button>
           </div>
         )}

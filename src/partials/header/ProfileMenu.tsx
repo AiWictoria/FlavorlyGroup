@@ -31,11 +31,11 @@ export default function ProfileMenu() {
 
           <Dropdown.Menu className="bg-primary text-light mx-md-4 p-3">
             <Dropdown.Header className="text-light">
-              Hello {user.firstName}
+              Hej {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
             <Dropdown.Item className="text-light" onClick={handleLogout}>
-              Logout
+              Logga ut
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>

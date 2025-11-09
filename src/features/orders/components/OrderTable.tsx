@@ -56,7 +56,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
 
   function formatDate(dateString: string) {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB", {
+    return date.toLocaleDateString("sv-SE", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -118,12 +118,12 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
             </th>
             <th className="order-column" style={{ width: "140px" }}>
               <div className="header-cell-content">
-                <span>Order Nr.</span>
+                <span>Order nr.</span>
               </div>
             </th>
             <th className="name-column" style={{ minWidth: "200px" }}>
               <div className="header-cell-content">
-                <span>Name</span>
+                <span>Namn</span>
               </div>
             </th>
             <th className="date-column" style={{ minWidth: "160px" }}>
@@ -132,7 +132,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
                 onClick={handleDateSort}
                 style={{ cursor: "pointer" }}
               >
-                <span>Date</span>
+                <span>Datum</span>
                 <i
                   className={`bi bi-arrow-down sort-icon ${
                     dateSort === "asc" ? "asc" : ""
@@ -142,7 +142,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
               </div>
             </th>
             <th className="actions-column text-end" style={{ width: "200px" }}>
-              Actions
+              Åtgärder
             </th>
           </tr>
         </thead>
@@ -195,7 +195,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
                       className="view-btn"
                     >
                       <i className="bi bi-eye me-1"></i>
-                      <span>View</span>
+                      <span>Visa</span>
                     </Button>
                   </Link>
                   {onDelete && (order.status === "pending" || order.status === "processing") && (
@@ -206,7 +206,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
                       onClick={() => onDelete(order.id)}
                     >
                       <i className="bi bi-trash me-1"></i>
-                      <span>Cancel</span>
+                      <span>Avbryt</span>
                     </Button>
                   )}
                 </div>

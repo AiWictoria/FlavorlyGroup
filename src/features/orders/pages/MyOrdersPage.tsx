@@ -8,7 +8,7 @@ import type { Order } from "@models/order.types";
 
 MyOrdersPage.route = {
   path: "/MyOrders",
-  menuLabel: "My Orders",
+  menuLabel: "Mina beställningar",
   index: 15,
 };
 
@@ -25,8 +25,9 @@ export default function MyOrdersPage() {
 
   return (
     <Row className="p-0 p-xl-3 justify-content-center">
-      <Col className="mx-xl-5 px-xl-5">
-        
+      <Col className="mt-4 mx-xl-5 px-xl-5">
+        <h2>Mina beställningar</h2>
+
         <Box size="l" className="order-table-container mt-4">
           <h2>My Orders</h2>
           <div className="m-5 d-flex flex-column gap-2">
