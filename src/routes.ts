@@ -21,7 +21,8 @@ interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
-  protected?: boolean;
+  adminOnly: boolean;
+  protected: boolean;
 }
 
 export default [
