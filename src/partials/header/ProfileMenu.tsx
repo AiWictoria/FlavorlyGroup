@@ -1,5 +1,5 @@
 import { Dropdown } from "react-bootstrap";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import ProfileModal from "./ProfileModal";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -35,7 +35,7 @@ export default function ProfileMenu() {
               Hej {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
-             <Dropdown.Item as={Link} to="/MyOrders" className="text-light">
+            <Dropdown.Item as={Link} to="/MyOrders" className="text-light">
               Mina beställningar
             </Dropdown.Item>
             <Dropdown.Item className="text-light" onClick={handleLogout}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import toast from "react-hot-toast";
 
 export interface ShoppingList {
@@ -84,6 +84,28 @@ export function useShoppingList() {
         toast.error(
           "Misslyckades med att registrera inköpslistan, försök igen"
         );
+        return { success: false };
+      }
+    } catch {
+      toast.error("Nätverksfel, försök igen senare");
+      return { success: false };
+    }
+  }
+
+  async function toggleItemChecked(id: string, checked: boolean) {
+    try {
+      const res = await fetch(`/api/shoppingList/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checked }),
+      });
+      if (res.ok) {
+        setItems((prev) =>
+          prev.map((i) => (i.id === id ? { ...i, checked } : i))
+        );
+        return { success: true };
+      } else {
+        toast.error("Misslyckades med att uppdatera objektets status");
         return { success: false };
       }
     } catch {

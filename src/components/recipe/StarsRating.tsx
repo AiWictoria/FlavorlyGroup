@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import { useRatings } from "../../hooks/useRatings";
 
 interface StarsRatingProps {

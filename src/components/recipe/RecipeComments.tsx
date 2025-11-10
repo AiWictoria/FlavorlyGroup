@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useComments } from "../../hooks/useComments";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import StarsRating from "./StarsRating";
 
 interface RecipeCommentsProps {
