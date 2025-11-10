@@ -1,32 +1,9 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Form } from "react-bootstrap";
 import toast from "react-hot-toast";
+import type { Ingredient } from "src/hooks/useShoppingList";
 
 // Component which retrieves Ingredient object when the user searches
-
-export interface Ingredient {
-  id?: string;
-  title?: string;
-  name?: string;
-  amount?: number;
-  baseUnit?: Unit;
-  productId?: Product[];
-}
-export interface Product {
-  id?: string;
-  name?: string;
-  price?: number;
-  quantity?: number;
-  unit?: Unit;
-}
-
-export interface Unit {
-  id?: string;
-  title?: string;
-  description?: string;
-  baseUnitId?: string;
-  unitCode?: string;
-}
 
 interface IngredientSearchProps {
   // Sends back the Ingredient object
@@ -81,6 +58,8 @@ export default function IngredientSearch({
         }
 
         const data: Ingredient[] = await res.json();
+        console.log(data);
+
         setSearchedIngredients(data);
       } catch {
         toast.error("Nätverksfel, försök igen senare");
@@ -104,14 +83,14 @@ export default function IngredientSearch({
       <Dropdown.Menu style={{ width: "100%" }}>
         {searchedIngredients.map((ingredient) => (
           <Dropdown.Item
-            key={ingredient.id ?? ingredient.title ?? ingredient.name}
+            key={ingredient.id}
             onClick={() => {
               onIngredientChange(ingredient);
-              setSearchText(ingredient.title ?? ingredient.name ?? "");
+              setSearchText(ingredient.name ?? "");
               setShow(false);
             }}
           >
-            {ingredient.title ?? ingredient.name}
+            {ingredient.name}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

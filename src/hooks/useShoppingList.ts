@@ -5,9 +5,6 @@ import toast from "react-hot-toast";
 export interface ShoppingList {
   id: string;
   shoppingItems: ShoppingItem[];
-  totalCost: number;
-  totalQuantity: number;
-  totalUnits: string;
 }
 
 export interface ShoppingItem {
