@@ -26,8 +26,25 @@ public static partial class GetRoutes
             ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
         };
         var jsonString = JsonSerializer.Serialize(contentItems, jsonOptions);
-        var plainObjects = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(jsonString);
-        if (plainObjects == null) return new List<Dictionary<string, object>>();
+
+        // Use JsonDocument.Parse and convert to Dictionary<string, JsonElement> for CleanWithDepth
+        // We need to preserve nested dictionaries, so we use JsonElementToDictionary first,
+        // then convert back to Dictionary<string, JsonElement> for CleanWithDepth
+        var jsonDoc = JsonDocument.Parse(jsonString);
+        var plainObjects = new List<Dictionary<string, JsonElement>>();
+
+        foreach (var element in jsonDoc.RootElement.EnumerateArray())
+        {
+            // Convert to Dictionary<string, object> first to preserve nested dictionaries
+            var dictObj = JsonElementToDictionary(element);
+            // Then convert back to Dictionary<string, JsonElement> for CleanWithDepth
+            var dictJsonElement = new Dictionary<string, JsonElement>();
+            foreach (var kvp in dictObj)
+            {
+                dictJsonElement[kvp.Key] = JsonSerializer.SerializeToElement(kvp.Value);
+            }
+            plainObjects.Add(dictJsonElement);
+        }
 
         // Only populate if requested
         if (populate)
@@ -211,13 +228,74 @@ public static partial class GetRoutes
 
         foreach (var obj in objects)
         {
-            var populated = PopulateObjectWithCleanedItems(obj, cleanedItemsDictionary);
+            // Convert Dictionary<string, JsonElement> back to Dictionary<string, object> for population
+            var dictObj = new Dictionary<string, object>();
+            foreach (var kvp in obj)
+            {
+                dictObj[kvp.Key] = JsonElementToObject(kvp.Value);
+            }
+            var populated = PopulateObjectWithCleanedItemsFromDict(dictObj, cleanedItemsDictionary);
             result.Add(populated);
         }
 
         return result;
     }
 
+    // New version that works with Dictionary<string, object> from JsonElementToDictionary
+    private static Dictionary<string, object> PopulateObjectWithCleanedItemsFromDict(
+        Dictionary<string, object> obj,
+        Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary)
+    {
+        var result = new Dictionary<string, object>();
+
+        foreach (var kvp in obj)
+        {
+            var key = kvp.Key;
+            var value = kvp.Value;
+
+            // Handle singular ID fields (e.g., "ingredientId" -> "ingredient"), but skip "id" itself
+            if (key != "id" && key.EndsWith("Id") && value is string idStr && cleanedItemsDictionary.TryGetValue(idStr, out var cleanedItem))
+            {
+                // Replace "ingredientId" with "ingredient" containing cleaned data
+                var newKey = key.Substring(0, key.Length - 2);
+                result[newKey] = cleanedItem;
+                continue;
+            }
+
+            // Recursively handle nested objects
+            if (value is Dictionary<string, object> nestedDict)
+            {
+                result[key] = PopulateObjectWithCleanedItemsFromDict(nestedDict, cleanedItemsDictionary);
+                continue;
+            }
+
+            // Recursively handle arrays
+            if (value is List<object> array)
+            {
+                var populatedArray = new List<object>();
+                foreach (var item in array)
+                {
+                    if (item is Dictionary<string, object> itemDict)
+                    {
+                        populatedArray.Add(PopulateObjectWithCleanedItemsFromDict(itemDict, cleanedItemsDictionary));
+                    }
+                    else
+                    {
+                        populatedArray.Add(item);
+                    }
+                }
+                result[key] = populatedArray;
+                continue;
+            }
+
+            // Handle primitive values (including "id")
+            result[key] = value;
+        }
+
+        return result;
+    }
+
+    // Original version that works with Dictionary<string, JsonElement> (kept for backward compatibility)
     private static Dictionary<string, object> PopulateObjectWithCleanedItems(
         Dictionary<string, JsonElement> obj,
         Dictionary<string, Dictionary<string, object>> cleanedItemsDictionary)
