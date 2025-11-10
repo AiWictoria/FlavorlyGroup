@@ -8,8 +8,6 @@ import type { Order } from "@models/order.types";
 
 MyOrdersPage.route = {
   path: "/MyOrders",
-  menuLabel: "Mina beställningar",
-  index: 15,
 };
 
 export default function MyOrdersPage() {
