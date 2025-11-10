@@ -2,24 +2,18 @@ namespace RestRoutes;
 
 using OrchardCore.ContentManagement;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using RestRoutes.Services;
 
+/// <summary>
+/// POST routes for creating new content items.
+/// Refactored to follow SOLID principles:
+/// - Single Responsibility: Only orchestrates the POST request flow
+/// - Open/Closed: Easy to extend by adding new services
+/// - Dependency Inversion: Depends on service abstractions
+/// - DRY: No duplicated code, all logic in dedicated services
+/// </summary>
 public static class PostRoutes
 {
-    private static readonly HashSet<string> RESERVED_FIELDS = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "id",
-        "contentItemId",
-        "title",
-        "displayText",
-        "createdUtc",
-        "modifiedUtc",
-        "publishedUtc",
-        "contentType",
-        "published",
-        "latest"
-    };
-
     public static void MapPostRoutes(this WebApplication app)
     {
         app.MapPost("api/{contentType}", async (
@@ -27,59 +21,31 @@ public static class PostRoutes
             [FromBody] Dictionary<string, object>? body,
             [FromServices] IContentManager contentManager,
             [FromServices] YesSql.ISession session,
+            [FromServices] PostRequestValidator validator,
+            [FromServices] ContentItemCreationService creationService,
             HttpContext context) =>
         {
             try
             {
-                // Check permissions
+                // Step 1: Check permissions
                 var permissionCheck = await PermissionsACL.CheckPermissions(contentType, "POST", context, session);
                 if (permissionCheck != null) return permissionCheck;
 
-                // Check if body is null or empty
-                if (body == null || body.Count == 0)
-                {
-                    return Results.Json(new {
-                        error = "Cannot read request body"
-                    }, statusCode: 400);
-                }
+                // Step 2: Validate request body
+                var (isValidBody, bodyError) = validator.ValidateRequestBody(body);
+                if (!isValidBody) return bodyError!;
 
-                // Validate fields
-                var validFields = await FieldValidator.GetValidFieldsAsync(contentType, contentManager, session);
-                var (isValid, invalidFields) = FieldValidator.ValidateFields(body, validFields, RESERVED_FIELDS);
+                // Step 3: Validate fields
+                var (isValidFields, fieldsError) = await validator.ValidateFieldsAsync(
+                    contentType, body!, contentManager, session);
+                if (!isValidFields) return fieldsError!;
 
-                if (!isValid)
-                {
-                    return Results.Json(new {
-                        error = "Invalid fields provided",
-                        invalidFields = invalidFields,
-                        validFields = validFields.OrderBy(f => f).ToList()
-                    }, statusCode: 400);
-                }
+                // Step 4: Create content item
+                var userName = context.User?.Identity?.Name;
+                var contentItem = await creationService.CreateContentItemAsync(
+                    contentType, body!, userName, contentManager, session);
 
-                var contentItem = await contentManager.NewAsync(contentType);
-
-                // Extract and handle special fields explicitly
-                contentItem.DisplayText = body.ContainsKey("title")
-                    ? body["title"].ToString()
-                    : "Untitled";
-
-                contentItem.Owner = context.User?.Identity?.Name ?? "anonymous";
-                contentItem.Author = contentItem.Owner;
-
-                // Build content directly into the content item using FieldMapper
-                foreach (var kvp in body)
-                {
-                    // Skip all reserved fields
-                    if (RESERVED_FIELDS.Contains(kvp.Key))
-                        continue;
-
-                    FieldMapper.MapFieldToContentItem(contentItem, contentType, kvp.Key, kvp.Value);
-                }
-
-                await contentManager.CreateAsync(contentItem, VersionOptions.Published);
-                await session.SaveChangesAsync();
-
-                // Build and return clean, populated response
+                // Step 5: Build and return clean, populated response
                 var cleanResponse = await ResponseBuilder.BuildCleanResponse(
                     contentType,
                     contentItem.ContentItemId,
@@ -88,18 +54,19 @@ public static class PostRoutes
 
                 if (cleanResponse == null)
                 {
-                    // Fallback if response builder fails (shouldn't happen, but safety check)
-                    return Results.Json(new {
-                        id = contentItem.ContentItemId,
-                        title = contentItem.DisplayText
-                    }, statusCode: 201);
+                    return Results.Json(new
+                    {
+                        error = "Response builder failed",
+                        id = contentItem.ContentItemId
+                    }, statusCode: 500);
                 }
 
                 return Results.Json(cleanResponse, statusCode: 201);
             }
             catch (Exception ex)
             {
-                return Results.Json(new {
+                return Results.Json(new
+                {
                     error = ex.Message
                 }, statusCode: 500);
             }
