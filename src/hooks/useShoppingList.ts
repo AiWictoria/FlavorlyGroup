@@ -24,7 +24,7 @@ export interface ProductId {
 }
 export interface Product {
   id?: string;
-  name?: string;
+  title?: string;
   price?: number;
   quantity?: number;
   unit?: Unit;
@@ -39,20 +39,47 @@ export interface Unit {
 }
 export function useShoppingList() {
   const { user } = useAuth();
-  const [wholeShoppingList, setItems] = useState<ShoppingList | null>(null);
+  const [shoppingList, setItems] = useState<ShoppingList | null>(null);
+  const [productsByIngredient, setProductsByIngredient] = useState<
+    Record<string, Product[]>
+  >({});
 
   async function fetchList() {
     if (!user) return { success: false };
-
     try {
       const res = await fetch(
         `/api/expand/ShoppingList?where=user.id==${user.userId}`
       );
-      console.log(user);
+
       const data: ShoppingList[] = await res.json();
-      console.log(data);
+
       if (res.ok) {
-        setItems(data[0] ?? null);
+        const list = data[0] ?? null;
+        setItems(list);
+
+        if (list?.items?.length) {
+          // For each ingredient, fetch all its products by ID
+          list.items.forEach(async (item) => {
+            if (!item.ingredient.productId?.length) return;
+
+            const productPromises = item.ingredient.productId.map(
+              async (id) => {
+                const resProd = await fetch(
+                  `http://localhost:5001/api/Product/${id}`
+                );
+                return resProd.json() as Promise<Product>;
+              }
+            );
+
+            const products = await Promise.all(productPromises);
+
+            setProductsByIngredient((prev) => ({
+              ...prev,
+              [item.ingredient.id]: products,
+            }));
+          });
+        }
+
         return { success: true };
       } else {
         toast.error(
@@ -111,5 +138,5 @@ export function useShoppingList() {
     fetchList();
   }, [user]);
 
-  return { wholeShoppingList, addItem, removeItem, fetchList };
+  return { shoppingList, productsByIngredient, fetchList };
 }

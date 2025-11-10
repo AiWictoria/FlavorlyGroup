@@ -19,7 +19,7 @@ ShoppingListPage.route = {
 };
 
 export default function ShoppingListPage() {
-  const { wholeShoppingList } = useShoppingList();
+  const { shoppingList, productsByIngredient, fetchList } = useShoppingList();
 
   const [selectedIngredient, setSelectedIngredient] = useState<
     Ingredient | undefined
@@ -29,8 +29,6 @@ export default function ShoppingListPage() {
   const [product, setProduct] = useState("");
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
-
-  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -54,7 +52,6 @@ export default function ShoppingListPage() {
     setSelectedIngredient(undefined);
     setClearSearchText((prev) => prev + 1);
     setAmount("");
-    setShoppingList((prevList) => [...prevList, newShoppingItem]);
   }
 
   return (
@@ -108,10 +105,10 @@ export default function ShoppingListPage() {
               </Row>
             </Form>
 
-            {wholeShoppingList != null ? (
+            {shoppingList != null ? (
               <>
                 <Col className="m-2 fs-6 mt-4">
-                  {wholeShoppingList.items.map((shoppingItem, index) => (
+                  {shoppingList.items.map((shoppingItem, index) => (
                     <>
                       <Row
                         key={index}
@@ -139,15 +136,13 @@ export default function ShoppingListPage() {
                             onChange={(e) => setProduct(e.target.value)}
                           >
                             <option value="">Välj produkt</option>
-                            {/* {shoppingItem.ingredient.productId?.map(
-                              (product: Product) => (
-                                <>
-                                  <option key={product.id} value={product.name}>
-                                    {product.name ?? product.id}
-                                  </option>
-                                </>
-                              ) */}
-                            {/* )} */}
+                            {productsByIngredient[
+                              shoppingItem.ingredient.id
+                            ]?.map((prod) => (
+                              <option key={prod.id} value={prod.id}>
+                                {prod.title}
+                              </option>
+                            ))}
                           </Form.Select>
                         </Col>
                         <Col xs={6} md={2} lg={2}>
