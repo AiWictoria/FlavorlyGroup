@@ -15,6 +15,18 @@ public static class FieldMapper
         string fieldName,
         object value)
     {
+        if (value == null) return; // Skip null values
+
+        // Use contentType + "Part" (e.g., "RecipePart") as that's where fields are stored in Orchard
+        var typePartKey = contentType + "Part";
+
+        // Ensure the content type part section exists before any field access
+        // Use Dictionary<string, object> instead of ExpandoObject to ensure proper serialization
+        if (!contentItem.Content.ContainsKey(typePartKey))
+        {
+            contentItem.Content[typePartKey] = new Dictionary<string, object>();
+        }
+
         var pascalKey = ToPascalCase(fieldName);
 
         // Handle "items" field - this should become BagPart
@@ -65,7 +77,14 @@ public static class FieldMapper
                     var idValue = jsonEl.GetString();
                     if (idValue != null)
                     {
-                        contentItem.Content[contentType][fieldNameWithoutId]["ContentItemIds"] = new List<string> { idValue };
+                        if (!contentItem.Content.ContainsKey(typePartKey))
+                        {
+                            contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                        }
+                        contentItem.Content[typePartKey][fieldNameWithoutId] = new Dictionary<string, object>
+                        {
+                            ["ContentItemIds"] = new List<string> { idValue }
+                        };
                     }
                 }
                 else if (jsonEl.ValueKind == JsonValueKind.Array)
@@ -81,13 +100,27 @@ public static class FieldMapper
                     }
                     if (idList.Count > 0)
                     {
-                        contentItem.Content[contentType][fieldNameWithoutId]["ContentItemIds"] = idList;
+                        if (!contentItem.Content.ContainsKey(typePartKey))
+                        {
+                            contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                        }
+                        contentItem.Content[typePartKey][fieldNameWithoutId] = new Dictionary<string, object>
+                        {
+                            ["ContentItemIds"] = idList
+                        };
                     }
                 }
             }
             else if (value is string strValue)
             {
-                contentItem.Content[contentType][fieldNameWithoutId]["ContentItemIds"] = new List<string> { strValue };
+                if (!contentItem.Content.ContainsKey(typePartKey))
+                {
+                    contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                }
+                contentItem.Content[typePartKey][fieldNameWithoutId] = new Dictionary<string, object>
+                {
+                    ["ContentItemIds"] = new List<string> { strValue }
+                };
             }
             return;
         }
@@ -102,14 +135,25 @@ public static class FieldMapper
         // Handle string values
         if (value is string strVal)
         {
-            contentItem.Content[contentType][pascalKey]["Text"] = strVal;
+            if (!contentItem.Content.ContainsKey(typePartKey))
+            {
+                contentItem.Content[typePartKey] = new Dictionary<string, object>();
+            }
+            contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
+            {
+                ["Text"] = strVal
+            };
             return;
         }
 
         // Handle numeric values
         if (value is int or long or double or float or decimal)
         {
-            contentItem.Content[contentType][pascalKey] = new Dictionary<string, object>
+            if (!contentItem.Content.ContainsKey(typePartKey))
+            {
+                contentItem.Content[typePartKey] = new Dictionary<string, object>();
+            }
+            contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
             {
                 ["Value"] = value
             };
@@ -122,18 +166,70 @@ public static class FieldMapper
         string pascalKey,
         JsonElement jsonElement)
     {
-        // Extract the actual string value, not a wrapped JObject
+        // Use contentType + "Part" (e.g., "RecipePart") as that's where fields are stored in Orchard
+        var typePartKey = contentType + "Part";
+
+        // Ensure the content type part section exists
+        // Use Dictionary<string, object> instead of ExpandoObject to ensure proper serialization
+        if (!contentItem.Content.ContainsKey(typePartKey))
+        {
+            contentItem.Content[typePartKey] = new Dictionary<string, object>();
+        }
+
+        // Extract the actual string value
         if (jsonElement.ValueKind == JsonValueKind.String)
         {
-            contentItem.Content[contentType][pascalKey]["Text"] = jsonElement.GetString();
+            var fieldDict = new Dictionary<string, object>
+            {
+                ["Text"] = jsonElement.GetString()!
+            };
+            // Cast to Dictionary<string, object> and set directly
+            if (contentItem.Content[typePartKey] is Dictionary<string, object> typeSectionDict)
+            {
+                typeSectionDict[pascalKey] = fieldDict;
+            }
+            else
+            {
+                // Fallback to dynamic access if it's not a Dictionary
+                dynamic typeSection = contentItem.Content[typePartKey];
+                typeSection[pascalKey] = fieldDict;
+            }
         }
         else if (jsonElement.ValueKind == JsonValueKind.Number)
         {
-            contentItem.Content[contentType][pascalKey]["Value"] = jsonElement.GetDouble();
+            var fieldDict = new Dictionary<string, object>();
+            // Try using GetInt32 for integers
+            if (jsonElement.TryGetInt32(out var intValue))
+            {
+                fieldDict["Value"] = intValue;
+            }
+            else
+            {
+                fieldDict["Value"] = jsonElement.GetDecimal();
+            }
+
+            // Cast to Dictionary<string, object> and set directly
+            if (contentItem.Content[typePartKey] is Dictionary<string, object> typeSectionDict)
+            {
+                typeSectionDict[pascalKey] = fieldDict;
+            }
+            else
+            {
+                // Fallback to dynamic access if it's not a Dictionary
+                dynamic typeSection = contentItem.Content[typePartKey];
+                typeSection[pascalKey] = fieldDict;
+            }
         }
         else if (jsonElement.ValueKind == JsonValueKind.True || jsonElement.ValueKind == JsonValueKind.False)
         {
-            contentItem.Content[contentType][pascalKey]["Value"] = jsonElement.GetBoolean();
+            if (!contentItem.Content.ContainsKey(typePartKey))
+            {
+                contentItem.Content[typePartKey] = new Dictionary<string, object>();
+            }
+            contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
+            {
+                ["Value"] = jsonElement.GetBoolean()
+            };
         }
         else if (jsonElement.ValueKind == JsonValueKind.Object)
         {
@@ -169,7 +265,11 @@ public static class FieldMapper
                     }
                 }
 
-                contentItem.Content[contentType][pascalKey] = taxonomyDict;
+                if (!contentItem.Content.ContainsKey(typePartKey))
+                {
+                    contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                }
+                contentItem.Content[typePartKey][pascalKey] = taxonomyDict;
                 return;
             }
 
@@ -199,8 +299,15 @@ public static class FieldMapper
                 }
 
                 // Assign arrays directly - ContentItem.Content uses System.Text.Json, so use List instead of JArray
-                contentItem.Content[contentType][pascalKey]["Paths"] = paths;
-                contentItem.Content[contentType][pascalKey]["MediaTexts"] = mediaTexts;
+                if (!contentItem.Content.ContainsKey(typePartKey))
+                {
+                    contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                }
+                contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
+                {
+                    ["Paths"] = paths,
+                    ["MediaTexts"] = mediaTexts
+                };
                 return;
             }
 
@@ -210,7 +317,11 @@ public static class FieldMapper
             {
                 obj[ToPascalCase(prop.Name)] = ConvertJsonElementToPascal(prop.Value);
             }
-            contentItem.Content[contentType][pascalKey] = obj;
+            if (!contentItem.Content.ContainsKey(typePartKey))
+            {
+                contentItem.Content[typePartKey] = new Dictionary<string, object>();
+            }
+            contentItem.Content[typePartKey][pascalKey] = obj;
         }
         else if (jsonElement.ValueKind == JsonValueKind.Array)
         {
@@ -242,8 +353,15 @@ public static class FieldMapper
                     }
                 }
 
-                contentItem.Content[contentType][pascalKey]["UserIds"] = userIds;
-                contentItem.Content[contentType][pascalKey]["UserNames"] = userNames;
+                if (!contentItem.Content.ContainsKey(typePartKey))
+                {
+                    contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                }
+                contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
+                {
+                    ["UserIds"] = userIds,
+                    ["UserNames"] = userNames
+                };
             }
             else
             {
@@ -262,19 +380,34 @@ public static class FieldMapper
                 var isContentItemIds = arrayData.Count > 0 &&
                     arrayData.All(id => id.Length > 20 && id.All(c => char.IsLetterOrDigit(c)));
 
+                if (!contentItem.Content.ContainsKey(typePartKey))
+                {
+                    contentItem.Content[typePartKey] = new Dictionary<string, object>();
+                }
+
                 if (isContentItemIds)
                 {
-                    contentItem.Content[contentType][pascalKey]["ContentItemIds"] = arrayData;
+                    contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
+                    {
+                        ["ContentItemIds"] = arrayData
+                    };
                 }
                 else
                 {
-                    contentItem.Content[contentType][pascalKey]["Values"] = arrayData;
+                    contentItem.Content[typePartKey][pascalKey] = new Dictionary<string, object>
+                    {
+                        ["Values"] = arrayData
+                    };
                 }
             }
         }
         else
         {
-            contentItem.Content[contentType][pascalKey] = ConvertJsonElement(jsonElement);
+            if (!contentItem.Content.ContainsKey(typePartKey))
+            {
+                contentItem.Content[typePartKey] = new Dictionary<string, object>();
+            }
+            contentItem.Content[typePartKey][pascalKey] = ConvertJsonElement(jsonElement);
         }
     }
 
@@ -327,16 +460,55 @@ public static class FieldMapper
             }
             else if (value.ValueKind == JsonValueKind.Array)
             {
-                var arrayData = new List<string>();
-                foreach (var item in value.EnumerateArray())
+                // Check if this is a UserPickerField (array of objects with "id" and "username")
+                var firstElement = value.EnumerateArray().FirstOrDefault();
+                if (prop.Name.Equals("user", StringComparison.OrdinalIgnoreCase) &&
+                    firstElement.ValueKind == JsonValueKind.Object &&
+                    firstElement.TryGetProperty("id", out _) &&
+                    firstElement.TryGetProperty("username", out _))
                 {
-                    if (item.ValueKind == JsonValueKind.String)
+                    // Unzip the user objects into UserIds and UserNames arrays
+                    var userIds = new List<string>();
+                    var userNames = new List<string>();
+
+                    foreach (var userObj in value.EnumerateArray())
                     {
-                        var str = item.GetString();
-                        if (str != null) arrayData.Add(str);
+                        if (userObj.ValueKind == JsonValueKind.Object)
+                        {
+                            if (userObj.TryGetProperty("id", out var idProp) && idProp.ValueKind == JsonValueKind.String)
+                            {
+                                var id = idProp.GetString();
+                                if (id != null) userIds.Add(id);
+                            }
+
+                            if (userObj.TryGetProperty("username", out var usernameProp) && usernameProp.ValueKind == JsonValueKind.String)
+                            {
+                                var username = usernameProp.GetString();
+                                if (username != null) userNames.Add(username);
+                            }
+                        }
                     }
+
+                    typeSection["User"] = new Dictionary<string, object>
+                    {
+                        ["UserIds"] = userIds,
+                        ["UserNames"] = userNames
+                    };
                 }
-                typeSection[pascalKey] = new Dictionary<string, object> { ["Values"] = arrayData };
+                else
+                {
+                    // Existing generic array handling for string arrays
+                    var arrayData = new List<string>();
+                    foreach (var item in value.EnumerateArray())
+                    {
+                        if (item.ValueKind == JsonValueKind.String)
+                        {
+                            var str = item.GetString();
+                            if (str != null) arrayData.Add(str);
+                        }
+                    }
+                    typeSection[pascalKey] = new Dictionary<string, object> { ["Values"] = arrayData };
+                }
             }
             else if (value.ValueKind == JsonValueKind.Object)
             {
