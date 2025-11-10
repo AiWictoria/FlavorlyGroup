@@ -1,7 +1,7 @@
 import {
   useShoppingList,
   type Ingredient,
-  type ShoppingItem,
+  type ShoppingList,
   type Product,
 } from "../hooks/useShoppingList";
 import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
@@ -19,7 +19,7 @@ ShoppingListPage.route = {
 };
 
 export default function ShoppingListPage() {
-  const { items } = useShoppingList();
+  const { wholeShoppingList } = useShoppingList();
 
   const [selectedIngredient, setSelectedIngredient] = useState<
     Ingredient | undefined
@@ -108,10 +108,10 @@ export default function ShoppingListPage() {
               </Row>
             </Form>
 
-            {shoppingList.length > 0 ? (
+            {wholeShoppingList != null ? (
               <>
                 <Col className="m-2 fs-6 mt-4">
-                  {shoppingList.map((item, index) => (
+                  {wholeShoppingList.items.map((shoppingItem, index) => (
                     <>
                       <Row
                         key={index}
@@ -121,8 +121,9 @@ export default function ShoppingListPage() {
                           <span>
                             <b>Ingrediens:</b>{" "}
                           </span>
-                          {item.ingredient.title} {item.ingredient.amount}{" "}
-                          {item.ingredient.baseUnit?.title}{" "}
+                          {shoppingItem.ingredient.title}{" "}
+                          {shoppingItem.quantity}{" "}
+                          {shoppingItem.ingredient.unit.unitCode}{" "}
                         </Col>
 
                         <Col
@@ -138,15 +139,15 @@ export default function ShoppingListPage() {
                             onChange={(e) => setProduct(e.target.value)}
                           >
                             <option value="">Välj produkt</option>
-                            {item.ingredient.productId?.map(
+                            {/* {shoppingItem.ingredient.productId?.map(
                               (product: Product) => (
                                 <>
                                   <option key={product.id} value={product.name}>
                                     {product.name ?? product.id}
                                   </option>
                                 </>
-                              )
-                            )}
+                              ) */}
+                            {/* )} */}
                           </Form.Select>
                         </Col>
                         <Col xs={6} md={2} lg={2}>

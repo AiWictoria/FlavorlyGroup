@@ -4,25 +4,23 @@ import toast from "react-hot-toast";
 
 export interface ShoppingList {
   id: string;
-  shoppingItems: ShoppingItem[];
+  items: ShoppingListItem[];
 }
 
-export interface ShoppingItem {
+export interface ShoppingListItem {
   id: string;
   ingredient: Ingredient;
-  productName: string;
-  productPrice: number;
-  productQuantity: number;
-  productUnit: string;
+  quantity: number;
 }
 
 export interface Ingredient {
-  id?: string;
-  title?: string;
-  name?: string;
-  amount?: number;
-  baseUnit?: Unit;
-  productId?: Product[];
+  id: string;
+  title: string;
+  unit: Unit;
+  productId: string[];
+}
+export interface ProductId {
+  id: string;
 }
 export interface Product {
   id?: string;
@@ -41,7 +39,7 @@ export interface Unit {
 }
 export function useShoppingList() {
   const { user } = useAuth();
-  const [items, setItems] = useState<ShoppingList[]>([]);
+  const [wholeShoppingList, setItems] = useState<ShoppingList | null>(null);
 
   async function fetchList() {
     if (!user) return { success: false };
@@ -51,10 +49,10 @@ export function useShoppingList() {
         `/api/expand/ShoppingList?where=user.id==${user.userId}`
       );
       console.log(user);
-      const data = await res.json();
+      const data: ShoppingList[] = await res.json();
       console.log(data);
       if (res.ok) {
-        setItems(data as ShoppingList[]);
+        setItems(data[0] ?? null);
         return { success: true };
       } else {
         toast.error(
@@ -113,5 +111,5 @@ export function useShoppingList() {
     fetchList();
   }, [user]);
 
-  return { items, addItem, removeItem, fetchList };
+  return { wholeShoppingList, addItem, removeItem, fetchList };
 }
