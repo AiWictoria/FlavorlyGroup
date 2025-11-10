@@ -58,7 +58,6 @@ export default function IngredientSearch({
         }
 
         const data: Ingredient[] = await res.json();
-        console.log(data);
 
         setSearchedIngredients(data);
       } catch {
@@ -86,11 +85,11 @@ export default function IngredientSearch({
             key={ingredient.id}
             onClick={() => {
               onIngredientChange(ingredient);
-              setSearchText(ingredient.name ?? "");
+              setSearchText(ingredient.title ?? "");
               setShow(false);
             }}
           >
-            {ingredient.name}
+            {ingredient.title}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

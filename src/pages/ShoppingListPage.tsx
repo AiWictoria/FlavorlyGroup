@@ -1,9 +1,4 @@
-import {
-  useShoppingList,
-  type Ingredient,
-  type ShoppingList,
-  type Product,
-} from "../hooks/useShoppingList";
+import { useShoppingList, type Ingredient } from "../hooks/useShoppingList";
 import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import QuantitySelector from "../components/QuantitySelector";
@@ -19,14 +14,13 @@ ShoppingListPage.route = {
 };
 
 export default function ShoppingListPage() {
-  const { shoppingList, productsByIngredient, fetchList } = useShoppingList();
+  const { shoppingList, addIngredientToShoppingList } = useShoppingList();
 
   const [selectedIngredient, setSelectedIngredient] = useState<
     Ingredient | undefined
   >(undefined);
 
   const [clearSearchText, setClearSearchText] = useState(0);
-  const [product, setProduct] = useState("");
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
 
@@ -35,19 +29,7 @@ export default function ShoppingListPage() {
 
     if (numberAmount <= 0 || selectedIngredient == undefined) return;
 
-    const updatedIngredient = {
-      ...selectedIngredient,
-      amount: numberAmount,
-    };
-
-    const newShoppingItem: ShoppingItem = {
-      id: "",
-      ingredient: updatedIngredient,
-      productName: "",
-      productPrice: 0,
-      productQuantity: 0,
-      productUnit: "",
-    };
+    await addIngredientToShoppingList(selectedIngredient, numberAmount);
 
     setSelectedIngredient(undefined);
     setClearSearchText((prev) => prev + 1);
@@ -80,9 +62,8 @@ export default function ShoppingListPage() {
                       value={amount}
                       required
                       type="number"
-                      min={0.5}
-                      max={99}
-                      step={0.5}
+                      min={1}
+                      max={10000}
                       onChange={(e) => setAmount(e.target.value)}
                     />
                   </Form.Group>
@@ -92,7 +73,7 @@ export default function ShoppingListPage() {
                   <Form.Control
                     placeholder="Enhet"
                     disabled
-                    value={selectedIngredient?.baseUnit?.title ?? ""}
+                    value={selectedIngredient?.unit.unitCode ?? ""}
                   />
                 </Col>
                 <Col xs={12} xl={3}>
@@ -105,66 +86,57 @@ export default function ShoppingListPage() {
               </Row>
             </Form>
 
-            {shoppingList != null ? (
-              <>
-                <Col className="m-2 fs-6 mt-4">
-                  {shoppingList.items.map((shoppingItem, index) => (
-                    <>
-                      <Row
-                        key={index}
-                        className="shopping-list-item d-flex align-items-center pt-2 pb-2 "
-                      >
-                        <Col xs={12} md={12} lg={3} className="mb-2">
-                          <span>
-                            <b>Ingrediens:</b>{" "}
-                          </span>
-                          {shoppingItem.ingredient.title}{" "}
-                          {shoppingItem.quantity}{" "}
-                          {shoppingItem.ingredient.unit.unitCode}{" "}
-                        </Col>
+            {shoppingList != null && shoppingList.items ? (
+              <div className="shopping-list-container m-2 fs-6 mt-4">
+                {shoppingList.items.map((shoppingItem) => (
+                  <Row
+                    key={shoppingItem.id}
+                    className="shopping-list-item d-flex align-items-center pt-2 pb-2"
+                  >
+                    {/* Ingredient */}
+                    <Col xs={12} md={12} lg={3} className="mb-2">
+                      <span>
+                        <b>Ingrediens:</b>{" "}
+                      </span>
+                      {shoppingItem.ingredient?.title} {shoppingItem.quantity}{" "}
+                      {shoppingItem.ingredient?.unit.unitCode}
+                    </Col>
 
-                        <Col
-                          xs={12}
-                          md={8}
-                          lg={6}
-                          className="mt-1 mb-2 d-flex align-items-center"
-                        >
-                          <b className="me-2">Produkt:</b>
-                          <Form.Select
-                            size="sm"
-                            value={product}
-                            onChange={(e) => setProduct(e.target.value)}
-                          >
-                            <option value="">Välj produkt</option>
-                            {productsByIngredient[
-                              shoppingItem.ingredient.id
-                            ]?.map((prod) => (
-                              <option key={prod.id} value={prod.id}>
-                                {prod.title}
-                              </option>
-                            ))}
-                          </Form.Select>
-                        </Col>
-                        <Col xs={6} md={2} lg={2}>
-                          <b>Total kostnad:</b> 5 kr
-                        </Col>
-                        <Col
-                          xs={6}
-                          md={2}
-                          lg={1}
-                          className="d-flex justify-content-end"
-                        >
-                          <QuantitySelector value={1}></QuantitySelector>
-                        </Col>
-                      </Row>
-                    </>
-                  ))}
-                </Col>
+                    {/* Product Selector */}
+                    <Col
+                      xs={12}
+                      md={8}
+                      lg={6}
+                      className="mt-1 mb-2 d-flex align-items-center"
+                    >
+                      <b className="me-2">Produkt:</b>
+                      <Form.Select size="sm">
+                        <option value="">Välj produkt</option>
+                      </Form.Select>
+                    </Col>
 
+                    {/* Total Cost */}
+                    <Col xs={6} md={2} lg={2}>
+                      <b>Total kostnad:</b> 5 kr
+                    </Col>
+
+                    {/* Quantity Selector */}
+                    <Col
+                      xs={6}
+                      md={2}
+                      lg={1}
+                      className="d-flex justify-content-end"
+                    >
+                      <QuantitySelector value={1} />
+                    </Col>
+                  </Row>
+                ))}
+
+                {/* Add to Cart Button */}
                 <div className="d-grid gap-3 mt-3 mb-4">
                   <Button>Lägg till produkter i varukorg</Button>
                 </div>
-              </>
+              </div>
             ) : (
               <div
                 className="d-flex justify-content-center align-items-center mt-5 mb-5"

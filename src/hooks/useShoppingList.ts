@@ -8,9 +8,10 @@ export interface ShoppingList {
 }
 
 export interface ShoppingListItem {
-  id: string;
+  id?: string;
   ingredient: Ingredient;
-  quantity: number;
+  quantity?: number;
+  unit?: Unit;
 }
 
 export interface Ingredient {
@@ -19,9 +20,7 @@ export interface Ingredient {
   unit: Unit;
   productId: string[];
 }
-export interface ProductId {
-  id: string;
-}
+
 export interface Product {
   id?: string;
   title?: string;
@@ -40,15 +39,12 @@ export interface Unit {
 export function useShoppingList() {
   const { user } = useAuth();
   const [shoppingList, setItems] = useState<ShoppingList | null>(null);
-  const [productsByIngredient, setProductsByIngredient] = useState<
-    Record<string, Product[]>
-  >({});
 
   async function fetchList() {
     if (!user) return { success: false };
     try {
       const res = await fetch(
-        `/api/expand/ShoppingList?where=user.id==${user.userId}`
+        `/api/ShoppingList?where=user.id==${user.userId}`
       );
 
       const data: ShoppingList[] = await res.json();
@@ -56,29 +52,6 @@ export function useShoppingList() {
       if (res.ok) {
         const list = data[0] ?? null;
         setItems(list);
-
-        if (list?.items?.length) {
-          // For each ingredient, fetch all its products by ID
-          list.items.forEach(async (item) => {
-            if (!item.ingredient.productId?.length) return;
-
-            const productPromises = item.ingredient.productId.map(
-              async (id) => {
-                const resProd = await fetch(
-                  `http://localhost:5001/api/Product/${id}`
-                );
-                return resProd.json() as Promise<Product>;
-              }
-            );
-
-            const products = await Promise.all(productPromises);
-
-            setProductsByIngredient((prev) => ({
-              ...prev,
-              [item.ingredient.id]: products,
-            }));
-          });
-        }
 
         return { success: true };
       } else {
@@ -93,39 +66,48 @@ export function useShoppingList() {
     }
   }
 
-  async function addItem(ingredient: string) {
-    if (!user) return { success: false };
+  async function addIngredientToShoppingList(
+    ingredient: Ingredient,
+    quantity: number
+  ) {
+    if (!shoppingList) return { success: false };
+
+    const newItem: ShoppingListItem = {
+      ingredient,
+      quantity,
+      unit: ingredient.unit,
+    };
+
+    console.log(newItem);
+
+    let updatedList;
+
+    if (!shoppingList.items) {
+      updatedList = {
+        ...shoppingList,
+        items: [newItem],
+      };
+    } else {
+      updatedList = {
+        ...shoppingList,
+        items: [...shoppingList.items, newItem],
+      };
+    }
+
+    console.log(updatedList);
+
     try {
-      const res = await fetch("/api/shoppingList", {
-        method: "POST",
+      const res = await fetch(`/api/ShoppingList/${shoppingList.id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.userId, ingredient }),
+        body: JSON.stringify(updatedList),
       });
+
       if (res.ok) {
-        toast.success("Lagt till i inköpslistan");
         await fetchList();
         return { success: true };
       } else {
-        toast.error(
-          "Misslyckades med att registrera inköpslistan, försök igen"
-        );
-        return { success: false };
-      }
-    } catch {
-      toast.error("Nätverksfel, försök igen senare");
-      return { success: false };
-    }
-  }
-
-  async function removeItem(id: number) {
-    try {
-      const res = await fetch(`/api/shoppingList/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setItems((prev) => prev.filter((i) => i.id !== id));
-        toast.success("Objektet har tagits bort");
-        return { success: true };
-      } else {
-        toast.error("Misslyckades med att ta bort objektet, försök igen");
+        toast.error("Misslyckades med att lägga till ingrediens");
         return { success: false };
       }
     } catch {
@@ -138,5 +120,5 @@ export function useShoppingList() {
     fetchList();
   }, [user]);
 
-  return { shoppingList, productsByIngredient, fetchList };
+  return { shoppingList, addIngredientToShoppingList };
 }
