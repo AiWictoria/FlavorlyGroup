@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (
-    email: string,
+    usernameOrEmail: string,
     password: string
   ) => Promise<{ success: boolean; data?: User }>;
   logout: () => Promise<{ success: boolean }>;
@@ -38,22 +38,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const fetched = useRef(false);
 
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch("/api/auth/login", { credentials: "include" });
-        const data = await res.json();
-        if (!data.error) setUser(data);
-      } catch (error) {
-        toast.error("Något gick fel, försök igen senare");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+    if (!fetched.current) {
+      fetchUser();
+      fetched.current = true;
     }
-    fetchUser();
   }, []);
+
+  async function fetchUser() {
+    try {
+      const res = await fetch("/api/auth/login", {
+        credentials: "include",
+      });
+
+      const contentType = res.headers.get("content-type");
+      if (!res.ok || !contentType?.includes("application/json")) {
+        setUser(null);
+        return;
+      }
+
+      const data: User = await res.json();
+      setUser(data);
+    } catch (err) {
+      console.error(err);
+      setUser(null);
+      toast.error("Något gick fel, försök igen senare");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function login(usernameOrEmail: string, password: string) {
     try {
@@ -61,18 +76,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ usernameOrEmail: usernameOrEmail, password }),
+        body: JSON.stringify({ usernameOrEmail, password }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        setUser(data);
-        toast.success("Inloggning lyckades");
-        window.location.reload();
-        return { success: true, data };
-      } else {
-        toast.error("Inloggningen misslyckades, försök igen");
+
+      const contentType = res.headers.get("content-type");
+      if (!res.ok || !contentType?.includes("application/json")) {
+        toast.error("Inloggningen misslyckades");
         return { success: false };
       }
+
+      const data: User = await res.json();
+      setUser(data);
+      toast.success("Du är inloggad");
+      return { success: true, data };
     } catch {
       toast.error("Nätverksfel, försök igen senare");
       return { success: false };
@@ -85,13 +101,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "DELETE",
         credentials: "include",
       });
+
       if (res.ok) {
         setUser(null);
         toast.success("Du har blivit utloggad");
         navigate("/");
         return { success: true };
       } else {
-        toast.error("Utloggning misslyckades, försök igen");
+        toast.error("Utloggning misslyckades");
         return { success: false };
       }
     } catch {
@@ -121,14 +138,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           phone,
         }),
       });
-      if (res.ok) {
-        toast.success("Kontot har skapats");
-        await login(email, password);
-        return { success: true };
-      } else {
+
+      if (!res.ok) {
         toast.error("Kunde inte skapa kontot, försök igen senare.");
         return { success: false };
       }
+
+      toast.success("Kontot har skapats");
+      await login(email, password);
+      return { success: true };
     } catch {
       toast.error("Nätverksfel, försök igen senare");
       return { success: false };

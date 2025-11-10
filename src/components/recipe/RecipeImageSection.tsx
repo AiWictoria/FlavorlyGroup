@@ -1,7 +1,7 @@
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useSavedRecipes } from "../../hooks/useSavedRecipes";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import StarsRating from "./StarsRating";
 
 interface RecipeImageSectionProps {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useShoppingList } from "../../hooks/useShoppingList";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 
 interface RecipeIngredientsProps {
   mode: "view" | "edit" | "create";
@@ -28,7 +28,8 @@ export function RecipeIngredients({
     if (recipe?.ingredients) {
       const parts = recipe.ingredients.map((ing) => {
         const segments: string[] = [];
-        if (ing.quantity !== undefined && ing.quantity !== null) segments.push(String(ing.quantity));
+        if (ing.quantity !== undefined && ing.quantity !== null)
+          segments.push(String(ing.quantity));
         if (ing.unit) segments.push(ing.unit.name);
         if (ing.ingredient.name) segments.push(ing.ingredient.name);
         else if (ing.ingredientId) segments.push(`#${ing.ingredientId}`);
