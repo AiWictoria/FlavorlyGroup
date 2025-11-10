@@ -41,6 +41,8 @@ public static class StripeRoutes
         },
         SuccessUrl = "http://localhost:5173/order?status=success&step=confirmation",
         CancelUrl = "http://localhost:5173/order?status=cancelled&step=payment",
+        Locale = "sv",
+
       };
 
       var service = new SessionService();
