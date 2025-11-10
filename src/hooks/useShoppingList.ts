@@ -92,28 +92,6 @@ export function useShoppingList() {
     }
   }
 
-  async function toggleItemChecked(id: string, checked: boolean) {
-    try {
-      const res = await fetch(`/api/shoppingList/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ checked }),
-      });
-      if (res.ok) {
-        setItems((prev) =>
-          prev.map((i) => (i.id === id ? { ...i, checked } : i))
-        );
-        return { success: true };
-      } else {
-        toast.error("Misslyckades med att uppdatera objektets status");
-        return { success: false };
-      }
-    } catch {
-      toast.error("Nätverksfel, försök igen senare");
-      return { success: false };
-    }
-  }
-
   async function removeItem(id: number) {
     try {
       const res = await fetch(`/api/shoppingList/${id}`, { method: "DELETE" });

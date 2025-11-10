@@ -11,7 +11,7 @@ export default function HomePage() {
         <Col>
           <h1 className="fs-1 text-light">Share, Cook, Enjoy</h1>
           <h3 className="fs-4 text-light mt-2">Hitta nya favoritrecept idag</h3>
-          <div className="d-flex justify-content-center gap-3 mt-4">
+          <div className="d-flex justify-content-center gap-3 mt-4 ">
             <Button
               className="fs-6 home-page-button "
               variant="light"
