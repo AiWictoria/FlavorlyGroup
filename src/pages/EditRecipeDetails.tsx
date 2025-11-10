@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 EditRecipeDetails.route = {
   path: "/recipes/:id/edit",
+  adminOnly: false,
   protected: true,
 };
 

@@ -13,6 +13,7 @@ ShoppingListPage.route = {
   path: "/shoppingList",
   menuLabel: "Inköpslistan",
   index: 4,
+  adminOnly: false,
   protected: true,
 };
 

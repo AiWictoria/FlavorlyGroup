@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 
 ViewRecipeDetails.route = {
   path: "/recipes/:id",
+  adminOnly: false,
+  protected: false,
 };
 
 export default function ViewRecipeDetails() {

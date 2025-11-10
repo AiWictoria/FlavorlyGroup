@@ -1,14 +1,19 @@
 import { Container } from "react-bootstrap";
 import { useRoutes } from "react-router-dom";
 import routes from "../routes";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../features/auth/ProtectedRoute";
+import AdminRoute from "../features/auth/AdminRoute";
 
 export default function Main() {
   const element = useRoutes(
-    routes.map(({ element, path, protected: isProtected }) => ({
+    routes.map(({ element, path, protected: isProtected, adminOnly }) => ({
       path,
       element: isProtected ? (
-        <ProtectedRoute>{element}</ProtectedRoute>
+        adminOnly ? (
+          <AdminRoute>{element}</AdminRoute>
+        ) : (
+          <ProtectedRoute>{element}</ProtectedRoute>
+        )
       ) : (
         element
       ),

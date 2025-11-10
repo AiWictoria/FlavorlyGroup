@@ -8,7 +8,13 @@ import Payment from "../components/orderFlow/orderReceipt/Payment";
 import TotalBox from "../components/orderFlow/cartParts/TotalBox";
 import { useOrder } from "../hooks/useOrder";
 
-Checkout.route = { path: "/order", menuLabel: "Kassa", index: 6 };
+Checkout.route = {
+  path: "/order",
+  menuLabel: "Kassa",
+  index: 6,
+  adminOnly: false,
+  protected: true,
+};
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();

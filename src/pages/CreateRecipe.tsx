@@ -7,6 +7,7 @@ CreateRecipe.route = {
   path: "/createRecipe",
   menuLabel: "Skapa Recept",
   index: 2,
+  adminOnly: false,
   protected: true,
 };
 

@@ -5,9 +5,9 @@ import { fetchOrders } from "@orders/api/data.mock";
 import Box from "../../../components/shared/Box";
 import type { Order } from "@models/order.types";
 
-
 MyOrdersPage.route = {
   path: "/MyOrders",
+  protected: true,
 };
 
 export default function MyOrdersPage() {
@@ -33,7 +33,9 @@ export default function MyOrdersPage() {
                   <OrderCard key={order.id} order={order} />
                 ))
               ) : (
-                <p className="text-center text-muted">Du har inte gjort några beställningar</p>
+                <p className="text-center text-muted">
+                  Du har inte gjort några beställningar
+                </p>
               )}
             </div>
           </Box>
