@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../features/auth/AuthContext";
+import { useAuth } from "./AuthContext";
 
 interface AdminRouteProps {
   children: ReactNode;

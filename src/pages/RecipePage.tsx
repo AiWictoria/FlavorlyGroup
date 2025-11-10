@@ -11,6 +11,8 @@ RecipePage.route = {
   path: "/recipes",
   menuLabel: "Recept",
   index: 1,
+  adminOnly: false,
+  protected: false,
 };
 
 export default function RecipePage() {

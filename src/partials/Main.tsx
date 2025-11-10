@@ -1,8 +1,8 @@
 import { Container } from "react-bootstrap";
 import { useRoutes } from "react-router-dom";
 import routes from "../routes";
-import ProtectedRoute from "../components/ProtectedRoute";
-import AdminRoute from "../components/AdminRoute";
+import ProtectedRoute from "../features/auth/ProtectedRoute";
+import AdminRoute from "../features/auth/AdminRoute";
 
 export default function Main() {
   const element = useRoutes(
