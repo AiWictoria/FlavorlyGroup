@@ -1,93 +1,51 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Form } from "react-bootstrap";
 import toast from "react-hot-toast";
+import { mapIngredient, type Ingredient as UiIngredient, type IngredientDto } from "../../api/models";
 
-// Component which retrieves Ingredient object when the user searches
-
-export interface Ingredient {
-  id?: string;
-  title?: string;
-  name?: string;
-  amount?: number;
-  baseUnit?: Unit;
-  productId?: Product[];
-}
-export interface Product {
-  id?: string;
-  name?: string;
-  price?: number;
-  quantity?: number;
-  unit?: Unit;
-}
-
-export interface Unit {
-  id?: string;
-  title?: string;
-  description?: string;
-  baseUnitId?: string;
-  unitCode?: string;
-}
+export type Ingredient = UiIngredient;
 
 interface IngredientSearchProps {
-  // Sends back the Ingredient object
-  onIngredientChange: (ingredient?: Ingredient) => void;
+  onIngredientChange: (ingredient?: UiIngredient) => void;
   clearSearchText?: number;
 }
 
-export default function IngredientSearch({
-  onIngredientChange,
-  clearSearchText,
-}: IngredientSearchProps) {
-  // Controls whether the dropdown should be shown or not
+export default function IngredientSearch({ onIngredientChange, clearSearchText }: IngredientSearchProps) {
   const [show, setShow] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>(
-    []
-  );
+  const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>([]);
 
-  // When the user adds an Ingredient successfully
-  useEffect(() => {
-    setSearchText("");
-  }, [clearSearchText]);
+  useEffect(() => { setSearchText(""); }, [clearSearchText]);
 
-  function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchedIngredients([]);
-    setSearchText(event.target.value);
+    setSearchText(e.target.value);
     setShow(true);
-
-    // Clear ingredient when user starts searching ingredients again
     onIngredientChange(undefined);
   }
 
   useEffect(() => {
-    // Don't search if there's no text
-    if (!searchText) {
-      setShow(false);
-      setSearchedIngredients([]);
-      return;
-    }
+    if (!searchText) { setShow(false); setSearchedIngredients([]); return; }
 
     const fetchIngredients = async () => {
       try {
-        const res = await fetch(
-          `/api/expand/Ingredient?where=titleLIKE${searchText}&limit=4`
-        );
 
-        if (!res.ok) {
-          toast.error(
-            "Misslyckades med att ladda ingredienser, försök igen senare"
-          );
-          return;
+        const res = await fetch(`/api/expand/Ingredient?where=titleLIKE${encodeURIComponent(searchText)}&limit=20`);
+        if (!res.ok) { toast.error("Misslyckades med att ladda ingredienser"); return; }
+        const data: IngredientDto[] = await res.json();
+        const mapped: Ingredient[] = [];
+        for (const d of data) {
+          try { mapped.push(mapIngredient(d)); } catch { /* ignore this item */ }
         }
 
-        const data: Ingredient[] = await res.json();
-        setSearchedIngredients(data);
+        setSearchedIngredients(mapped);
+        setShow(mapped.length > 0);
+        setSearchedIngredients(data.map(mapIngredient));
         setShow(true);
       } catch {
         toast.error("Nätverksfel, försök igen senare");
       }
     };
-
     fetchIngredients();
   }, [searchText]);
 
@@ -105,14 +63,14 @@ export default function IngredientSearch({
       <Dropdown.Menu style={{ width: "100%" }}>
         {searchedIngredients.map((ingredient) => (
           <Dropdown.Item
-            key={ingredient.id ?? ingredient.title ?? ingredient.name}
+            key={ingredient.id}
             onClick={() => {
               onIngredientChange(ingredient);
-              setSearchText(ingredient.title ?? ingredient.name ?? "");
+              setSearchText(ingredient.title);
               setShow(false);
             }}
           >
-            {ingredient.title ?? ingredient.name}
+            {ingredient.title}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
