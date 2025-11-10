@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import ProfileModal from "../partials/header/ProfileModal";
 
 interface ProtectedRouteProps {

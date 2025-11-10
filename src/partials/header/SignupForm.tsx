@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
-import { useAuth } from '../../hooks/useAuth';
+import { useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import { useAuth } from "../../features/auth/AuthContext";
 
 interface SignupFormProps {
   onBack: () => void;
@@ -11,12 +11,12 @@ export default function SignupForm({ onBack }: SignupFormProps) {
   const { createUser } = useAuth();
 
   const [form, setForm] = useState({
-    username: '',
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
+    username: "",
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
   });
 
   function setProperty(e: React.ChangeEvent<HTMLInputElement>) {

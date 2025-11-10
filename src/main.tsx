@@ -5,26 +5,25 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "../sass/index.scss";
 import routes from "./routes";
 import App from "./App";
+import { AuthProvider } from "./features/auth/AuthContext";
 
 // Create a router using settings/content from 'routes.tsx'
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    ),
     children: routes as RouteObject[],
     HydrateFallback: App,
   },
 ]);
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
-}
-
 // Create the React root element
 createRoot(document.querySelector("#root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router={router}></RouterProvider>
   </StrictMode>
 );

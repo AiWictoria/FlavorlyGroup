@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import { useState, useEffect } from "react";
 
 export interface SavedRecipe {

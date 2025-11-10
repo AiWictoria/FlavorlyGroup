@@ -3,7 +3,7 @@ import { useRecipes } from "../hooks/useRecipes";
 import type { Recipe } from "../hooks/useRecipes";
 import { useEffect, useState } from "react";
 import RecipeLayout from "../components/recipe/RecipeLayout";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import { RecipeComments } from "../components/recipe/RecipeComments";
 import { Row, Col, Button } from "react-bootstrap";
 import toast from "react-hot-toast";
@@ -21,7 +21,10 @@ export default function ViewRecipeDetails() {
   useEffect(() => {
     if (!id) return;
     fetchRecipeById(String(id)).then((data) => {
-      if (data && ('success' in data ? (data as { success: boolean }).success : true)) {
+      if (
+        data &&
+        ("success" in data ? (data as { success: boolean }).success : true)
+      ) {
         setRecipe(data.data as Recipe | null);
       }
     });
@@ -62,11 +65,13 @@ export default function ViewRecipeDetails() {
 
   const isOwner = Boolean(
     user &&
-    recipe.userAuthor &&
-    typeof recipe.userAuthor === 'object' &&
-    'userIds' in (recipe.userAuthor as Record<string, unknown>) &&
-    Array.isArray((recipe.userAuthor as { userIds?: string[] }).userIds) &&
-    ((recipe.userAuthor as { userIds?: string[] }).userIds as string[]).includes(user.username)
+      recipe.userAuthor &&
+      typeof recipe.userAuthor === "object" &&
+      "userIds" in (recipe.userAuthor as Record<string, unknown>) &&
+      Array.isArray((recipe.userAuthor as { userIds?: string[] }).userIds) &&
+      (
+        (recipe.userAuthor as { userIds?: string[] }).userIds as string[]
+      ).includes(user.username)
   );
   return (
     <>
