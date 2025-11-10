@@ -2,6 +2,7 @@ namespace RestRoutes;
 
 using OrchardCore.ContentManagement;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 public static class PutRoutes
 {
@@ -38,8 +39,7 @@ public static class PutRoutes
                 // Check if body is null or empty
                 if (body == null || body.Count == 0)
                 {
-                    return Results.Json(new
-                    {
+                    return Results.Json(new {
                         error = "Cannot read request body"
                     }, statusCode: 400);
                 }
@@ -58,8 +58,7 @@ public static class PutRoutes
 
                 if (!isValid)
                 {
-                    return Results.Json(new
-                    {
+                    return Results.Json(new {
                         error = "Invalid fields provided",
                         invalidFields = invalidFields,
                         validFields = validFields.OrderBy(f => f).ToList()
@@ -72,9 +71,7 @@ public static class PutRoutes
                     contentItem.DisplayText = body["title"].ToString() ?? contentItem.DisplayText;
                 }
 
-                // Use FieldMapper to update all fields
-                // FieldMapper correctly handles Orchard's field structure (e.g., NumericField needs {"Value": 30})
-                // JsonUpdateModel doesn't handle field structures correctly, so we use FieldMapper for all fields
+                // Update fields - only the ones provided in the body using FieldMapper
                 foreach (var kvp in body)
                 {
                     // Skip all reserved fields
@@ -98,8 +95,7 @@ public static class PutRoutes
                 if (cleanResponse == null)
                 {
                     // Fallback if response builder fails (shouldn't happen, but safety check)
-                    return Results.Json(new
-                    {
+                    return Results.Json(new {
                         id = contentItem.ContentItemId,
                         title = contentItem.DisplayText
                     }, statusCode: 200);
@@ -109,8 +105,7 @@ public static class PutRoutes
             }
             catch (Exception ex)
             {
-                return Results.Json(new
-                {
+                return Results.Json(new {
                     error = ex.Message
                 }, statusCode: 500);
             }

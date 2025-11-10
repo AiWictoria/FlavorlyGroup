@@ -10,15 +10,11 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
     <Folder Include="Localization\" />
-    <Compile Remove="backend.Tests\**" />
-    <Content Remove="backend.Tests\**" />
-    <EmbeddedResource Remove="backend.Tests\**" />
-    <None Remove="backend.Tests\**" />
   </ItemGroup>
 
   <!-- Watcher include and excludes -->
   <ItemGroup>
-      <Watch Include="**\*.cs" Exclude="Recipes\**;Assets\**;node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*;backend.Tests\**" />
+      <Watch Include="**\*.cs" Exclude="Recipes\**;Assets\**;node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*" />
   </ItemGroup>
 
   <ItemGroup>

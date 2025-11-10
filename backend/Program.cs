@@ -1,6 +1,5 @@
 using OrchardCore.Logging;
 using RestRoutes;
-using RestRoutes.Services;
 using DotNetEnv;
 using Stripe;
 
@@ -19,14 +18,6 @@ namespace backend
             builder.Host.UseNLogHost();
 
             builder.Services.AddOrchardCms();
-
-            // Register POST route services (SOLID refactoring)
-            // These services depend on OrchardCore services (IContentManager, ISession)
-            // which are registered by AddOrchardCms(), so we register them after
-            builder.Services.AddScoped<PostRequestValidator>();
-            builder.Services.AddScoped<ContentItemMetadataService>();
-            builder.Services.AddScoped<ContentItemFieldMapperService>();
-            builder.Services.AddScoped<ContentItemCreationService>();
 
             // CORS (för frontend på annan port)
             builder.Services.AddCors(options =>
