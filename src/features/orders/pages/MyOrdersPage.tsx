@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Container } from "react-bootstrap";
 import { OrderCard } from "@orders/components/OrderCard";
 import { fetchOrders } from "@orders/api/data.mock";
 import Box from "../../../components/shared/Box";
 import type { Order } from "@models/order.types";
 
-// Use canonical Order directly in the card
 
 MyOrdersPage.route = {
   path: "/MyOrders",
@@ -25,17 +24,23 @@ export default function MyOrdersPage() {
   }, []);
 
   return (
-    <Row className="p-0 p-xl-5">
-      <Col className="mt-4 mx-xl-5 px-xl-5">
-        <h2>Mina beställningar</h2>
-        <Box size="l" className="order-table-container mt-4">
-          <div className="d-flex flex-column gap-2">
-            {orders.map((order) => (
-              <OrderCard key={order.id} order={order} />
-            ))}
-          </div>
-        </Box>
-      </Col>
-    </Row>
+    <Container>
+      <Row className="justify-content-center">
+        <Col xs={12} md={10} lg={8} className="my-4">
+          <Box size="xl" className="p-4">
+            <h2 className="mb-4">Mina beställningar</h2>
+            <div className="d-flex flex-column gap-3">
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <OrderCard key={order.id} order={order} />
+                ))
+              ) : (
+                <p className="text-center text-muted">Du har inte gjort några beställningar</p>
+              )}
+            </div>
+          </Box>
+        </Col>
+      </Row>
+    </Container>
   );
 }
