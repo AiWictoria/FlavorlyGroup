@@ -4,13 +4,13 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export interface User {
-  userId: string;
+  id: string;
   username: string;
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  phone: string;
+  phoneNumber: string;
   roles: string[];
 }
 
@@ -28,7 +28,7 @@ interface AuthContextType {
     password: string,
     firstName: string,
     lastName: string,
-    phone: string
+    phoneNumber: string
   ) => Promise<{ success: boolean }>;
 }
 
@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string,
     firstName: string,
     lastName: string,
-    phone: string
+    phoneNumber: string
   ) {
     try {
       const res = await fetch("/api/auth/register", {
@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           password,
           firstName,
           lastName,
-          phone,
+          phoneNumber,
         }),
       });
 

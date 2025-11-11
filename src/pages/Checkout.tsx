@@ -8,20 +8,20 @@ import Payment from "../components/orderFlow/orderReceipt/Payment";
 import TotalBox from "../components/orderFlow/cartParts/TotalBox";
 import { useOrder } from "../hooks/useOrder";
 
-Checkout.route = { path: "/order", menuLabel: "Kassa", index: 6 };
+Checkout.route = {
+  path: "/order",
+  menuLabel: "Kassa",
+  index: 6,
+  adminOnly: false,
+  protected: true,
+};
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-  const {
-    products,
-    handleQuantityChange,
-    handleRemoveProduct,
-    deliveryData,
-    handleDeliveryChange,
-  } = useOrder();
+  const { products, deliveryData, handleDeliveryChange } = useOrder();
 
   const getButtonLabel = () => {
     if (activeStep === 0) return "Leverans";
@@ -64,8 +64,8 @@ export default function Checkout() {
   const stepsContent = [
     <Cart
       products={products}
-      onQuantityChange={handleQuantityChange}
-      onRemoveProduct={handleRemoveProduct}
+      onQuantityChange={() => void 0}
+      onRemoveProduct={() => void 0}
     />,
     <Delivery
       onDeliveryChange={handleDeliveryChange}
