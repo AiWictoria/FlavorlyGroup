@@ -28,9 +28,9 @@ export default function ShoppingListPage() {
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
 
-    if (numberAmount <= 0 || selectedIngredient == undefined) return;
+    if (selectedIngredient == undefined) return;
 
-    await addIngredientToShoppingList(selectedIngredient, numberAmount);
+    await addIngredientToShoppingList(selectedIngredient);
 
     setSelectedIngredient(undefined);
     setClearSearchText((prev) => prev + 1);
@@ -79,7 +79,7 @@ export default function ShoppingListPage() {
                       <span>
                         <b>Ingrediens:</b>{" "}
                       </span>
-                      {shoppingItem.ingredient?.title}
+                      {shoppingItem.ingredient.title}
                     </Col>
 
                     {/* Product Selector */}
@@ -97,7 +97,7 @@ export default function ShoppingListPage() {
 
                     {/* Total Cost */}
                     <Col xs={6} md={2} lg={2}>
-                      <b>Total kostnad:</b> 5 kr
+                      <b>Total kostnad:</b> 0 kr
                     </Col>
 
                     {/* Quantity Selector */}

@@ -9,16 +9,14 @@ export interface ShoppingList {
 
 export interface ShoppingListItem {
   id?: string;
+  title: null;
   ingredient: Ingredient;
-  quantity?: number;
-  unit?: Unit;
+  contentType: "ShoppingListItem";
 }
-
 export interface Ingredient {
   id: string;
   title: string;
   unit: Unit;
-  productId: string[];
 }
 
 export interface Product {
@@ -49,6 +47,8 @@ export function useShoppingList() {
 
       const data: ShoppingList[] = await res.json();
 
+      console.log(data);
+
       if (res.ok) {
         const list = data[0] ?? null;
         setItems(list);
@@ -65,34 +65,23 @@ export function useShoppingList() {
       return { success: false };
     }
   }
-
-  async function addIngredientToShoppingList(
-    ingredient: Ingredient,
-    quantity: number
-  ) {
+  async function addIngredientToShoppingList(ingredient: Ingredient) {
     if (!shoppingList) return { success: false };
-
-    console.log(ingredient);
+    console.log("Current items:", shoppingList.items);
+    console.log("Adding ingredient:", ingredient);
 
     const newItem: ShoppingListItem = {
+      title: null,
       ingredient,
-      quantity,
-      unit: ingredient.unit,
+      contentType: "ShoppingListItem",
     };
 
-    let updatedList;
+    const updatedList = {
+      ...shoppingList,
+      items: [...shoppingList.items, newItem],
+    };
 
-    if (!shoppingList.items) {
-      updatedList = {
-        ...shoppingList,
-        items: [newItem],
-      };
-    } else {
-      updatedList = {
-        ...shoppingList,
-        items: [...shoppingList.items, newItem],
-      };
-    }
+    console.log("Sending updated list:", updatedList);
 
     try {
       const res = await fetch(`/api/ShoppingList/${shoppingList.id}`, {
@@ -102,6 +91,9 @@ export function useShoppingList() {
       });
 
       if (res.ok) {
+        const responseData = await res.json();
+        console.log("Response from server:", responseData);
+
         await fetchList();
         return { success: true };
       } else {
