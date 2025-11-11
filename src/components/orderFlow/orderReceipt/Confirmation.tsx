@@ -5,7 +5,7 @@ import Divider from "../../shared/Divider";
 import ProductInfo from "./ProductInfo";
 
 interface ConfirmationProps {
-  products: { id: number; name: string; quantity: number; price: number }[];
+  products: { id: string; name: string; quantity: number; price: number }[];
   deliveryData: {
     address: string;
     postcode: string;

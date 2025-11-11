@@ -21,13 +21,7 @@ export default function Checkout() {
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-  const {
-    products,
-    handleQuantityChange,
-    handleRemoveProduct,
-    deliveryData,
-    handleDeliveryChange,
-  } = useOrder();
+  const { products, deliveryData, handleDeliveryChange } = useOrder();
 
   const getButtonLabel = () => {
     if (activeStep === 0) return "Leverans";
@@ -61,8 +55,8 @@ export default function Checkout() {
   const stepsContent = [
     <Cart
       products={products}
-      onQuantityChange={handleQuantityChange}
-      onRemoveProduct={handleRemoveProduct}
+      onQuantityChange={() => void 0}
+      onRemoveProduct={() => void 0}
     />,
     <Delivery onDeliveryChange={handleDeliveryChange} />,
     <Payment />,

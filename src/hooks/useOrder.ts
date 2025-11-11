@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../features/auth/AuthContext";
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   quantity: number;
@@ -16,31 +17,36 @@ export interface DeliveryData {
 }
 
 export function useOrder() {
-  const [products, setProducts] = useState<Product[]>(() => {
-    const saved = sessionStorage.getItem("orderProducts");
-    return saved
-      ? JSON.parse(saved)
-      : [
-          { id: 1, name: "Mjölk", price: 20, quantity: 2 },
-          { id: 2, name: "Ägg 6p frigående höns", price: 35, quantity: 1 },
-        ];
-  });
+  const { user } = useAuth();
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    sessionStorage.setItem("orderProducts", JSON.stringify(products));
-  }, [products]);
+    if (!user) return;
 
-  const handleQuantityChange = (productId: number, newQuantity: number) => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === productId ? { ...p, quantity: newQuantity } : p
-      )
-    );
-  };
+    const fetchCart = async () => {
+      try {
+        const res = await fetch(`/api/Cart?where=user.id=${user.id}`);
+        if (!res.ok) throw new Error("Failed to fetch cart");
 
-  const handleRemoveProduct = (productId: number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
-  };
+        const data = await res.json();
+        const cart = data[0];
+        if (!cart || !cart.items) return;
+
+        const mappedProducts: Product[] = cart.items.map((item: any) => ({
+          id: String(item.product.id),
+          name: item.product.title,
+          price: item.product.price,
+          quantity: item.quanitity,
+        }));
+
+        setProducts(mappedProducts);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, [user?.id]);
 
   const [deliveryData, setDeliveryData] = useState<DeliveryData>(() => {
     const saved = sessionStorage.getItem("deliveryData");
@@ -69,8 +75,6 @@ export function useOrder() {
 
   return {
     products,
-    handleQuantityChange,
-    handleRemoveProduct,
     deliveryData,
     handleDeliveryChange,
   };
