@@ -56,27 +56,7 @@ export default function ShoppingListPage() {
                     />
                   </Form.Group>
                 </Col>
-                <Col xs={6} xl={3} className="mb-2">
-                  <Form.Group>
-                    <Form.Control
-                      placeholder="Välj mängd..."
-                      value={amount}
-                      required
-                      type="number"
-                      min={1}
-                      max={10000}
-                      onChange={(e) => setAmount(e.target.value)}
-                    />
-                  </Form.Group>
-                </Col>
 
-                <Col xs={6} xl={2}>
-                  <Form.Control
-                    placeholder="Enhet"
-                    disabled
-                    value={selectedIngredient?.unit.unitCode ?? ""}
-                  />
-                </Col>
                 <Col xs={12} xl={3}>
                   <div className="d-grid gap-2">
                     <Button variant="success" type="submit" className="w-auto">
@@ -99,8 +79,7 @@ export default function ShoppingListPage() {
                       <span>
                         <b>Ingrediens:</b>{" "}
                       </span>
-                      {shoppingItem.ingredient?.title} {shoppingItem.quantity}{" "}
-                      {shoppingItem.ingredient?.unit.unitCode}
+                      {shoppingItem.ingredient?.title}
                     </Col>
 
                     {/* Product Selector */}
@@ -134,7 +113,10 @@ export default function ShoppingListPage() {
                 ))}
 
                 {/* Add to Cart Button */}
-                <div className="d-grid gap-3 mt-3 mb-4">
+                <div className="d-flex justify-content-end mt-3 mb-4">
+                  <div className="me-3">
+                    <b>Summa:</b> kr
+                  </div>
                   <Button>Lägg till produkter i varukorg</Button>
                 </div>
               </div>

@@ -43,42 +43,11 @@ export function useShoppingList() {
 
   async function fetchList() {
     if (!user) return { success: false };
-    
-    try {
-      const res = await fetch(
-        `/api/ShoppingList?where=user.id==${user.userId}`
-      );
 
-      console.log(user.userId);
+    try {
+      const res = await fetch(`/api/ShoppingList?where=user.id==${user.id}`);
 
       const data: ShoppingList[] = await res.json();
-
-      if (data.length === 0) {
-        const body = {
-          title: "Ny lista",
-          user: {
-            id: user.userId,
-          },
-        };
-        const createRes = await fetch(`/api/ShoppingList`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-
-        console.log(user.userId);
-
-        if (createRes.ok) {
-          console.log(res);
-          toast.error("Gick att skapa lista");
-          return { success: true };
-        } else {
-          toast.error("Misslyckades att skapa lista");
-          return { success: false };
-        }
-      }
-
-      console.log(data);
 
       if (res.ok) {
         const list = data[0] ?? null;
