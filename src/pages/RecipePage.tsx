@@ -4,13 +4,15 @@ import { useRecipes } from "../hooks/useRecipes";
 import RecipeCard from "../components/RecipeCard";
 import RecipeSearchBar from "../components/RecipeSearchBar";
 import { sortRecipes } from "../utils/sortRecipes";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import { useSavedRecipes } from "../hooks/useSavedRecipes";
 
 RecipePage.route = {
   path: "/recipes",
   menuLabel: "Recept",
   index: 1,
+  adminOnly: false,
+  protected: false,
 };
 
 export default function RecipePage() {

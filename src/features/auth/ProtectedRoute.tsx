@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import ProfileModal from "../partials/header/ProfileModal";
+import { useAuth } from "./AuthContext";
+import ProfileModal from "../../partials/header/ProfileModal";
 
 interface ProtectedRouteProps {
   children: ReactNode;

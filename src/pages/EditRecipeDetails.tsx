@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecipes, type Recipe } from "../hooks/useRecipes";
 import RecipeLayout from "../components/recipe/RecipeLayout";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 EditRecipeDetails.route = {
   path: "/recipes/:id/edit",
+  adminOnly: false,
   protected: true,
 };
 

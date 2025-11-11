@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useRecipes } from "../hooks/useRecipes";
 import RecipeLayout from "../components/recipe/RecipeLayout";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 
 CreateRecipe.route = {
   path: "/createRecipe",
   menuLabel: "Skapa Recept",
   index: 2,
+  adminOnly: false,
   protected: true,
 };
 
