@@ -4,7 +4,13 @@ import QuantitySelector from "../components/QuantitySelector";
 import Box from "../components/shared/Box.tsx";
 import IngredientSearch, { type Ingredient } from "../components/shoppingList/IngredientSearch";
 
-ShoppingListPage.route = { path: "/shoppingList", menuLabel: "Inköpslistan", index: 4, protected: true };
+ShoppingListPage.route = {
+  path: "/shoppingList",
+  menuLabel: "Inköpslistan",
+  index: 4,
+  adminOnly: false,
+  protected: true,
+};
 
 const sek = (v: number) =>
   Number.isFinite(v) ? v.toLocaleString("sv-SE", { style: "currency", currency: "SEK" }) : "–";

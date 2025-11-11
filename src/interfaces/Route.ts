@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 export default interface Route {
   element: JSX.Element;
@@ -7,5 +7,6 @@ export default interface Route {
   menuLabel?: string;
   index?: number;
   parent?: string;
-  protected?: boolean;
+  adminOnly: boolean;
+  protected: boolean;
 }
