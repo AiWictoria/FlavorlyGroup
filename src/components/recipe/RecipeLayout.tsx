@@ -31,8 +31,8 @@ export default function RecipeLayout({
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Row className="bg-secondary border-top border-primary mt-5 pt-4">
-          <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4 mt-4">
+        <Row className="bg-secondary border-top border-primary">
+          <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4">
             <RecipeImageSection
               mode={mode}
               recipe={recipe ?? undefined}
@@ -54,8 +54,12 @@ export default function RecipeLayout({
           />
           </Col>
         </Row>
-        <Row className="mx-4 pb-3 mt-4">
-          <Col lg={8} className="mx-auto">
+        <Row className="mx-4 pb-3">
+          <Col
+            lg={8}
+            className="mx-auto d-flex justify-content-center align-items-center"
+            style={{ minHeight: "300px", overflowY: "auto" }}
+          >
             <RecipeInstructions
               mode={mode}
               recipe={recipe}
