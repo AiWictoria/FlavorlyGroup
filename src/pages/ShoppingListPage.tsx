@@ -1,6 +1,6 @@
 import { useShoppingList, type Ingredient } from "../hooks/useShoppingList";
-import { Form, Button, Row, Col, Table, Container } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { Form, Button, Row, Col } from "react-bootstrap";
+import { useState } from "react";
 import QuantitySelector from "../components/QuantitySelector";
 import Box from "../components/shared/Box.tsx";
 

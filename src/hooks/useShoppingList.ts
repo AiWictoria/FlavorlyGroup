@@ -36,6 +36,7 @@ export interface Unit {
   baseUnitId?: string;
   unitCode?: string;
 }
+
 export function useShoppingList() {
   const { user } = useAuth();
   const [shoppingList, setItems] = useState<ShoppingList | null>(null);
@@ -48,6 +49,27 @@ export function useShoppingList() {
       );
 
       const data: ShoppingList[] = await res.json();
+
+      // if (data.length == 0) {
+      //   const res = await fetch(
+      //     `/api/ShoppingList?where=user.id==${user.userId}`,
+      //     {
+      //       method: "POST",
+      //       headers: { "Content-Type": "application/json" },
+      //       body: "{}",
+      //     }
+      //   );
+      //   if (res.ok) {
+      //     console.log(res);
+      //     toast.error("Gick att skapa lista");
+      //     return { success: true };
+      //   } else {
+      //     toast.error("Misslyckades att skapa lista");
+      //     return { success: false };
+      //   }
+      // }
+
+      console.log(data);
 
       if (res.ok) {
         const list = data[0] ?? null;
@@ -72,13 +94,13 @@ export function useShoppingList() {
   ) {
     if (!shoppingList) return { success: false };
 
+    console.log(ingredient);
+
     const newItem: ShoppingListItem = {
       ingredient,
       quantity,
       unit: ingredient.unit,
     };
-
-    console.log(newItem);
 
     let updatedList;
 
@@ -93,8 +115,6 @@ export function useShoppingList() {
         items: [...shoppingList.items, newItem],
       };
     }
-
-    console.log(updatedList);
 
     try {
       const res = await fetch(`/api/ShoppingList/${shoppingList.id}`, {
