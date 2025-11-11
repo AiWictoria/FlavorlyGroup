@@ -49,9 +49,8 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
   };
 
   function formatOrderNumber(orderNumber: string): string {
-    // Extract just the numerical index for the order
-    const index = orders.findIndex((o) => o.orderNumber === orderNumber) + 1;
-    return `#${String(index).padStart(4, "0")}`;
+    // Use the actual order number from backend
+    return `#${String(orderNumber).padStart(4, "0")}`;
   }
 
   function formatDate(dateString: string) {

@@ -3,13 +3,12 @@ import { Container, Alert, Button, ButtonGroup } from "react-bootstrap";
 import { OrderTable } from "../components/OrderTable";
 import { OrderStats } from "../components/OrderStats";
 import type { Order } from "@models/order.types";
-import { fetchOrders, deleteOrder } from "../api/data.mock";
+import { useOrders } from "../hooks/useOrders";
 import toast from "react-hot-toast";
 import CancelConfirmationToast from "../../../components/shared/CancelConfirmationToast";
 
 function StoreManagerOrderViewComponent() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { orders, loading, fetchAllOrders, updateOrderStatus } = useOrders();
   const [error, setError] = useState("");
   const [selectedTab, setSelectedTab] = useState<
     "pending" | "completed" | "cancelled"
@@ -17,15 +16,10 @@ function StoreManagerOrderViewComponent() {
 
   const loadOrders = async () => {
     try {
-      setLoading(true);
-      // Fetch all orders without filtering by status
-      const response = await fetchOrders();
-      setOrders(response.orders);
       setError("");
+      await fetchAllOrders();
     } catch (err) {
       setError("Failed to fetch orders");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -40,7 +34,7 @@ function StoreManagerOrderViewComponent() {
           message="Är du säker på att du vill avbryta den här ordern?"
           onConfirm={async () => {
             try {
-              await deleteOrder(orderId);
+              await updateOrderStatus(orderId, "cancelled");
               loadOrders();
             } catch (err) {
               setError("Failed to cancel the order");
@@ -87,40 +81,40 @@ function StoreManagerOrderViewComponent() {
                   {selectedTab === "pending" && "Aktuella ordrar"}
                   {selectedTab === "cancelled" && "Avbrutna ordrar"}
                 </h2>
-                <ButtonGroup className="d-flex flex-wrap justify-content-center">
-                  <Button
-                    variant={
-                      selectedTab === "pending" ? "primary" : "outline-primary"
-                    }
-                    onClick={() => setSelectedTab("pending")}
-                    className="flex-grow-0"
-                  >
-                    Aktuella
-                  </Button>
-                  <Button
-                    variant={
-                      selectedTab === "completed"
-                        ? "primary"
-                        : "outline-primary"
-                    }
-                    onClick={() => setSelectedTab("completed")}
-                    className="flex-grow-0"
-                  >
-                    Färdiga
-                  </Button>
-                  <Button
-                    variant={
-                      selectedTab === "cancelled"
-                        ? "primary"
-                        : "outline-primary"
-                    }
-                    onClick={() => setSelectedTab("cancelled")}
-                    className="flex-grow-0"
-                  >
-                    Avbrutna
-                  </Button>
-                </ButtonGroup>
-              </div>
+                  <ButtonGroup className="d-flex flex-wrap justify-content-center">
+                    <Button
+                      variant={
+                        selectedTab === "pending" ? "primary" : "outline-primary"
+                      }
+                      onClick={() => setSelectedTab("pending")}
+                      className="flex-grow-0"
+                    >
+                      Aktuella
+                    </Button>
+                    <Button
+                      variant={
+                        selectedTab === "completed"
+                          ? "primary"
+                          : "outline-primary"
+                      }
+                      onClick={() => setSelectedTab("completed")}
+                      className="flex-grow-0"
+                    >
+                      Färdiga
+                    </Button>
+                    <Button
+                      variant={
+                        selectedTab === "cancelled"
+                          ? "primary"
+                          : "outline-primary"
+                      }
+                      onClick={() => setSelectedTab("cancelled")}
+                      className="flex-grow-0"
+                    >
+                      Avbrutna
+                    </Button>
+                  </ButtonGroup>
+                </div>
               <OrderTable
                 orders={orders.filter((order) => {
                   if (selectedTab === "pending")
