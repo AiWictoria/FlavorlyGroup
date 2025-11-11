@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useRecipes } from "../hooks/useRecipes";
 import type { Recipe } from "../hooks/useRecipes";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import { useAuth } from "../features/auth/AuthContext";
 import { RecipeComments } from "../components/recipe/RecipeComments";
 import { Row, Col, Button } from "react-bootstrap";
 import toast from "react-hot-toast";
+import { getRecipe, deleteRecipe as apiDeleteRecipe } from "../api/recipeapi";
 
 ViewRecipeDetails.route = {
   path: "/recipes/:id",
@@ -16,20 +17,50 @@ ViewRecipeDetails.route = {
 
 export default function ViewRecipeDetails() {
   const { id } = useParams();
-  const { fetchRecipeById, deleteRecipe } = useRecipes();
+  const { } = useRecipes();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
-    fetchRecipeById(String(id)).then((data) => {
-      if (
-        data &&
-        ("success" in data ? (data as { success: boolean }).success : true)
-      ) {
-        setRecipe(data.data as Recipe | null);
+    // Fetch via Orchard API and adapt to UI Recipe type
+    (async () => {
+      try {
+        const r = await getRecipe(String(id));
+        const uiRecipe: Recipe = {
+          id: r.id,
+          title: r.title,
+          image: r.recipeImage?.paths?.[0] ?? undefined,
+          slug: "",
+          description: r.description ?? "",
+          instructions: r.items
+            .filter((i) => i.contentType === "Instruction")
+            .map((i: any) => ({ order: i.order ?? i.step, text: i.text ?? i.content ?? "" })),
+          categoryId: undefined,
+          prepTimeMinutes: r.prepTimeMinutes,
+          cookTimeMinutes: r.cookTimeMinutes,
+          servings: r.servings,
+          ingredients: r.items
+            .filter((i) => i.contentType === "RecipeItem")
+            .map((i: any) => ({
+              ingredientId: i.ingredient?.id ?? "",
+              ingredient: { id: i.ingredient?.id ?? "", name: i.ingredient?.title ?? i.ingredient?.name ?? "" },
+              quantity: i.quantity ?? 0,
+              unit: { id: i.unit?.id ?? "", name: i.unit?.title ?? "" },
+            })),
+          comments: r.items
+            .filter((i) => i.contentType === "Comment")
+            .map((i: any) => ({ text: i.content ?? "", authorUsername: i.user?.username ?? "" })),
+          userAuthor: r.user
+            ? ({ userId: r.user.id, username: r.user.username, userIds: [r.user.username] } as unknown as any)
+            : undefined,
+        } as unknown as Recipe;
+        setRecipe(uiRecipe);
+      } catch {
+        toast.error("Vi kunde inte hitta det receptet");
       }
-    });
+    })();
   }, [id]);
 
   async function handleDelete() {
@@ -52,7 +83,17 @@ export default function ViewRecipeDetails() {
               className="btn btn-danger"
               onClick={async () => {
                 toast.dismiss(t.id);
-                await deleteRecipe(recipe.id);
+                try {
+                  const res = await apiDeleteRecipe(String(recipe.id));
+                  if (res?.success) {
+                    toast.success("Receptet är borttaget");
+                    navigate("/recipes");
+                  } else {
+                    toast.error("Misslyckades med att ta bort receptet");
+                  }
+                } catch {
+                  toast.error("Misslyckades med att ta bort receptet");
+                }
               }}
             >
               Delete
