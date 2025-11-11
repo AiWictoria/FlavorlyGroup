@@ -20,6 +20,8 @@ export interface Order {
   ingredients: OrderItem[];
   customerId: string;
   customerName: string;
+  address?: string;
+  postalCode?: string;
   sum: number;
   date: string;
   status: OrderStatus;
