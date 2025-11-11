@@ -41,7 +41,7 @@ export default function Checkout() {
             products: products.map((p) => ({
               name: p.name,
               price: p.price,
-              quantity:p.quantity,
+              quantity: p.quantity,
             })),
             deliveryPrice: deliveryData.deliveryPrice,
           }),
@@ -67,7 +67,10 @@ export default function Checkout() {
       onQuantityChange={handleQuantityChange}
       onRemoveProduct={handleRemoveProduct}
     />,
-    <Delivery onDeliveryChange={handleDeliveryChange} />,
+    <Delivery
+      onDeliveryChange={handleDeliveryChange}
+      savedData={deliveryData}
+    />,
     <Payment />,
     <Confirmation products={products} deliveryData={deliveryData} />,
   ];
@@ -84,6 +87,8 @@ export default function Checkout() {
     if (status === "success" && step === "confirmation") {
       setCompletedSteps([0, 1, 2]);
       setActiveStep(3);
+      sessionStorage.removeItem("orderProducts");
+      sessionStorage.removeItem("deliveryData");
     } else if (status === "cancelled" && step === "payment") {
       setCompletedSteps([0, 1]);
       setActiveStep(2);
