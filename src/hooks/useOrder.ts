@@ -115,8 +115,6 @@ export function useOrder() {
         })),
       };
 
-      console.log("Body: ", body);
-
       const res = await fetch(`/api/Cart/${cartId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

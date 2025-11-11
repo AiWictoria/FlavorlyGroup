@@ -26,7 +26,7 @@ export default function Cart({
             <CartItem
               key={p.id}
               name={p.name}
-              productImage="images/start.jpg"
+              productImage="images/placeholder.png"
               unitPrice={p.price}
               quantity={p.quantity}
               onQuantityChange={(newQuantity) =>
