@@ -152,11 +152,43 @@ export function useOrder() {
     setDeliveryData({ ...formData, deliveryType: type, deliveryPrice: price });
   };
 
+  const handleRemoveProduct = async (productId: string) => {
+    try {
+      if (!cartId || !user) return;
+
+      const updatedProducts = products.filter((p) => p.id !== productId);
+
+      const body = {
+        id: cartId,
+        User: [{ id: user.id, username: user.username }],
+        items: updatedProducts.map((item) => ({
+          id: item.id,
+          product: { ContentItemIds: [item.id] },
+          quantity: { Value: item.quantity },
+          contentType: "CartItem",
+        })),
+      };
+
+      const res = await fetch(`/api/Cart/${cartId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error("Failed to update cart");
+
+      setProducts(updatedProducts);
+    } catch (err) {
+      console.error("Failed to remove product:", err);
+    }
+  };
+
   return {
     products,
     updateCart,
     deliveryData,
     handleDeliveryChange,
     handleQuantityChange,
+    handleRemoveProduct,
   };
 }
