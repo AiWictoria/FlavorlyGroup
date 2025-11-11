@@ -19,6 +19,7 @@ export interface DeliveryData {
 export function useOrder() {
   const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
+  const [cartId, setCartId] = useState<any>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -32,14 +33,18 @@ export function useOrder() {
         const cart = data[0];
         if (!cart || !cart.items) return;
 
-        const mappedProducts: Product[] = cart.items.map((item: any) => ({
-          id: String(item.product.id),
-          name: item.product.title,
-          price: item.product.price,
-          quantity: item.quanitity,
-        }));
+        setCartId(cart.id);
 
-        setProducts(mappedProducts);
+        const uniqueProductsMap = new Map<string, Product>();
+        cart.items.forEach((item: any) => {
+          uniqueProductsMap.set(item.product.id, {
+            id: String(item.product.id),
+            name: item.product.title,
+            price: item.product.price,
+            quantity: item.quantity,
+          });
+        });
+        setProducts(Array.from(uniqueProductsMap.values()));
       } catch (error) {
         console.error("Error fetching cart:", error);
       }
@@ -47,6 +52,82 @@ export function useOrder() {
 
     fetchCart();
   }, [user?.id]);
+
+  const updateCart = async (
+    cartId: string,
+    userId: string,
+    items: Product[]
+  ) => {
+    try {
+      const body = {
+        id: cartId,
+        User: [
+          {
+            id: userId,
+            username: user?.username,
+          },
+        ],
+        items: items.map((item) => ({
+          id: item.id,
+          product: {
+            ContentItemIds: [item.id],
+          },
+          quantity: { Value: item.quantity },
+          contentType: "CartItem",
+        })),
+      };
+
+      const res = await fetch(`/api/Cart/${cartId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error("Failed to update cart");
+      return await res.json();
+    } catch (err) {
+      console.error("Error updating cart:", err);
+      throw err;
+    }
+  };
+
+  const handleQuantityChange = async (
+    cartItemId: string,
+    newQuantity: number
+  ) => {
+    const updatedProducts = products.map((p) =>
+      p.id === cartItemId ? { ...p, quantity: newQuantity } : p
+    );
+
+    setProducts(updatedProducts);
+
+    try {
+      if (!user || !cartId) return;
+
+      const body = {
+        id: cartId,
+        User: [{ id: user.id, username: user.username }],
+        items: updatedProducts.map((item) => ({
+          id: item.id,
+          product: { ContentItemIds: [item.id] },
+          quantity: { Value: item.quantity },
+          contentType: "CartItem",
+        })),
+      };
+
+      console.log("Body: ", body);
+
+      const res = await fetch(`/api/Cart/${cartId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error("Failed to update cart");
+    } catch (err) {
+      console.error("Failed to update cart:", err);
+    }
+  };
 
   const [deliveryData, setDeliveryData] = useState<DeliveryData>(() => {
     const saved = sessionStorage.getItem("deliveryData");
@@ -75,7 +156,9 @@ export function useOrder() {
 
   return {
     products,
+    updateCart,
     deliveryData,
     handleDeliveryChange,
+    handleQuantityChange,
   };
 }
