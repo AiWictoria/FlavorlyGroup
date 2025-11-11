@@ -18,7 +18,7 @@ export default function CartItem({
   onQuantityChange,
   onRemove,
 }: CartItemProps) {
-  const totalPrice = unitPrice * quantity;
+  const totalPrice = (unitPrice * quantity).toFixed(2);
 
   return (
     <>
