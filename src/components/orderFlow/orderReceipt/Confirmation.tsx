@@ -24,7 +24,7 @@ export default function Confirmation({
     0
   );
 
-  const total = totalProducts + (deliveryData.deliveryPrice ?? 0);
+  const total = (totalProducts + (deliveryData.deliveryPrice ?? 0)).toFixed(2);
 
   return (
     <>
