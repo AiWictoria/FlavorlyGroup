@@ -77,6 +77,8 @@ export default function OrderDetailsPage() {
                     orderNumber={order.orderNumber}
                     status={order.status}
                     customerName={order.customerName}
+                    address={order.address}
+                    postalCode={order.postalCode}
                     dateText={formatDate(order.createdAt)}
                 />
                 <div className="orderstable">

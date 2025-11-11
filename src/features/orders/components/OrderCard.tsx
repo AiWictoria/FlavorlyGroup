@@ -10,6 +10,21 @@ export function OrderCard({ order }: { order: Order }) {
 
   const total = order.sum;
 
+  const getStatusDescription = (status: string): string => {
+    switch (status) {
+      case "pending":
+        return "Din beställning har mottagits och väntar på att behandlas";
+      case "processing":
+        return "Din beställning håller på att packas och förberedas";
+      case "completed":
+        return "Din beställning har skickats och levereras snart";
+      case "cancelled":
+        return "Denna beställning har avbrutits";
+      default:
+        return "Status okänd";
+    }
+  };
+
   return (
     <Card className="flavorly-shadow order-card">
       <Card.Body className="py-3">
@@ -51,6 +66,17 @@ export function OrderCard({ order }: { order: Order }) {
 
         {open && (
           <div className="mt-3">
+            <div className="mb-3 p-3 bg-light rounded-2">
+              <div className="d-flex align-items-start gap-2">
+                <i className="bi bi-info-circle text-primary mt-1"></i>
+                <div>
+                  <div className="fw-semibold mb-1">Status</div>
+                  <div className="small text-muted">
+                    {getStatusDescription(order.status)}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="border rounded-2 overflow-hidden">
               {order.ingredients.map(
                 (item: Order["ingredients"][number], i: number) => (
