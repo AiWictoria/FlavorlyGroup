@@ -4,6 +4,7 @@ import { RecipeIngredients } from "./RecipeIngredients";
 import { RecipeInstructions } from "./RecipeInstructions";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
+import type { RecipeItemDto } from "@models/recipe";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
@@ -11,6 +12,7 @@ interface RecipeLayoutProps {
   onSubmit?: (recipe: Recipe) => void;
   onChange?: (field: string, value: string) => void;
   onFileSelect?: (file: File | null) => void;
+  onRecipeItemsChange?: (items: RecipeItemDto[]) => void;
 }
 
 export default function RecipeLayout({
@@ -19,6 +21,7 @@ export default function RecipeLayout({
   onSubmit,
   onChange,
   onFileSelect,
+  onRecipeItemsChange,
 }: RecipeLayoutProps) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,8 +31,8 @@ export default function RecipeLayout({
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Row className="bg-secondary border-top border-primary">
-          <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4">
+        <Row className="bg-secondary border-top border-primary mt-5 pt-4">
+          <Col lg={6} className="p-0 order-lg-2 mb-1 mb-lg-4 mt-4">
             <RecipeImageSection
               mode={mode}
               recipe={recipe ?? undefined}
@@ -43,19 +46,16 @@ export default function RecipeLayout({
               recipe={recipe}
               onChange={onChange}
             />
-            <RecipeIngredients
-              mode={mode}
-              recipe={recipe}
-              onChange={onChange}
-            />
+          <RecipeIngredients
+            mode={mode}
+            recipe={recipe}
+            onChange={onChange}
+            onRecipeItemsChange={onRecipeItemsChange}
+          />
           </Col>
         </Row>
-        <Row className="mx-4 pb-3">
-          <Col
-            lg={8}
-            className="mx-auto d-flex justify-content-center align-items-center"
-            style={{ minHeight: "300px", overflowY: "auto" }}
-          >
+        <Row className="mx-4 pb-3 mt-4">
+          <Col lg={8} className="mx-auto">
             <RecipeInstructions
               mode={mode}
               recipe={recipe}

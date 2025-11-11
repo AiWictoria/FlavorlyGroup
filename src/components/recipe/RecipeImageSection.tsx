@@ -1,4 +1,5 @@
 import { Form, Button } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useSavedRecipes } from "../../hooks/useSavedRecipes";
 import { useAuth } from "../../features/auth/AuthContext";
@@ -24,16 +25,20 @@ export function RecipeImageSection({
     ? savedRecipes.some((r) => r.recipeId === String(recipe.id))
     : false;
 
+  // Local image preview for create/edit
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+  const lastObjectUrl = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (lastObjectUrl.current) URL.revokeObjectURL(lastObjectUrl.current);
+    };
+  }, []);
+
+  const displaySrc = previewUrl ?? (recipe?.image ? `/media/${recipe.image}` : undefined);
+
   return (
     <div>
-      <div className="ratio ratio-16x9 rounded">
-        <img
-          src={`/media/${recipe?.image}`}
-          alt={recipe?.image || "Recept bild"}
-          className="object-fit-cover w-100"
-        />
-      </div>
-
       {isView && user && (
         <div className="d-flex align-items-center justify-content-between mt-3 mx-3 px-2">
           <StarsRating recipeId={recipe!.id} size="fs-3" mode="view" />
@@ -63,7 +68,7 @@ export function RecipeImageSection({
       )}
 
       {mode !== "view" && (
-        <Form.Group className=" m-5">
+        <Form.Group className="m-3">
           <Form.Label>Ladda upp bild</Form.Label>
           <Form.Control
             type="file"
@@ -72,11 +77,36 @@ export function RecipeImageSection({
             onChange={(e) => {
               const input = e.target as HTMLInputElement;
               const file = input.files?.[0] ?? null;
+              // Create preview URL
+              if (lastObjectUrl.current) URL.revokeObjectURL(lastObjectUrl.current);
+              if (file) {
+                const url = URL.createObjectURL(file);
+                lastObjectUrl.current = url;
+                setPreviewUrl(url);
+              } else {
+                setPreviewUrl(undefined);
+              }
               onFileSelect?.(file);
             }}
           />
         </Form.Group>
       )}
+
+      <div className="mx-auto mt-4" style={{ maxWidth: 540 }}>
+        <div className="ratio ratio-16x9 rounded">
+          {displaySrc ? (
+            <img
+              src={displaySrc}
+              alt={recipe?.image || "Recept bild"}
+              className="object-fit-cover w-100"
+            />
+          ) : (
+            <div className="d-flex justify-content-center align-items-center bg-light text-muted">
+              Ingen bild vald
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
