@@ -68,8 +68,8 @@ export default function OrderDetailsPage() {
           address: data.deliveryAddress?.split(",")[0]?.trim() || "",
           postalCode: data.deliveryAddress?.split(",")[1]?.trim() || "",
           city: data.deliveryAddress?.split(",")[2]?.trim() || "",
-          deliveryType: data.deliveryType || "",
-          deliveryPrice: typeof data.deliveryPrice === "number" ? data.deliveryPrice : 0,
+          deliverytype: data.deliveryType || "",
+          deliveryprice: typeof data.deliveryPrice === "number" ? data.deliveryPrice : 0,
           ingredients: mappedItems,
         };
         
@@ -180,22 +180,22 @@ export default function OrderDetailsPage() {
             />
           </div>
           {/* Delivery info row in table */}
-          {(order.deliveryType || (typeof order.deliveryPrice === "number" && order.deliveryPrice > 0)) && (
+          {(order.deliverytype || (typeof order.deliveryprice === "number" && order.deliveryprice > 0)) && (
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center border-top px-3 py-2 bg-light">
               <div className="small text-muted">
-                {order.deliveryType && (
-                  <span>Leveranssätt: <span className="fw-semibold">{order.deliveryType}</span></span>
+                {order.deliverytype && (
+                  <span>Leveranssätt: <span className="fw-semibold">{order.deliverytype}</span></span>
                 )}
               </div>
-              {typeof order.deliveryPrice === "number" && order.deliveryPrice > 0 && (
+              {typeof order.deliveryprice === "number" && order.deliveryprice > 0 && (
                 <div className="small text-muted">
-                  Fraktkostnad: <span className="fw-semibold">{formatSek(order.deliveryPrice)}</span>
+                  Fraktkostnad: <span className="fw-semibold">{formatSek(order.deliveryprice)}</span>
                 </div>
               )}
             </div>
           )}
           <div className="text-black text-center fw-semibold p-2 border-bottom p-3">
-            Totalsumma: {formatSek(order.sum + (order.deliveryPrice || 0))}
+            Totalsumma: {formatSek(order.sum + (order.deliveryprice || 0))}
           </div>
         </div>
         <div className="mt-4 text-center">
