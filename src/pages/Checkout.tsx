@@ -20,7 +20,6 @@ export default function Checkout() {
   const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [orderCreated, setOrderCreated] = useState(false);
   const orderCreationAttempted = useRef(false);
 
   const {
@@ -92,7 +91,7 @@ export default function Checkout() {
     <Confirmation
       products={products}
       deliveryData={deliveryData}
-      cartId={cartId}
+      cartId={cartId || undefined}
     />,
   ];
 
@@ -122,8 +121,6 @@ export default function Checkout() {
 
         createOrder(savedProducts, savedDelivery)
           .then(() => {
-            sessionStorage.removeItem("checkoutProducts");
-            sessionStorage.removeItem("checkoutDeliveryData");
             setCompletedSteps([0, 1, 2]);
             setActiveStep(3);
           })

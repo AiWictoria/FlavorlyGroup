@@ -5,6 +5,7 @@ import Divider from "../../shared/Divider";
 import ProductInfo from "./ProductInfo";
 import ClearCartButton from "./ClearCartButton";
 import { useAuth } from "../../../features/auth/AuthContext";
+import { useEffect } from "react";
 
 interface ConfirmationProps {
   products: { id: string; name: string; quantity: number; price: number }[];
@@ -31,6 +32,12 @@ export default function Confirmation({
   const { user } = useAuth();
 
   const total = (totalProducts + (deliveryData.deliveryPrice ?? 0)).toFixed(2);
+
+  useEffect(() => {
+    sessionStorage.removeItem("checkoutProducts");
+    sessionStorage.removeItem("deliveryData");
+    sessionStorage.removeItem("checkoutDeliveryData");
+  }, []);
 
   return (
     <>
