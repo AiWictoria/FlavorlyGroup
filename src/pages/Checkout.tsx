@@ -77,6 +77,8 @@ export default function Checkout() {
     }
   };
 
+  const [isDeliveryValid, setIsDeliveryValid] = useState(false);
+
   const stepsContent = [
     <Cart
       products={products}
@@ -86,6 +88,7 @@ export default function Checkout() {
     <Delivery
       onDeliveryChange={handleDeliveryChange}
       savedData={deliveryData}
+      onFormValidChange={setIsDeliveryValid}
     />,
     <Payment />,
     <Confirmation
@@ -172,7 +175,10 @@ export default function Checkout() {
           }
           products={products}
           deliveryPrice={deliveryData.deliveryPrice}
-          isDisabled={activeStep === 0 && products.length === 0}
+          isDisabled={
+            (activeStep === 0 && products.length === 0) ||
+            (activeStep === 1 && !isDeliveryValid)
+          }
         />
       )}
     </OrderBox>

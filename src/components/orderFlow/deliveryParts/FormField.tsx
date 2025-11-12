@@ -26,6 +26,7 @@ export default function FormField({
           onChange={onChange}
           className="flavorly-shadow-inset"
           placeholder={placeholder}
+          required
         />
       </FormGroup>
     </>
