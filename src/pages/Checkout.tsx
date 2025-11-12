@@ -100,43 +100,38 @@ export default function Checkout() {
     const status = searchParams.get("status");
     const step = searchParams.get("step");
 
-    if (
-      status === "success" &&
-      step === "confirmation" &&
-      !orderCreated &&
-      !orderCreationAttempted.current
-    ) {
-      // Create order when payment succeeds (only once)
-      orderCreationAttempted.current = true;
-      setOrderCreated(true);
-      // Hämta sparade produkter OCH leveransinfo från sessionStorage
-      const savedProductsJson = sessionStorage.getItem("checkoutProducts");
-      const savedDeliveryJson = sessionStorage.getItem("checkoutDeliveryData");
-      const savedProducts = savedProductsJson
-        ? JSON.parse(savedProductsJson)
-        : products;
-      const savedDelivery = savedDeliveryJson
-        ? JSON.parse(savedDeliveryJson)
-        : deliveryData;
+    if (!orderCreationAttempted.current) {
+      if (status === "success" && step === "confirmation") {
+        orderCreationAttempted.current = true;
 
-      createOrder(savedProducts, savedDelivery)
-        .then((order) => {
-          // Rensa sparade produkter och leveransinfo
-          sessionStorage.removeItem("checkoutProducts");
-          sessionStorage.removeItem("checkoutDeliveryData");
-          setCompletedSteps([0, 1, 2]);
-          setActiveStep(3);
-        })
-        .catch((error) => {
-          console.error(error);
-          orderCreationAttempted.current = false;
-          setOrderCreated(false); // Reset så användaren kan försöka igen
-        });
-    } else if (status === "cancelled" && step === "payment") {
-      setCompletedSteps([0, 1]);
-      setActiveStep(2);
+        const savedProductsJson = sessionStorage.getItem("checkoutProducts");
+        const savedDeliveryJson = sessionStorage.getItem(
+          "checkoutDeliveryData"
+        );
+        const savedProducts = savedProductsJson
+          ? JSON.parse(savedProductsJson)
+          : products;
+        const savedDelivery = savedDeliveryJson
+          ? JSON.parse(savedDeliveryJson)
+          : deliveryData;
+
+        createOrder(savedProducts, savedDelivery)
+          .then(() => {
+            sessionStorage.removeItem("checkoutProducts");
+            sessionStorage.removeItem("checkoutDeliveryData");
+            setCompletedSteps([0, 1, 2]);
+            setActiveStep(3);
+          })
+          .catch((err) => {
+            console.error(err);
+            orderCreationAttempted.current = false;
+          });
+      } else if (status === "cancelled" && step === "payment") {
+        setCompletedSteps([0, 1]);
+        setActiveStep(2);
+      }
     }
-  }, [searchParams, orderCreated, createOrder, products, deliveryData]);
+  }, [searchParams]);
 
   return (
     <OrderBox
