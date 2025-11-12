@@ -93,7 +93,6 @@ export default function Checkout() {
     if (status === "success" && step === "confirmation") {
       setCompletedSteps([0, 1, 2]);
       setActiveStep(3);
-      sessionStorage.removeItem("orderProducts");
       sessionStorage.removeItem("deliveryData");
     } else if (status === "cancelled" && step === "payment") {
       setCompletedSteps([0, 1]);
