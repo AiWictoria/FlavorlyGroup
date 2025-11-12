@@ -45,9 +45,14 @@ export default function CreateRecipe() {
       if (!res.ok) return undefined;
       if (contentType.includes("application/json")) {
         const data: any = await res.json();
-        // Try common keys
+        // Normalize from common keys; prefer Orchard-style relative path
+        const fromUrl =
+          typeof data?.url === "string" && data.url.startsWith("/media/")
+            ? data.url.slice("/media/".length)
+            : undefined;
         return (
           data?.path ||
+          fromUrl ||
           data?.mediaPath ||
           data?.filePath ||
           (Array.isArray(data?.paths) ? data.paths[0] : undefined) ||
@@ -57,7 +62,8 @@ export default function CreateRecipe() {
       }
       // If server returns text, assume it is the path
       const text = await res.text();
-      return text || undefined;
+      if (!text) return undefined;
+      return text.startsWith("/media/") ? text.slice("/media/".length) : text;
     } catch {
       return undefined;
     }
