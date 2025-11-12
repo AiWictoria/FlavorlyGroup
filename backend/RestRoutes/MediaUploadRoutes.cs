@@ -19,6 +19,12 @@ public static class MediaUploadRoutes
 
     private static readonly int MAX_FILE_SIZE_MB = 10; // Maximum file size in megabytes
 
+    // Allow only common image types
+    private static readonly HashSet<string> ALLOWED_EXTENSIONS = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg", ".jpeg", ".png", ".gif", ".webp"
+    };
+
     public static void MapMediaUploadRoutes(this WebApplication app)
     {
         app.MapPost("/api/media-upload", async (
@@ -71,28 +77,40 @@ public static class MediaUploadRoutes
                 var baseMediaPath = Path.Combine("App_Data", "Sites", "Default", "Media");
 
                 string mediaPath;
-                string relativeUrl;
-
+                var orchardUser = user as User;
+                var userId = orchardUser?.UserId ?? "unknown";
                 if (USE_USER_SUBFOLDERS)
-                {
-                    var orchardUser = user as User;
-                    var userId = orchardUser?.UserId ?? "unknown";
                     mediaPath = Path.Combine(baseMediaPath, "_Users", userId);
-                    relativeUrl = $"/media/_Users/{userId}";
-                }
                 else
-                {
                     mediaPath = baseMediaPath;
-                    relativeUrl = "/media";
-                }
 
                 // Create directory if it doesn't exist
                 Directory.CreateDirectory(mediaPath);
 
                 // Generate unique filename with original extension
-                var extension = Path.GetExtension(file.FileName);
+                var extension = Path.GetExtension(file.FileName) ?? string.Empty;
+
+                // Validate image type by extension and content-type
+                var isImageContentType = !string.IsNullOrWhiteSpace(file.ContentType)
+                    && file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+
+                if (!ALLOWED_EXTENSIONS.Contains(extension) || !isImageContentType)
+                {
+                    return Results.Json(new
+                    {
+                        error = "Unsupported file type",
+                        allowedExtensions = ALLOWED_EXTENSIONS.OrderBy(x => x).ToArray()
+                    }, statusCode: 400);
+                }
+
                 var fileName = $"{Guid.NewGuid()}{extension}";
                 var filePath = Path.Combine(mediaPath, fileName);
+
+                // Build Orchard-style asset path and public url
+                var assetPath = USE_USER_SUBFOLDERS
+                    ? $"_Users/{userId}/{fileName}"
+                    : fileName;
+                var relativeUrl = $"/media/{assetPath}";
 
                 // Save the file
                 using (var stream = File.Create(filePath))
@@ -106,7 +124,8 @@ public static class MediaUploadRoutes
                     success = true,
                     fileName = fileName,
                     originalFileName = file.FileName,
-                    url = $"{relativeUrl}/{fileName}",
+                    path = assetPath,
+                    url = relativeUrl,
                     size = file.Length
                 }, statusCode: 201);
             }
