@@ -24,8 +24,6 @@ export interface Order {
   postalCode?: string;
   city?: string;
   deliverytype?: string;
-  deliveryPrice?: number;
-  deliveryType?: string;
   deliveryprice?: number;
   sum: number;
   date: string;
