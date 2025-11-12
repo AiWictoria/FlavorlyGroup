@@ -148,6 +148,14 @@ public class ContentItemFieldMapperService
         content.RecipeInstructions = new { ContentItems = instructionObjs };
         content.RecipeComments = new { ContentItems = commentObjs };
 
+        // Also populate a root BagPart with all items so generic cleaners/consumers can find them under 'items'
+        // This is additive and does not replace named BagParts.
+        var allItems = ingredientObjs.Concat(instructionObjs).Concat(commentObjs).ToList();
+        content.BagPart = new
+        {
+            ContentItems = allItems
+        };
+
         if (!string.IsNullOrWhiteSpace(slug))
         {
             content.AutoroutePart = new
