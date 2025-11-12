@@ -8,6 +8,7 @@ import "./OrderCard.css";
 export function OrderCard({ order }: { order: Order }) {
   const [open, setOpen] = useState(false);
 
+  const formatPrice = (price: number) => price.toFixed(2);
   const total = order.sum;
 
   const getStatusDescription = (status: string): string => {
@@ -77,6 +78,28 @@ export function OrderCard({ order }: { order: Order }) {
                 </div>
               </div>
             </div>
+              {/* Delivery info */}
+              <div className="mb-3 p-3 bg-light rounded-2">
+                <div className="d-flex align-items-start gap-2">
+                  <i className="bi bi-truck text-success mt-1"></i>
+                  <div>
+                    <div className="fw-semibold mb-1">Leverans</div>
+                    <div className="small text-muted">
+                      {order.deliveryType || order.deliverytype ? (
+                        <span>Typ: <span className="fw-semibold">{order.deliveryType || order.deliverytype}</span></span>
+                      ) : (
+                        <span>Typ: <span className="fw-semibold">-</span></span>
+                      )}
+                      <br />
+                      {typeof order.deliveryPrice === "number" && order.deliveryPrice > 0 ? (
+                        <span>Fraktkostnad: <span className="fw-semibold">{formatPrice(order.deliveryPrice)} kr</span></span>
+                      ) : (
+                        <span>Fraktkostnad: <span className="fw-semibold">-</span></span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             <div className="border rounded-2 overflow-hidden">
               {order.ingredients.map(
                 (item: Order["ingredients"][number], i: number) => (
@@ -89,13 +112,13 @@ export function OrderCard({ order }: { order: Order }) {
                     <span className="order-items">
                       {item.amount} {item.unit} {item.ingredient}
                     </span>
-                    <span className="order-items">{item.cost} kr</span>
+                    <span className="order-items">{formatPrice(item.cost)} kr</span>
                   </div>
                 )
               )}
               <div className="px-3 py-2 d-flex justify-content-between align-items-center border-top order-total">
                 <span>Total</span>
-                <span>{total} kr</span>
+                <span>{formatPrice(total)} kr</span>
               </div>
             </div>
           </div>
