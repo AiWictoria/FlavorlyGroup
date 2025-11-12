@@ -23,7 +23,15 @@ export default function Checkout() {
   const [orderCreated, setOrderCreated] = useState(false);
   const orderCreationAttempted = useRef(false);
 
-  const { products, deliveryData, handleDeliveryChange, handleQuantityChange, createOrder, handleRemoveProduct } = useOrder();
+  const {
+    products,
+    deliveryData,
+    handleDeliveryChange,
+    handleQuantityChange,
+    createOrder,
+    handleRemoveProduct,
+    cartId,
+  } = useOrder();
 
   const getButtonLabel = () => {
     if (activeStep === 0) return "Leverans";
@@ -78,7 +86,7 @@ export default function Checkout() {
       savedData={deliveryData}
     />,
     <Payment />,
-    <Confirmation products={products} deliveryData={deliveryData} />,
+    <Confirmation products={products} deliveryData={deliveryData} cartId={cartId} />,
   ];
 
   const totalSteps = stepsContent.length;
