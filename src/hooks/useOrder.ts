@@ -6,6 +6,7 @@ export interface Product {
   name: string;
   price: number;
   quantity: number;
+  unitId?: string;
 }
 
 export interface DeliveryData {
@@ -42,6 +43,7 @@ export function useOrder() {
             name: item.product.title,
             price: item.product.price,
             quantity: item.quantity,
+            unitId: item.unit?.id || undefined,
           });
         });
         setProducts(Array.from(uniqueProductsMap.values()));
@@ -152,43 +154,78 @@ export function useOrder() {
     setDeliveryData({ ...formData, deliveryType: type, deliveryPrice: price });
   };
 
-  const handleRemoveProduct = async (productId: string) => {
-    try {
-      if (!cartId || !user) return;
-
-      const updatedProducts = products.filter((p) => p.id !== productId);
-
-      const body = {
-        id: cartId,
-        User: [{ id: user.id, username: user.username }],
-        items: updatedProducts.map((item) => ({
-          id: item.id,
-          product: { ContentItemIds: [item.id] },
-          quantity: { Value: item.quantity },
-          contentType: "CartItem",
-        })),
-      };
-
-      const res = await fetch(`/api/Cart/${cartId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) throw new Error("Failed to update cart");
-
-      setProducts(updatedProducts);
-    } catch (err) {
-      console.error("Failed to remove product:", err);
+  const createOrder = async (savedProducts?: Product[], savedDeliveryData?: DeliveryData) => {
+    const productsToUse = savedProducts || products;
+    const deliveryToUse = savedDeliveryData || deliveryData;
+    if (!user || productsToUse.length === 0) {
+      throw new Error("No user or products available");
     }
+    const orderItems = productsToUse.map((product: any) => ({
+      contentType: "OrderItem",
+      productId: product.id,
+      amount: product.quantity,
+      unitId: product.unitId,
+      price: product.price * product.quantity,
+      checked: false
+    }));
+
+function generateOrderNumber() {
+  const usedNumbers = JSON.parse(sessionStorage.getItem("usedOrderNumbers") || "[]");
+
+  let newNumber;
+  do {
+    newNumber = Math.floor(1000 + Math.random() * 9000);
+  } while (usedNumbers.includes(newNumber));
+
+  usedNumbers.push(newNumber);
+  sessionStorage.setItem("usedOrderNumbers", JSON.stringify(usedNumbers));
+
+  return "#" + newNumber;
+}
+
+  const orderBody = {
+    status: "pending",
+    orderNumber: generateOrderNumber(),
+      totalSum: orderItems.reduce((sum, item) => sum + item.price, 0),
+      orderDate: new Date().toISOString(),
+      deliveryAddress: `${deliveryToUse.address}, ${deliveryToUse.postcode}, ${deliveryToUse.city}`,
+      deliveryType: deliveryToUse.deliveryType,
+      deliveryPrice: deliveryToUse.deliveryPrice,
+      user: [
+        {
+          id: user.id,
+          username: user.username
+        }
+      ],
+      items: orderItems
+    };
+
+
+    const response = await fetch("/api/Order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(orderBody),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to create order");
+    }
+    const createdOrder = await response.json();
+    if (cartId) {
+      await updateCart(cartId, user.id, []);
+    }
+    return createdOrder;
   };
 
   return {
     products,
-    updateCart,
+    cartId,
     deliveryData,
-    handleDeliveryChange,
+    setDeliveryData,
+    updateCart,
     handleQuantityChange,
-    handleRemoveProduct,
+    handleDeliveryChange,
+    createOrder,
   };
 }

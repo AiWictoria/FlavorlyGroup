@@ -95,7 +95,7 @@ export function OrderStats({ orders }: OrderStatsProps) {
             </div>
             <div className="stats-content">
               <div className="stats-value-wrapper">
-                <div className="stats-value">{stats.totalRevenue} kr</div>
+                <div className="stats-value">{stats.totalRevenue.toFixed(2)} kr</div>
               </div>
               <div className="stats-label">Total försäljning</div>
               <div className="stats-detail-wrapper">
