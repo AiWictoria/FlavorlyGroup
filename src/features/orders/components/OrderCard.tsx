@@ -31,7 +31,7 @@ export function OrderCard({ order }: { order: Order }) {
         <Row className="align-items-center gx-2">
           <Col xs={7} sm={8}>
             <div className="d-flex flex-column gap-1">
-              <h5 className="mb-1">Order {order.orderNumber}</h5>
+              <h3 className="mb-1 display-8">Order {order.orderNumber}</h3>
               <div className="order-date">
                 <span className="date-label">Orderdatum:</span>
                 <span className="date-value">
