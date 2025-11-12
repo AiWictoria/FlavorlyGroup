@@ -1,8 +1,13 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import QuantitySelector from "../components/QuantitySelector";
 import Box from "../components/shared/Box.tsx";
-import IngredientSearch, { type Ingredient } from "../components/shoppingList/IngredientSearch";
+import IngredientSearch, {
+  type Ingredient,
+} from "../components/shoppingList/IngredientSearch";
+import { useOrder, type Product } from "../hooks/useOrder";
+import { useAuth } from "../features/auth/AuthContext";
 
 ShoppingListPage.route = {
   path: "/shoppingList",
@@ -13,7 +18,9 @@ ShoppingListPage.route = {
 };
 
 const sek = (v: number) =>
-  Number.isFinite(v) ? v.toLocaleString("sv-SE", { style: "currency", currency: "SEK" }) : "–";
+  Number.isFinite(v)
+    ? v.toLocaleString("sv-SE", { style: "currency", currency: "SEK" })
+    : "–";
 
 type ShoppingItem = {
   id: string;
@@ -23,12 +30,103 @@ type ShoppingItem = {
 };
 
 export default function ShoppingListPage() {
-  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | undefined>(undefined);
+  const { user } = useAuth();
+  const { updateCart } = useOrder();
+  const [cartId, setCartId] = useState<string | null>(null);
+  const [selectedIngredient, setSelectedIngredient] = useState<
+    Ingredient | undefined
+  >(undefined);
   const [clearSearchText, setClearSearchText] = useState(0);
   const [amount, setAmount] = useState("");
   const numberAmount = Number(amount);
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (!user?.id) return;
+      try {
+        const res = await fetch(`/api/Cart?where=user.id=${user.id}`);
+        if (!res.ok) throw new Error("Failed to fetch cart");
+
+        const data = await res.json();
+        if (data[0]?.id) setCartId(data[0].id);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchCart();
+  }, [user?.id]);
+
+  const addToCart = async () => {
+    if (!shoppingList.length || !user || !cartId) return;
+
+    // Convert selected shopping list items to Products
+    const itemsToAdd: Product[] = shoppingList
+      .filter((item) => item.selectedProductId)
+      .map((item) => {
+        const product = item.ingredient.products.find(
+          (p) => p.id === item.selectedProductId
+        );
+        if (!product) return null;
+        return {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: item.quantity,
+        };
+      })
+      .filter((p): p is Product => p !== null);
+
+    if (!itemsToAdd.length) return;
+
+    // Fetch current cart items
+    let existingCartItems: Product[] = [];
+    try {
+      const res = await fetch(`/api/Cart?where=user.id=${user.id}`);
+      if (!res.ok) throw new Error("Failed to fetch cart");
+      const data = await res.json();
+      const cart = data[0];
+      existingCartItems =
+        cart?.items?.map((item: any) => ({
+          id: String(item.product.id),
+          name: item.product.title,
+          price: item.product.price,
+          quantity: item.quantity,
+        })) ?? [];
+    } catch (err) {
+      console.error("Failed to fetch existing cart items", err);
+    }
+
+    // Merge quantities
+    const mergedMap = new Map<string, Product>();
+    existingCartItems.forEach((p) => mergedMap.set(p.id, { ...p }));
+    itemsToAdd.forEach((p) => {
+      if (mergedMap.has(p.id)) {
+        mergedMap.set(p.id, {
+          ...p,
+          quantity: mergedMap.get(p.id)!.quantity + p.quantity,
+        });
+      } else {
+        mergedMap.set(p.id, p);
+      }
+    });
+
+    const mergedItems = Array.from(mergedMap.values());
+
+    // Update cart
+    try {
+      await updateCart(cartId, user.id, mergedItems);
+
+      setShoppingList((prev) => prev.filter((item) => !item.selectedProductId));
+
+      toast.success("Products added to cart!");
+    } catch (err) {
+      console.error("Failed to update cart", err);
+    }
+  };
+
+  //Add ingredients to shopping list
   const addItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (numberAmount <= 0 || !selectedIngredient) return;
@@ -40,22 +138,24 @@ export default function ShoppingListPage() {
       quantity: 1,
     };
 
-    setShoppingList(prev => [...prev, newItem]);
+    setShoppingList((prev) => [...prev, newItem]);
     setSelectedIngredient(undefined);
-    setClearSearchText(prev => prev + 1);
+    setClearSearchText((prev) => prev + 1);
     setAmount("");
   };
 
   const updateItem = (idx: number, patch: Partial<ShoppingItem>) => {
-    setShoppingList(list => list.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
+    setShoppingList((list) =>
+      list.map((it, i) => (i === idx ? { ...it, ...patch } : it))
+    );
   };
 
   const removeItem = (idx: number) => {
-    setShoppingList(list => list.filter((_, i) => i !== idx));
+    setShoppingList((list) => list.filter((_, i) => i !== idx));
   };
 
   const getSelectedProduct = (item: ShoppingItem) =>
-    item.ingredient.products.find(p => p.id === item.selectedProductId);
+    item.ingredient.products.find((p) => p.id === item.selectedProductId);
 
   const rowCost = (item: ShoppingItem) => {
     const p = getSelectedProduct(item);
@@ -115,18 +215,30 @@ export default function ShoppingListPage() {
             <>
               <Col className="m-2 fs-6 mt-4">
                 {shoppingList.map((item, index) => (
-                  <Row key={item.id} className="shopping-list-item d-flex align-items-center pt-2 pb-2">
+                  <Row
+                    key={item.id}
+                    className="shopping-list-item d-flex align-items-center pt-2 pb-2"
+                  >
                     <Col xs={12} md={12} lg={3} className="mb-2">
-                      <b>Ingrediens:</b> {item.ingredient.title} {item.ingredient.amount}{" "}
-                      {item.ingredient.baseUnit?.title}
+                      <b>Ingrediens:</b> {item.ingredient.title}{" "}
+                      {item.ingredient.amount} {item.ingredient.baseUnit?.title}
                     </Col>
 
-                    <Col xs={12} md={8} lg={6} className="mt-1 mb-2 d-flex align-items-center">
+                    <Col
+                      xs={12}
+                      md={8}
+                      lg={5}
+                      className="mt-1 mb-2 d-flex align-items-center"
+                    >
                       <b className="me-2">Produkt:</b>
                       <Form.Select
                         size="sm"
                         value={item.selectedProductId ?? ""}
-                        onChange={(e) => updateItem(index, { selectedProductId: e.target.value })}
+                        onChange={(e) =>
+                          updateItem(index, {
+                            selectedProductId: e.target.value,
+                          })
+                        }
                       >
                         <option value="">Välj produkt</option>
                         {item.ingredient.products.map((p) => (
@@ -137,14 +249,21 @@ export default function ShoppingListPage() {
                       </Form.Select>
                     </Col>
 
-                    <Col xs={6} md={2} lg={2}>
+                    <Col xs={6} md={2} lg={3}>
                       <b>Total kostnad:</b> {sek(rowCost(item))}
                     </Col>
 
-                    <Col xs={6} md={2} lg={1} className="d-flex justify-content-end">
+                    <Col
+                      xs={6}
+                      md={2}
+                      lg={1}
+                      className="d-flex justify-content-end"
+                    >
                       <QuantitySelector
                         value={item.quantity}
-                        onChange={(newValue) => updateItem(index, { quantity: newValue })}
+                        onChange={(newValue) =>
+                          updateItem(index, { quantity: newValue })
+                        }
                         onRemove={() => removeItem(index)}
                       />
                     </Col>
@@ -152,13 +271,20 @@ export default function ShoppingListPage() {
                 ))}
               </Col>
 
-              <div className="d-flex justify-content-end mt-3 mb-4">
-                <div className="me-3"><b>Summa:</b> {totalCost.toFixed(2)} kr</div>
-                <Button>Lägg till produkter i varukorg</Button>
+              <div className="d-flex justify-content-end align-items-center mt-3 mb-4">
+                <div className="me-3">
+                  <b>Summa:</b> {totalCost.toFixed(2)} kr
+                </div>
+                <Button onClick={addToCart}>
+                  Lägg till produkter i varukorg
+                </Button>{" "}
               </div>
             </>
           ) : (
-            <div className="d-flex justify-content-center align-items-center mt-5 mb-5" style={{ color: "#9b9d9eff" }}>
+            <div
+              className="d-flex justify-content-center align-items-center mt-5 mb-5"
+              style={{ color: "#9b9d9eff" }}
+            >
               <h1>Inköpslistan är tom...</h1>
             </div>
           )}
