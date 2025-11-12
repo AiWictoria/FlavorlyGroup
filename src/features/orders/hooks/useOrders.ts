@@ -84,6 +84,7 @@ export function useOrders() {
       const data = await res.json();
 
       if (res.ok) {
+        console.log("Raw backend orders for My Orders:", JSON.stringify(data, null, 2));
         const mappedOrders = data
           .filter((order: any) => order.user?.id === targetUserId)
           .map((order: any) => {
@@ -95,14 +96,15 @@ export function useOrders() {
               cost: item.price || 0, // Total price from backend
               checked: item.checked || false,
             })) || [];
-            
-            // Calculate total sum from items + delivery price
-            const deliveryPrice = order.orderPart?.DeliveryPrice?.Value || 0;
+
+            // Mappa deliveryType och deliveryPrice direkt från backend (top-level)
+            const deliveryType = order.deliveryType || "";
+            const deliveryPrice = typeof order.deliveryPrice === "number" ? order.deliveryPrice : 0;
             const calculatedSum = mappedItems.reduce(
               (sum: number, item: any) => sum + item.cost,
               0
             ) + deliveryPrice;
-            
+
             return {
               id: order.id || order.contentItemId,
               orderNumber: order.orderNumber?.toString() || "",
@@ -114,8 +116,8 @@ export function useOrders() {
               address: order.deliveryAddress?.split(",")[0]?.trim() || "",
               postalCode: order.deliveryAddress?.split(",")[1]?.trim() || "",
               city: order.deliveryAddress?.split(",")[2]?.trim() || "",
-              deliveryType: order.orderPart?.DeliveryType?.Text || "",
-              deliveryPrice: order.orderPart?.DeliveryPrice?.Value || 0,
+              deliveryType,
+              deliveryPrice,
               sum: calculatedSum,
               date: order.orderDate || order.createdUtc || new Date().toISOString(),
               status: order.status || "pending",

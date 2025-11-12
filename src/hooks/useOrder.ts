@@ -171,18 +171,23 @@ export function useOrder() {
       checked: false
     }));
 
-    function generateOrderNumber() {
-      const now = new Date();
-      return (
-        "#" +
-        now.getFullYear().toString().slice(-2) +
-        (now.getMonth() + 1).toString().padStart(2, "0") +
-        now.getMinutes().toString().padStart(2, "0") +
-        now.getSeconds().toString().padStart(2, "0")
-      );
-    }
-    const orderBody = {
-      status: "pending",
+function generateOrderNumber() {
+  const usedNumbers = JSON.parse(sessionStorage.getItem("usedOrderNumbers") || "[]");
+
+  let newNumber;
+  do {
+    newNumber = Math.floor(1000 + Math.random() * 9000); 
+  } while (usedNumbers.includes(newNumber));
+
+  usedNumbers.push(newNumber);
+  sessionStorage.setItem("usedOrderNumbers", JSON.stringify(usedNumbers));
+
+  return "#" + newNumber;
+}
+
+  const orderBody = {
+    status: "pending",
+    orderNumber: generateOrderNumber(), 
       totalSum: orderItems.reduce((sum, item) => sum + item.price, 0),
       orderDate: new Date().toISOString(),
       deliveryAddress: `${deliveryToUse.address}, ${deliveryToUse.postcode}, ${deliveryToUse.city}`,

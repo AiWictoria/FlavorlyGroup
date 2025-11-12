@@ -49,7 +49,7 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
 
   function formatOrderNumber(orderNumber: string): string {
     // Use the actual order number from backend
-    return `#${String(orderNumber).padStart(4, "0")}`;
+    return `${String(orderNumber).padStart(4, "0")}`;
   }
 
   function formatDate(dateString: string) {
