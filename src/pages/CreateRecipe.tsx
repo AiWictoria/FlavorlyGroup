@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RecipeLayout from "../components/recipe/RecipeLayout";
 import { useAuth } from "../features/auth/AuthContext";
@@ -26,6 +26,17 @@ export default function CreateRecipe() {
     image: null as File | null,
   });
   const [recipeItems, setRecipeItems] = useState<RecipeItemDto[]>([]);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // Build a local preview URL for the selected image file
+  useEffect(() => {
+    if (recipe.image instanceof File) {
+      const url = URL.createObjectURL(recipe.image);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setPreviewUrl(null);
+  }, [recipe.image]);
 
   function handleChange(field: string, value: string) {
     setRecipe((prev) => ({ ...prev, [field]: value }));
@@ -125,6 +136,7 @@ export default function CreateRecipe() {
         onFileSelect={handleFileSelect}
         onRecipeItemsChange={setRecipeItems}
         onSubmit={handleSubmit}
+        previewUrl={previewUrl}
       />
     </>
   );

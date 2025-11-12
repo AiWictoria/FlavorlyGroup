@@ -13,6 +13,7 @@ interface RecipeLayoutProps {
   onChange?: (field: string, value: string) => void;
   onFileSelect?: (file: File | null) => void;
   onRecipeItemsChange?: (items: RecipeItemDto[]) => void;
+  previewUrl?: string | null;
 }
 
 export default function RecipeLayout({
@@ -22,6 +23,7 @@ export default function RecipeLayout({
   onChange,
   onFileSelect,
   onRecipeItemsChange,
+  previewUrl,
 }: RecipeLayoutProps) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,6 +39,7 @@ export default function RecipeLayout({
               mode={mode}
               recipe={recipe ?? undefined}
               onFileSelect={onFileSelect}
+              previewUrl={previewUrl}
             />
           </Col>
 
@@ -46,12 +49,12 @@ export default function RecipeLayout({
               recipe={recipe}
               onChange={onChange}
             />
-          <RecipeIngredients
-            mode={mode}
-            recipe={recipe}
-            onChange={onChange}
-            onRecipeItemsChange={onRecipeItemsChange}
-          />
+            <RecipeIngredients
+              mode={mode}
+              recipe={recipe}
+              onChange={onChange}
+              onRecipeItemsChange={onRecipeItemsChange}
+            />
           </Col>
         </Row>
         <Row className="mx-4 pb-3">
@@ -70,7 +73,7 @@ export default function RecipeLayout({
 
         {(mode === "create" || mode === "edit") && (
           <div className="text-end pb-4 px-5">
-            <Button type="submit" className="bg-success">
+            <Button type="submit" className="bg-primary">
               {mode === "create" ? "Skapa recept" : "Spara ändringar"}
             </Button>
           </div>

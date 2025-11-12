@@ -8,12 +8,14 @@ interface RecipeImageSectionProps {
   mode: "view" | "edit" | "create";
   recipe?: Recipe;
   onFileSelect?: (file: File | null) => void;
+  previewUrl?: string | null;
 }
 
 export function RecipeImageSection({
   mode,
   recipe,
   onFileSelect,
+  previewUrl,
 }: RecipeImageSectionProps) {
   const isView = mode === "view";
 
@@ -27,7 +29,13 @@ export function RecipeImageSection({
   return (
     <div>
       <div className="ratio ratio-16x9 rounded">
-        {recipe?.image ? (
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt="Förhandsvisning"
+            className="object-fit-cover w-100"
+          />
+        ) : recipe?.image ? (
           <img
             src={`/media/${recipe.image}`}
             alt={recipe?.image || "Recept bild"}
@@ -61,7 +69,7 @@ export function RecipeImageSection({
               }
             }}
           >
-            <i className={`bi ${isSaved ? "bi-heart-fill" : "bi-heart-fill"}`}>
+            <i className={`bi ${isSaved ? "bi-heart-fill text-white" : "bi-heart-fill text-white"}`}>
               {isSaved ? " Sparad" : "Spara"}
             </i>
           </Button>
