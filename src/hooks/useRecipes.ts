@@ -60,7 +60,29 @@ export function useRecipes() {
       const data = await res.json();
 
       if (res.ok) {
-        setRecipes(data as Recipe[]);
+        // Normalize Orchard responses to our Recipe shape for list views
+        const normalized: Recipe[] = Array.isArray(data)
+          ? (data as any[]).map((r: any) => {
+              const items = Array.isArray(r.items) ? r.items : [];
+              const imagePath: string | undefined = r?.recipeImage?.paths?.[0] ?? r?.image ?? undefined;
+              const comments = items
+                .filter((i: any) => i.contentType === "Comment")
+                .map((i: any) => ({ text: i.content ?? "", authorUsername: i.user?.username ?? "" }));
+              const n: any = {
+                id: r.id,
+                title: r.title,
+                slug: r.slug ?? "",
+                image: imagePath,
+                description: r.description ?? r.category ?? "",
+                // keep minimal list data; detail page fetch maps full items
+                ingredients: [],
+                comments,
+                userAuthor: r.user ? { userId: r.user.id, username: r.user.username } : undefined,
+              };
+              return n as Recipe;
+            })
+          : [];
+        setRecipes(normalized);
         return { success: true };
       } else {
         toast.error("Det gick inte att läsa in recept");
@@ -233,3 +255,4 @@ export function useRecipes() {
     deleteRecipe,
   };
 }
+
