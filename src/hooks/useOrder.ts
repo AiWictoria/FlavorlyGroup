@@ -190,5 +190,6 @@ export function useOrder() {
     handleDeliveryChange,
     handleQuantityChange,
     handleRemoveProduct,
+    cartId,
   };
 }
