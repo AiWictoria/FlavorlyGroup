@@ -23,8 +23,7 @@ export default function Checkout() {
   const [orderCreated, setOrderCreated] = useState(false);
   const orderCreationAttempted = useRef(false);
 
-  const { products, deliveryData, handleDeliveryChange, handleQuantityChange, createOrder } =
-    useOrder();
+  const { products, deliveryData, handleDeliveryChange, handleQuantityChange, createOrder, handleRemoveProduct } = useOrder();
 
   const getButtonLabel = () => {
     if (activeStep === 0) return "Leverans";
@@ -43,6 +42,15 @@ export default function Checkout() {
         "http://localhost:5001/api/stripe/create-checkout-session",
         {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            products: products.map((p) => ({
+              name: p.name,
+              price: p.price,
+              quantity: p.quantity,
+            })),
+            deliveryPrice: deliveryData.deliveryPrice,
+          }),
         }
       );
 
@@ -63,9 +71,12 @@ export default function Checkout() {
     <Cart
       products={products}
       onQuantityChange={handleQuantityChange}
-      onRemoveProduct={() => void 0}
+      onRemoveProduct={handleRemoveProduct}
     />,
-    <Delivery onDeliveryChange={handleDeliveryChange} />,
+    <Delivery
+      onDeliveryChange={handleDeliveryChange}
+      savedData={deliveryData}
+    />,
     <Payment />,
     <Confirmation products={products} deliveryData={deliveryData} />,
   ];
@@ -86,16 +97,13 @@ export default function Checkout() {
       console.log("💳 Betalning lyckades! Skapar order...");
       orderCreationAttempted.current = true;
       setOrderCreated(true);
-      
       // Hämta sparade produkter OCH leveransinfo från sessionStorage
       const savedProductsJson = sessionStorage.getItem('checkoutProducts');
       const savedDeliveryJson = sessionStorage.getItem('checkoutDeliveryData');
       const savedProducts = savedProductsJson ? JSON.parse(savedProductsJson) : products;
       const savedDelivery = savedDeliveryJson ? JSON.parse(savedDeliveryJson) : deliveryData;
-      
       console.log("📦 Använder produkter:", savedProducts);
       console.log("📍 Använder leveransinfo:", savedDelivery);
-      
       createOrder(savedProducts, savedDelivery)
         .then((order) => {
           console.log("✅ Order skapad från cart:", order);

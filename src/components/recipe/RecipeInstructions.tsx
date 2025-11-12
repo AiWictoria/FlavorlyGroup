@@ -19,11 +19,17 @@ export function RecipeInstructions({
   const [instructionsList, setInstructionsList] = useState<string[]>([]);
 
   useEffect(() => {
-    if (recipe?.instructions) {
-      setInstructionsList(recipe.instructions.map((instr) => instr.text ?? ""));
-    } else {
-      setInstructionsList([""]);
+    const value: any = recipe?.instructions as any;
+    if (Array.isArray(value)) {
+      setInstructionsList(value.map((instr: any) => instr?.text ?? String(instr ?? "")));
+      return;
     }
+    if (typeof value === "string") {
+      const parts = value.split("\n");
+      setInstructionsList(parts.length > 0 ? parts : [""]);
+      return;
+    }
+    setInstructionsList([""]);
   }, [recipe]);
 
   const handleInstructionChange = (index: number, value: string) => {

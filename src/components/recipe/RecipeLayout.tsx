@@ -4,6 +4,7 @@ import { RecipeIngredients } from "./RecipeIngredients";
 import { RecipeInstructions } from "./RecipeInstructions";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
+import type { RecipeItemDto } from "@models/recipe";
 
 interface RecipeLayoutProps {
   mode: "view" | "edit" | "create";
@@ -11,6 +12,8 @@ interface RecipeLayoutProps {
   onSubmit?: (recipe: Recipe) => void;
   onChange?: (field: string, value: string) => void;
   onFileSelect?: (file: File | null) => void;
+  onRecipeItemsChange?: (items: RecipeItemDto[]) => void;
+  previewUrl?: string | null;
 }
 
 export default function RecipeLayout({
@@ -19,6 +22,8 @@ export default function RecipeLayout({
   onSubmit,
   onChange,
   onFileSelect,
+  onRecipeItemsChange,
+  previewUrl,
 }: RecipeLayoutProps) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +39,7 @@ export default function RecipeLayout({
               mode={mode}
               recipe={recipe ?? undefined}
               onFileSelect={onFileSelect}
+              previewUrl={previewUrl}
             />
           </Col>
 
@@ -47,6 +53,7 @@ export default function RecipeLayout({
               mode={mode}
               recipe={recipe}
               onChange={onChange}
+              onRecipeItemsChange={onRecipeItemsChange}
             />
           </Col>
         </Row>
@@ -66,7 +73,7 @@ export default function RecipeLayout({
 
         {(mode === "create" || mode === "edit") && (
           <div className="text-end pb-4 px-5">
-            <Button type="submit" className="bg-success">
+            <Button type="submit" className="bg-primary">
               {mode === "create" ? "Skapa recept" : "Spara ändringar"}
             </Button>
           </div>
