@@ -97,6 +97,12 @@ export default function Checkout() {
 
   const totalSteps = stepsContent.length;
   const nextStep = () => {
+    setCompletedSteps((prev) => {
+      const newCompleted = new Set([...prev, activeStep]);
+      for (let i = 0; i <= activeStep; i++) newCompleted.add(i);
+      return Array.from(newCompleted);
+    });
+
     setActiveStep((prev) => Math.min(prev + 1, totalSteps - 1));
   };
 
@@ -166,6 +172,7 @@ export default function Checkout() {
           }
           products={products}
           deliveryPrice={deliveryData.deliveryPrice}
+          isDisabled={activeStep === 0 && products.length === 0}
         />
       )}
     </OrderBox>

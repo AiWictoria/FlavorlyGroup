@@ -12,6 +12,7 @@ interface TotalBoxProps {
   onNext: () => void;
   products: Product[];
   deliveryPrice?: number;
+  isDisabled?: boolean;
   vatRate?: number;
 }
 
@@ -20,6 +21,7 @@ export default function TotalBox({
   onNext,
   products,
   deliveryPrice,
+  isDisabled = false,
   vatRate = 0.12,
 }: TotalBoxProps) {
   const subtotalPrice = products.reduce(
@@ -62,7 +64,7 @@ export default function TotalBox({
           md={4}
           className="d-flex justify-content-center align-items-end px-sm-4 pe-md-3 mx-md-2 py-2"
         >
-          <Button className="w-100" onClick={onNext}>
+          <Button className="w-100" onClick={onNext} disabled={isDisabled}>
             {buttonLable}
           </Button>
         </Col>
