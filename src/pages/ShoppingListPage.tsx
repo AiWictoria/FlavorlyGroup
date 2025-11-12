@@ -41,6 +41,7 @@ export default function ShoppingListPage() {
   const numberAmount = Number(amount);
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
 
+  //Fetches the users cart
   useEffect(() => {
     const fetchCart = async () => {
       if (!user?.id) return;
@@ -58,6 +59,7 @@ export default function ShoppingListPage() {
     fetchCart();
   }, [user?.id]);
 
+  //Adds all the selected products to the cart
   const addToCart = async () => {
     if (!shoppingList.length || !user || !cartId) return;
 
@@ -126,24 +128,6 @@ export default function ShoppingListPage() {
     }
   };
 
-  //Add ingredients to shopping list
-  const addItem = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (numberAmount <= 0 || !selectedIngredient) return;
-
-    const newItem: ShoppingItem = {
-      id: crypto.randomUUID(),
-      ingredient: { ...selectedIngredient, amount: numberAmount },
-      selectedProductId: undefined,
-      quantity: 1,
-    };
-
-    setShoppingList((prev) => [...prev, newItem]);
-    setSelectedIngredient(undefined);
-    setClearSearchText((prev) => prev + 1);
-    setAmount("");
-  };
-
   const updateItem = (idx: number, patch: Partial<ShoppingItem>) => {
     setShoppingList((list) =>
       list.map((it, i) => (i === idx ? { ...it, ...patch } : it))
@@ -164,6 +148,24 @@ export default function ShoppingListPage() {
     return price * qty;
   };
   const totalCost = shoppingList.reduce((sum, it) => sum + rowCost(it), 0);
+
+  //Add ingredients to shopping list
+  const addItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (numberAmount <= 0 || !selectedIngredient) return;
+
+    const newItem: ShoppingItem = {
+      id: crypto.randomUUID(),
+      ingredient: { ...selectedIngredient, amount: numberAmount },
+      selectedProductId: undefined,
+      quantity: 1,
+    };
+
+    setShoppingList((prev) => [...prev, newItem]);
+    setSelectedIngredient(undefined);
+    setClearSearchText((prev) => prev + 1);
+    setAmount("");
+  };
 
   return (
     <Box size="l" className="custom-class">
@@ -282,7 +284,7 @@ export default function ShoppingListPage() {
             </>
           ) : (
             <div
-              className="d-flex justify-content-center align-items-center mt-5 mb-5"
+              className="d-flex justify-content-center align-items-center mt-5 mb-5 extra-height"
               style={{ color: "#9b9d9eff" }}
             >
               <h1>Inköpslistan är tom...</h1>
