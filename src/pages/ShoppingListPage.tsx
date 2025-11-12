@@ -122,7 +122,7 @@ export default function ShoppingListPage() {
 
       setShoppingList((prev) => prev.filter((item) => !item.selectedProductId));
 
-      toast.success("Products added to cart!");
+      toast.success("Valda produkter blev tillagda i kassan!");
     } catch (err) {
       console.error("Failed to update cart");
     }
@@ -273,14 +273,20 @@ export default function ShoppingListPage() {
                 ))}
               </Col>
 
-              <div className="d-flex justify-content-end align-items-center mt-3 mb-4">
-                <div className="me-3">
+              <Row className="d-flex align-items-center">
+                <Col
+                  xs={12}
+                  lg={9}
+                  className="d-flex justify-content-end mb-1 mt-2 mt-sm-0"
+                >
                   <b>Summa:</b> {totalCost.toFixed(2)} kr
-                </div>
-                <Button onClick={addToCart}>
-                  Lägg till produkter i varukorg
-                </Button>{" "}
-              </div>
+                </Col>
+                <Col xs={12} lg={3} className="d-flex justify-content-end">
+                  <Button onClick={addToCart}>
+                    Lägg till produkter i varukorg
+                  </Button>
+                </Col>
+              </Row>
             </>
           ) : (
             <div
