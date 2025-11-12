@@ -19,6 +19,7 @@ export default function DeliveryForm({
     <Form className="mt-4 fs-6">
       <FormField
         label="Adress"
+        placeholder="Gata 123"
         name="address"
         value={formData.address}
         onChange={onChange}
@@ -27,6 +28,7 @@ export default function DeliveryForm({
         <Col xs={12} sm={4}>
           <FormField
             label="Postnummer"
+            placeholder="123 45"
             name="postcode"
             value={formData.postcode}
             onChange={onChange}
@@ -35,6 +37,7 @@ export default function DeliveryForm({
         <Col xs={12} sm={8}>
           <FormField
             label="Stad"
+            placeholder="Stad"
             name="city"
             value={formData.city}
             onChange={onChange}
