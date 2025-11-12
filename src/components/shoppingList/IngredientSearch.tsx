@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { Dropdown, Form } from "react-bootstrap";
 import toast from "react-hot-toast";
-import { mapIngredient, type Ingredient as UiIngredient, type IngredientDto } from "../../api/models";
+import {
+  mapIngredient,
+  type Ingredient as UiIngredient,
+  type IngredientDto,
+} from "../../api/models";
 
 export type Ingredient = UiIngredient;
 
@@ -10,13 +14,20 @@ interface IngredientSearchProps {
   clearSearchText?: number;
 }
 
-export default function IngredientSearch({ onIngredientChange, clearSearchText }: IngredientSearchProps) {
+export default function IngredientSearch({
+  onIngredientChange,
+  clearSearchText,
+}: IngredientSearchProps) {
   const [show, setShow] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>([]);
+  const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>(
+    []
+  );
   const [active, setActive] = useState(false);
 
-  useEffect(() => { setSearchText(""); }, [clearSearchText]);
+  useEffect(() => {
+    setSearchText("");
+  }, [clearSearchText]);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchedIngredients([]);
@@ -27,17 +38,31 @@ export default function IngredientSearch({ onIngredientChange, clearSearchText }
   }
 
   useEffect(() => {
-    if (!active || !searchText) { setShow(false); setSearchedIngredients([]); return; }
+    if (!active || !searchText) {
+      setShow(false);
+      setSearchedIngredients([]);
+      return;
+    }
 
     const fetchIngredients = async () => {
       try {
-
-        const res = await fetch(`/api/expand/Ingredient?where=titleLIKE${encodeURIComponent(searchText)}&limit=20`);
-        if (!res.ok) { toast.error("Misslyckades med att ladda ingredienser"); return; }
+        const res = await fetch(
+          `/api/expand/Ingredient?where=titleLIKE${encodeURIComponent(
+            searchText
+          )}&limit=4&orderby=title`
+        );
+        if (!res.ok) {
+          toast.error("Misslyckades med att ladda ingredienser");
+          return;
+        }
         const data: IngredientDto[] = await res.json();
         const mapped: Ingredient[] = [];
         for (const d of data) {
-          try { mapped.push(mapIngredient(d)); } catch { /* ignore this item */ }
+          try {
+            mapped.push(mapIngredient(d));
+          } catch {
+            /* ignore this item */
+          }
         }
         setSearchedIngredients(mapped);
         setShow(mapped.length > 0);

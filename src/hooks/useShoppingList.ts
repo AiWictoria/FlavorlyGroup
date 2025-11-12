@@ -19,6 +19,7 @@ export interface ShoppingList {
   totalQuantity: number;
   totalUnits: string;
 }
+
 export function useShoppingList() {
   const { user } = useAuth();
   const [items, setItems] = useState<ShoppingList[]>([]);
