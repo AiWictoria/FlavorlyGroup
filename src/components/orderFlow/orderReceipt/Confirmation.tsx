@@ -3,9 +3,11 @@ import OrderTitle from "./OrderTitle";
 import OrderInfoSection from "./OrderInfoSection";
 import Divider from "../../shared/Divider";
 import ProductInfo from "./ProductInfo";
+import ClearCartButton from "./ClearCartButton";
+import { useAuth } from "../../../features/auth/AuthContext";
 
 interface ConfirmationProps {
-  products: { id: number; name: string; quantity: number; price: number }[];
+  products: { id: string; name: string; quantity: number; price: number }[];
   deliveryData: {
     address: string;
     postcode: string;
@@ -13,24 +15,28 @@ interface ConfirmationProps {
     deliveryType: string;
     deliveryPrice: number;
   };
+  cartId?: string;
 }
 
 export default function Confirmation({
   products,
   deliveryData,
+  cartId,
 }: ConfirmationProps) {
   const totalProducts = products.reduce(
     (sum, p) => sum + p.price * (p.quantity ?? 1),
     0
   );
 
-  const total = totalProducts + (deliveryData.deliveryPrice ?? 0);
+  const { user } = useAuth();
+
+  const total = (totalProducts + (deliveryData.deliveryPrice ?? 0)).toFixed(2);
 
   return (
     <>
       <Row className="g-2 justify-content-center">
         <Col xs={10}>
-          <OrderTitle name="Will" />
+          <OrderTitle name={user?.firstName ?? null} />
         </Col>
         <Col xs={10} sm={6}>
           <OrderInfoSection
@@ -42,7 +48,7 @@ export default function Confirmation({
         </Col>
 
         <Col xs={10} sm={4}>
-          <OrderInfoSection title="Pay method:" paymethod="Apple Pay" />
+          <OrderInfoSection title="Betalnings metod:" paymethod="Kort" />
         </Col>
         <Divider color="orange" />
         <Col xs={10}>
@@ -57,7 +63,7 @@ export default function Confirmation({
               <p>Antal</p>
             </Col>
             <Col xs="auto" className=" text-end">
-              <p>Pris</p>
+              <p>A-Pris</p>
             </Col>
           </Row>
         </Col>
@@ -81,6 +87,19 @@ export default function Confirmation({
         <Col xs={10} className="d-flex justify-content-end">
           <h4 className="fw-bold">Totalt: {total} kr</h4>
         </Col>
+        {cartId && (
+          <Col
+            xs={10}
+            className="d-flex justify-content-center mx-4 mx-sm-5 mx-md-0"
+          >
+            <Col
+              md={4}
+              className="d-flex justify-content-center align-items-center px-sm-4 pe-md-3 mx-md-2 py-2"
+            >
+              <ClearCartButton cartId={cartId} />
+            </Col>
+          </Col>
+        )}
       </Row>
     </>
   );

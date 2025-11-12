@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import { useState, useEffect } from "react";
 
 export interface Rating {
@@ -9,11 +9,18 @@ export interface Rating {
   rating: number;
 }
 
+// Temporary kill switch until ratings API exists
+const RATINGS_ENABLED = false;
+
 export function useRatings() {
   const { user } = useAuth();
   const [ratings, setRatings] = useState<Rating[]>([]);
 
   async function fetchRatings(recipeId?: number) {
+    if (!RATINGS_ENABLED) {
+      setRatings([]);
+      return { success: true, data: [] } as const;
+    }
     try {
       const url = recipeId
         ? `/api/ratings?where=recipeId=${recipeId}`
@@ -95,7 +102,7 @@ export function useRatings() {
   }
 
   useEffect(() => {
-    fetchRatings();
+    if (RATINGS_ENABLED) fetchRatings();
   }, [user]);
 
   return { ratings, fetchRatings, addRating, updateRating };

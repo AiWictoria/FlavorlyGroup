@@ -12,6 +12,7 @@ public static class SetupRoutes
         app.MapAuthEndpoints();
         app.MapSystemRoutes();
         app.MapMediaUploadRoutes();
+        app.MapCartRoutes();
         app.MapGetRoutes();
         app.MapPostRoutes();
         app.MapPutRoutes();

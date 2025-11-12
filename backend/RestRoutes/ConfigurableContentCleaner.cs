@@ -20,6 +20,7 @@ public static class ConfigurableContentCleaner
         Dictionary<string, JsonElement>? usersDictionary = null)
     {
         var clean = new Dictionary<string, object>();
+        var itemsFromBagPart = false; // track if top-level items came from root BagPart
         var allowedFields = config.GetAllowedFields(contentType, currentDepth);
         var hasWhitelist = allowedFields != null;
 
@@ -224,6 +225,7 @@ public static class ConfigurableContentCleaner
                 if (itemsList.Count > 0)
                 {
                     clean["items"] = itemsList;
+                    itemsFromBagPart = true;
                 }
             }
         }
@@ -271,10 +273,14 @@ public static class ConfigurableContentCleaner
 
                     if (itemsList.Count > 0)
                     {
-                        // Merge with existing items if any
+                        // Merge named BagParts unless items already came from root BagPart
                         if (clean.ContainsKey("items") && clean["items"] is List<object> existingItems)
                         {
-                            existingItems.AddRange(itemsList);
+                            if (!itemsFromBagPart)
+                            {
+                                existingItems.AddRange(itemsList);
+                            }
+                            // else: skip merge to avoid duplication with root BagPart
                         }
                         else
                         {

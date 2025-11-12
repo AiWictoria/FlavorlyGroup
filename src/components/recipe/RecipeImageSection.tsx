@@ -1,19 +1,21 @@
 import { Form, Button } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
 import { useSavedRecipes } from "../../hooks/useSavedRecipes";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import StarsRating from "./StarsRating";
 
 interface RecipeImageSectionProps {
   mode: "view" | "edit" | "create";
   recipe?: Recipe;
   onFileSelect?: (file: File | null) => void;
+  previewUrl?: string | null;
 }
 
 export function RecipeImageSection({
   mode,
   recipe,
   onFileSelect,
+  previewUrl,
 }: RecipeImageSectionProps) {
   const isView = mode === "view";
 
@@ -27,11 +29,23 @@ export function RecipeImageSection({
   return (
     <div>
       <div className="ratio ratio-16x9 rounded">
-        <img
-          src={`/media/${recipe?.image}`}
-          alt={recipe?.image || "Recipe image"}
-          className="object-fit-cover w-100"
-        />
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt="Förhandsvisning"
+            className="object-fit-cover w-100"
+          />
+        ) : recipe?.image ? (
+          <img
+            src={`/media/${recipe.image}`}
+            alt={recipe?.image || "Recept bild"}
+            className="object-fit-cover w-100"
+          />
+        ) : (
+          <div className="d-flex justify-content-center align-items-center bg-light text-muted">
+            Ingen bild
+          </div>
+        )}
       </div>
 
       {isView && user && (
@@ -55,7 +69,7 @@ export function RecipeImageSection({
               }
             }}
           >
-            <i className={`bi ${isSaved ? "bi-heart-fill" : "bi-heart-fill"}`}>
+            <i className={`bi ${isSaved ? "bi-heart-fill text-white" : "bi-heart-fill text-white"}`}>
               {isSaved ? " Sparad" : "Spara"}
             </i>
           </Button>

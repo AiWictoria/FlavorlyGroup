@@ -1,9 +1,17 @@
 import { Col, Row } from "react-bootstrap";
+import toast from "react-hot-toast";
 import CartItem from "./CartItem";
+import CancelConfirmationToast from "../../shared/CancelConfirmationToast";
+
 interface CartProps {
-  products: { id: number; name: string; price: number; quantity: number }[];
-  onQuantityChange: (productId: number, newQuantity: number) => void;
-  onRemoveProduct: (productId: number) => void;
+  products: {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  onQuantityChange: (productId: string, newQuantity: number) => void;
+  onRemoveProduct: (productId: string) => void;
 }
 export default function Cart({
   products,
@@ -21,13 +29,25 @@ export default function Cart({
             <CartItem
               key={p.id}
               name={p.name}
-              productImage="images/start.jpg"
+              productImage="images/placeholder.png"
               unitPrice={p.price}
               quantity={p.quantity}
               onQuantityChange={(newQuantity) =>
                 onQuantityChange(p.id, newQuantity)
               }
-              onRemove={() => onRemoveProduct(p.id)}
+              onRemove={() =>
+                toast.custom((t) => (
+                  <CancelConfirmationToast
+                    message={`Ta bort "${p.name}" från varukorgen?`}
+                    onConfirm={async () => {
+                      onRemoveProduct(p.id);
+                      toast.dismiss(t.id);
+                    }}
+                    confirmText="Bekräfta"
+                    cancelText="Avbryt"
+                  />
+                ))
+              }
             />
           ))}
         </Col>

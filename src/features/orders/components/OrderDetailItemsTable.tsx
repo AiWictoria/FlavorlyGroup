@@ -23,7 +23,7 @@ export function OrderItemsTable({ items,
                 <tr>
                     <th className="col-amount">Antal</th>
                     <th className="col-units">Enhet</th>
-                    <th>Ingredienser</th>
+                    <th>Produkt</th>
                     <th>Belopp</th>
                     {showCheckboxes && <th>Checka</th>}
                 </tr>

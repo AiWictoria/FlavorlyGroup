@@ -6,10 +6,13 @@ type Props = {
     orderNumber: string;
     status: OrderStatus;
     customerName?: string;
+    address?: string;
+    postalCode?: string;
+    city?: string;
     dateText: string;
 };
 
-export function OrderHeader({ orderNumber, status, customerName, dateText }: Props) {
+export function OrderHeader({ orderNumber, status, customerName, address, postalCode, city, dateText }: Props) {
     const iconClass = iconClassFor(status);
 
     return (
@@ -20,6 +23,8 @@ export function OrderHeader({ orderNumber, status, customerName, dateText }: Pro
                         <h2 className="m-0 fw-semibold">Order: {orderNumber}</h2>
                         <div className="fw-semibold">{dateText}</div>
                         <div className="small opacity-75">{customerName}</div>
+                        {address && <div className="small opacity-75">{address}</div>}
+                        {postalCode && city && <div className="small opacity-75">{postalCode}, {city}</div>}
                     </div>
                 </div>
                 <div className="text-md-end me-3">

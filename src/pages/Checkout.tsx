@@ -1,6 +1,6 @@
 import OrderBox from "../components/orderFlow/orderReceipt/OrderBox";
 import Confirmation from "../components/orderFlow/orderReceipt/Confirmation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Cart from "../components/orderFlow/cartParts/Cart";
 import Delivery from "../components/orderFlow/deliveryParts/Delivery";
@@ -8,19 +8,29 @@ import Payment from "../components/orderFlow/orderReceipt/Payment";
 import TotalBox from "../components/orderFlow/cartParts/TotalBox";
 import { useOrder } from "../hooks/useOrder";
 
-Checkout.route = { path: "/order", menuLabel: "Kassa", index: 6 };
+Checkout.route = {
+  path: "/order",
+  menuLabel: "Varukorg",
+  index: 6,
+  adminOnly: false,
+  protected: true,
+};
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [orderCreated, setOrderCreated] = useState(false);
+  const orderCreationAttempted = useRef(false);
 
   const {
     products,
-    handleQuantityChange,
-    handleRemoveProduct,
     deliveryData,
     handleDeliveryChange,
+    handleQuantityChange,
+    createOrder,
+    handleRemoveProduct,
+    cartId,
   } = useOrder();
 
   const getButtonLabel = () => {
@@ -32,10 +42,26 @@ export default function Checkout() {
 
   const handlePayNow = async () => {
     try {
+      // Spara cart data OCH leveransinfo innan vi går till Stripe
+      sessionStorage.setItem("checkoutProducts", JSON.stringify(products));
+      sessionStorage.setItem(
+        "checkoutDeliveryData",
+        JSON.stringify(deliveryData)
+      );
+
       const res = await fetch(
         "http://localhost:5001/api/stripe/create-checkout-session",
         {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            products: products.map((p) => ({
+              name: p.name,
+              price: p.price,
+              quantity: p.quantity,
+            })),
+            deliveryPrice: deliveryData.deliveryPrice,
+          }),
         }
       );
 
@@ -58,9 +84,16 @@ export default function Checkout() {
       onQuantityChange={handleQuantityChange}
       onRemoveProduct={handleRemoveProduct}
     />,
-    <Delivery onDeliveryChange={handleDeliveryChange} />,
+    <Delivery
+      onDeliveryChange={handleDeliveryChange}
+      savedData={deliveryData}
+    />,
     <Payment />,
-    <Confirmation products={products} deliveryData={deliveryData} />,
+    <Confirmation
+      products={products}
+      deliveryData={deliveryData}
+      cartId={cartId}
+    />,
   ];
 
   const totalSteps = stepsContent.length;
@@ -72,12 +105,36 @@ export default function Checkout() {
     const status = searchParams.get("status");
     const step = searchParams.get("step");
 
-    if (status === "success" && step === "confirmation") {
-      setCompletedSteps([0, 1, 2]);
-      setActiveStep(3);
-    } else if (status === "cancelled" && step === "payment") {
-      setCompletedSteps([0, 1]);
-      setActiveStep(2);
+    if (!orderCreationAttempted.current) {
+      if (status === "success" && step === "confirmation") {
+        orderCreationAttempted.current = true;
+
+        const savedProductsJson = sessionStorage.getItem("checkoutProducts");
+        const savedDeliveryJson = sessionStorage.getItem(
+          "checkoutDeliveryData"
+        );
+        const savedProducts = savedProductsJson
+          ? JSON.parse(savedProductsJson)
+          : products;
+        const savedDelivery = savedDeliveryJson
+          ? JSON.parse(savedDeliveryJson)
+          : deliveryData;
+
+        createOrder(savedProducts, savedDelivery)
+          .then(() => {
+            sessionStorage.removeItem("checkoutProducts");
+            sessionStorage.removeItem("checkoutDeliveryData");
+            setCompletedSteps([0, 1, 2]);
+            setActiveStep(3);
+          })
+          .catch((error) => {
+            console.error(error);
+            orderCreationAttempted.current = false;
+          });
+      } else if (status === "cancelled" && step === "payment") {
+        setCompletedSteps([0, 1]);
+        setActiveStep(2);
+      }
     }
   }, [searchParams]);
 

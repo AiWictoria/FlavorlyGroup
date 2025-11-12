@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
-import { useAuth } from "./useAuth";
-import { useState, useEffect } from "react";
+import { useAuth } from "../features/auth/AuthContext";
+import { useState, useEffect, useRef } from "react";
 
 export interface SavedRecipe {
   id: number;
@@ -11,9 +11,10 @@ export interface SavedRecipe {
 export function useSavedRecipes() {
   const { user } = useAuth();
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
+  const disabledRef = useRef(false);
 
   async function fetchSavedRecipes() {
-    if (!user) return;
+    if (!user || disabledRef.current) return;
 
     try {
       const res = await fetch(`/api/savedRecipes?userId=${user.id}`);
@@ -22,6 +23,7 @@ export function useSavedRecipes() {
         setSavedRecipes(data);
         return { success: true };
       } else {
+        if (res.status === 403 || res.status === 404) { disabledRef.current = true; return { success: false }; }
         toast.error("Misslyckades med att ladda sparade recept");
         return { success: false };
       }
@@ -73,7 +75,8 @@ export function useSavedRecipes() {
 
   useEffect(() => {
     fetchSavedRecipes();
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   return { savedRecipes, saveRecipe, removeSaved };
 }

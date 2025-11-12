@@ -1,7 +1,8 @@
 import { Dropdown } from "react-bootstrap";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import ProfileModal from "./ProfileModal";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function ProfileMenu() {
   const { user, logout } = useAuth();
@@ -23,10 +24,7 @@ export default function ProfileMenu() {
             id="profile-menu"
             className="border-0 bg-transparent p-0 profile-toggle"
           >
-            <i
-              className="bi bi-person-circle fs-3 text-light mx-2 "
-              role="button"
-            ></i>
+            <i className="bi bi-person-circle fs-3 text-light mx-2 "></i>
           </Dropdown.Toggle>
 
           <Dropdown.Menu className="bg-primary text-light mx-md-4 p-3">
@@ -34,6 +32,9 @@ export default function ProfileMenu() {
               Hej {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
+            <Dropdown.Item as={Link} to="/MyOrders" className="text-light">
+              Mina beställningar
+            </Dropdown.Item>
             <Dropdown.Item className="text-light" onClick={handleLogout}>
               Logga ut
             </Dropdown.Item>
@@ -43,7 +44,6 @@ export default function ProfileMenu() {
         <>
           <i
             className="bi bi-person-circle fs-3 text-light mx-2"
-            role="button"
             onClick={handleIconClick}
           ></i>
           <ProfileModal show={showModal} onHide={() => setShowModal(false)} />

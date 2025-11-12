@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../features/auth/AuthContext";
 import toast from "react-hot-toast";
 import type { Ingredient } from "./useRecipes";
 
@@ -19,6 +19,7 @@ export interface ShoppingList {
   totalQuantity: number;
   totalUnits: string;
 }
+
 export function useShoppingList() {
   const { user } = useAuth();
   const [items, setItems] = useState<ShoppingList[]>([]);
@@ -33,7 +34,9 @@ export function useShoppingList() {
         setItems(data as ShoppingList[]);
         return { success: true };
       } else {
-        toast.error("Misslyckades med att ladda inköpslistan, försök igen senare");
+        toast.error(
+          "Misslyckades med att ladda inköpslistan, försök igen senare"
+        );
         return { success: false };
       }
     } catch {
@@ -55,7 +58,9 @@ export function useShoppingList() {
         await fetchList();
         return { success: true };
       } else {
-        toast.error("Misslyckades med att registrera inköpslistan, försök igen");
+        toast.error(
+          "Misslyckades med att registrera inköpslistan, försök igen"
+        );
         return { success: false };
       }
     } catch {

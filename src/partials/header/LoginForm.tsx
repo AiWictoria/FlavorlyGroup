@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 
 interface LoginFormProps {
   onBack: () => void;

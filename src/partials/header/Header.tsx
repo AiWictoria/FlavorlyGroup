@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../features/auth/AuthContext";
 import { Link, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import routes from "../../routes";
 import ProfileMenu from "./ProfileMenu";
-import SearchIcon from "./SearchIcon";
 
 export default function Header() {
   const { user } = useAuth();
@@ -54,6 +53,11 @@ export default function Header() {
                 .filter((x) => {
                   if (!x.menuLabel) return false;
                   if (x.protected && !user) return false;
+                  if (
+                    x.adminOnly &&
+                    (!user || !user.roles.includes("Administrator"))
+                  )
+                    return false;
                   return true;
                 })
                 .map(({ menuLabel, path }, i) => (
@@ -71,7 +75,6 @@ export default function Header() {
             </Nav>
           </Navbar.Collapse>
           <div className="d-flex align-items-center order-md-5 gap-2">
-            <SearchIcon />
             <ProfileMenu />
           </div>
         </Container>
