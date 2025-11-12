@@ -10,7 +10,7 @@ import { useOrder } from "../hooks/useOrder";
 
 Checkout.route = {
   path: "/order",
-  menuLabel: "Kassa",
+  menuLabel: "Varukorg",
   index: 6,
   adminOnly: false,
   protected: true,
