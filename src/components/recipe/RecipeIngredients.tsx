@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Form, Button, Row, Col, Badge } from "react-bootstrap";
 import type { Recipe } from "../../hooks/useRecipes";
-import { useShoppingList } from "../../hooks/useShoppingList";
+// import { useShoppingList } from "../../hooks/useShoppingList";
 import { useAuth } from "../../features/auth/AuthContext";
-import IngredientSearch, { type Ingredient as UiIngredient } from "../shoppingList/IngredientSearch";
+import IngredientSearch, {
+  type Ingredient as UiIngredient,
+} from "../shoppingList/IngredientSearch";
 import type { RecipeItemDto } from "@models/recipe";
 
 interface RecipeIngredientsProps {
@@ -25,20 +27,24 @@ export function RecipeIngredients({
 
   const [ingredientList, setIngredientList] = useState<string[]>([]);
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
-  const { addItem } = useShoppingList();
+  // const { addItem } = useShoppingList();
   const { user } = useAuth();
 
   // Structured recipe items (for Orchard Core)
-  const [selectedIngredient, setSelectedIngredient] = useState<UiIngredient | undefined>(undefined);
+  const [selectedIngredient, setSelectedIngredient] = useState<
+    UiIngredient | undefined
+  >(undefined);
   const [amount, setAmount] = useState<string>("");
   const [unitText, setUnitText] = useState<string>("");
-  const [structuredItems, setStructuredItems] = useState<{
-    id: string; // tmp id for list rendering
-    ingredient: UiIngredient;
-    quantity: number;
-    unitId?: string;
-    unitTitle?: string;
-  }[]>([]);
+  const [structuredItems, setStructuredItems] = useState<
+    {
+      id: string; // tmp id for list rendering
+      ingredient: UiIngredient;
+      quantity: number;
+      unitId?: string;
+      unitTitle?: string;
+    }[]
+  >([]);
   const initializedFromRecipe = useRef(false);
 
   useEffect(() => {
@@ -48,7 +54,10 @@ export function RecipeIngredients({
         const segments: string[] = [];
         if (ing.quantity !== undefined && ing.quantity !== null)
           segments.push(String(ing.quantity));
-        if (ing.unit) segments.push(ing.unit.name ?? ing.unit.title ?? ing.unit.unitCode ?? "");
+        if (ing.unit)
+          segments.push(
+            ing.unit.name ?? ing.unit.title ?? ing.unit.unitCode ?? ""
+          );
         const ingName = ing.ingredient?.name ?? ing.ingredient?.title ?? "";
         if (ingName) segments.push(ingName);
         else if (ing.ingredientId) segments.push(`#${ing.ingredientId}`);
@@ -64,7 +73,10 @@ export function RecipeIngredients({
           const mapped: UiIngredient = {
             id: ing.ingredient?.id ?? ing.ingredientId ?? "",
             title: name,
-            baseUnit: ing.unit?.id || unitTitle ? { id: ing.unit?.id ?? "", title: unitTitle } : undefined,
+            baseUnit:
+              ing.unit?.id || unitTitle
+                ? { id: ing.unit?.id ?? "", title: unitTitle }
+                : undefined,
             products: [],
           } as UiIngredient;
           return {
@@ -87,7 +99,9 @@ export function RecipeIngredients({
         .map((s: string) => s.trim())
         .filter((s: string) => s.length > 0);
       setIngredientList(parts.length > 0 ? parts : [""]);
-      setCheckedItems(new Array(parts.length > 0 ? parts.length : 1).fill(false));
+      setCheckedItems(
+        new Array(parts.length > 0 ? parts.length : 1).fill(false)
+      );
       return;
     }
     setIngredientList([""]);
@@ -162,11 +176,11 @@ export function RecipeIngredients({
         <>
           {/* Structured ingredient builder (Orchard) */}
           <div className="mb-3">
-        <Row className="g-2 align-items-end">
-          <Col xs={12} md={6} lg={6}>
-            <IngredientSearch onIngredientChange={setSelectedIngredient} />
-          </Col>
-          <Col xs={6} md={3} lg={3}>
+            <Row className="g-2 align-items-end">
+              <Col xs={12} md={6} lg={6}>
+                <IngredientSearch onIngredientChange={setSelectedIngredient} />
+              </Col>
+              <Col xs={6} md={3} lg={3}>
                 <Form.Control
                   placeholder="Mängd"
                   type="number"
@@ -190,7 +204,8 @@ export function RecipeIngredients({
                 size="sm"
                 onClick={() => {
                   const qty = Number(amount);
-                  if (!selectedIngredient || !Number.isFinite(qty) || qty <= 0) return;
+                  if (!selectedIngredient || !Number.isFinite(qty) || qty <= 0)
+                    return;
                   const unitId = selectedIngredient.baseUnit?.id;
                   const entry = {
                     id: crypto.randomUUID(),
@@ -221,10 +236,12 @@ export function RecipeIngredients({
             {structuredItems.length > 0 && (
               <div className="mt-3">
                 {structuredItems.map((it, idx) => (
-                  <div key={it.id} className="d-flex align-items-center mb-2 w-100" style={{ gap: 8 }}>
-                    <div className="flex-grow-1">
-                      {it.ingredient.title}
-                    </div>
+                  <div
+                    key={it.id}
+                    className="d-flex align-items-center mb-2 w-100"
+                    style={{ gap: 8 }}
+                  >
+                    <div className="flex-grow-1">{it.ingredient.title}</div>
                     <Form.Control
                       style={{ width: 110 }}
                       type="number"
@@ -233,7 +250,9 @@ export function RecipeIngredients({
                       value={it.quantity}
                       onChange={(e) => {
                         const q = Number(e.target.value);
-                        const next = structuredItems.map((x, i) => i === idx ? { ...x, quantity: q } : x);
+                        const next = structuredItems.map((x, i) =>
+                          i === idx ? { ...x, quantity: q } : x
+                        );
                         setStructuredItems(next);
                         const dtoItems: RecipeItemDto[] = next.map((x) => ({
                           contentType: "RecipeItem",
@@ -250,7 +269,9 @@ export function RecipeIngredients({
                       value={it.unitTitle ?? ""}
                       onChange={(e) => {
                         const ut = e.target.value;
-                        const next = structuredItems.map((x, i) => i === idx ? { ...x, unitTitle: ut } : x);
+                        const next = structuredItems.map((x, i) =>
+                          i === idx ? { ...x, unitTitle: ut } : x
+                        );
                         setStructuredItems(next);
                         const dtoItems: RecipeItemDto[] = next.map((x) => ({
                           contentType: "RecipeItem",
@@ -265,7 +286,9 @@ export function RecipeIngredients({
                       variant="outline-danger"
                       size="sm"
                       onClick={() => {
-                        const next = structuredItems.filter((x) => x.id !== it.id);
+                        const next = structuredItems.filter(
+                          (x) => x.id !== it.id
+                        );
                         setStructuredItems(next);
                         const dtoItems: RecipeItemDto[] = next.map((x) => ({
                           contentType: "RecipeItem",

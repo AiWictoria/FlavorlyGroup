@@ -16,7 +16,9 @@ export function RecipeTitleSection({
   const isView = mode === "view";
   const isCreate = mode === "create";
 
-  const [categories, setCategories] = useState<{ id: string; title: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; title: string }[]>(
+    []
+  );
 
   useEffect(() => {
     const getString = (v: unknown): string => {
@@ -29,12 +31,20 @@ export function RecipeTitleSection({
         const res = await fetch("/api/raw/Taxonomy/4xt2ey1mb7dq5zefaff51f1j4x");
         const data = await res.json();
         if (res.ok && data && typeof data === "object") {
-          const taxonomyPart = (data as Record<string, unknown>)["TaxonomyPart"] as Record<string, unknown> | undefined;
-          const terms = Array.isArray(taxonomyPart?.["Terms"]) ? (taxonomyPart?.["Terms"] as Array<Record<string, unknown>>) : [];
+          const taxonomyPart = (data as Record<string, unknown>)[
+            "TaxonomyPart"
+          ] as Record<string, unknown> | undefined;
+          const terms = Array.isArray(taxonomyPart?.["Terms"])
+            ? (taxonomyPart?.["Terms"] as Array<Record<string, unknown>>)
+            : [];
           const mapped = terms
             .map((t) => ({
               id: getString(t["ContentItemId"]),
-              title: getString(((t["TitlePart"] as Record<string, unknown> | undefined)?.["Title"]) ?? t["DisplayText"]),
+              title: getString(
+                (t["TitlePart"] as Record<string, unknown> | undefined)?.[
+                  "Title"
+                ] ?? t["DisplayText"]
+              ),
             }))
             .filter((x) => x.title);
           setCategories(mapped);
@@ -51,7 +61,12 @@ export function RecipeTitleSection({
       <>
         <div className="my-1 my-md-4">
           <h1 className="fs-1">{recipe?.title || "Titel"}</h1>
-          <h4>{recipe?.description || (recipe as any)?.category || recipe?.categoryId || "Kategori"}</h4>
+          <h4>
+            {recipe?.description ||
+              (recipe as any)?.category ||
+              recipe?.categoryId ||
+              "Kategori"}
+          </h4>
         </div>
       </>
     );
@@ -59,7 +74,7 @@ export function RecipeTitleSection({
 
   return (
     <>
-      <Form.Group>
+      <Form.Group controlId="recipeTitle">
         <Form.Label className="fs-1">Titel</Form.Label>
         <Form.Control
           required
@@ -70,7 +85,7 @@ export function RecipeTitleSection({
         />
       </Form.Group>
 
-      <Form.Group className="mt-3">
+      <Form.Group className="mt-3" controlId="categoryTitle">
         <Form.Label className="fs-2">Kategori (valfritt)</Form.Label>
         <Form.Select
           value={(recipe as any)?.category || ""}

@@ -24,10 +24,7 @@ export default function ProfileMenu() {
             id="profile-menu"
             className="border-0 bg-transparent p-0 profile-toggle"
           >
-            <i
-              className="bi bi-person-circle fs-3 text-light mx-2 "
-              role="button"
-            ></i>
+            <i className="bi bi-person-circle fs-3 text-light mx-2 "></i>
           </Dropdown.Toggle>
 
           <Dropdown.Menu className="bg-primary text-light mx-md-4 p-3">
@@ -47,7 +44,6 @@ export default function ProfileMenu() {
         <>
           <i
             className="bi bi-person-circle fs-3 text-light mx-2"
-            role="button"
             onClick={handleIconClick}
           ></i>
           <ProfileModal show={showModal} onHide={() => setShowModal(false)} />
