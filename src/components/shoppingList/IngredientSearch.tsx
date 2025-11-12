@@ -76,7 +76,11 @@ export default function IngredientSearch({
   return (
     <Dropdown show={show && searchedIngredients.length > 0}>
       <Dropdown.Toggle as="div" bsPrefix="p-0">
+        <label htmlFor="ingredient-search" className="visually-hidden">
+          Sök ingrediens
+        </label>
         <Form.Control
+          id="ingredient-search"
           placeholder="Sök ingrediens..."
           value={searchText}
           onChange={handleSearch}

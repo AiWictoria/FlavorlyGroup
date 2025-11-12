@@ -171,7 +171,7 @@ export default function ShoppingListPage() {
     <Box size="l" className="custom-class">
       <Row className="p-0">
         <Col className="mt-4 mx-xl-5">
-          <h2>Inköpslista</h2>
+          <h1>Inköpslista</h1>
 
           <Form onSubmit={addItem}>
             <Row className="mt-4">
@@ -189,7 +189,7 @@ export default function ShoppingListPage() {
                   required
                   type="number"
                   min={0.5}
-                  max={99}
+                  max={10000}
                   step={0.5}
                   onChange={(e) => setAmount(e.target.value)}
                 />
@@ -252,7 +252,7 @@ export default function ShoppingListPage() {
                     </Col>
 
                     <Col xs={6} md={2} lg={3}>
-                      <b>Total kostnad:</b> {sek(rowCost(item))}
+                      <b>Radkostnad:</b> {sek(rowCost(item))}
                     </Col>
 
                     <Col
@@ -279,7 +279,7 @@ export default function ShoppingListPage() {
                   lg={9}
                   className="d-flex justify-content-end mb-1 mt-2 mt-sm-0"
                 >
-                  <b>Summa:</b> {totalCost.toFixed(2)} kr
+                  <b className="me-1">Summa: </b> {totalCost.toFixed(2)} kr
                 </Col>
                 <Col xs={12} lg={3} className="d-flex justify-content-end">
                   <Button onClick={addToCart}>
@@ -293,7 +293,7 @@ export default function ShoppingListPage() {
               className="d-flex justify-content-center align-items-center mt-5 mb-5 extra-height"
               style={{ color: "#9b9d9eff" }}
             >
-              <h1>Inköpslistan är tom...</h1>
+              <h2 className="display-5 fw-bold">Inköpslistan är tom...</h2>{" "}
             </div>
           )}
         </Col>

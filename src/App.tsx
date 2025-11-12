@@ -13,7 +13,10 @@ export default function App() {
     <>
       <div className="d-flex flex-column min-vh-100">
         <Header />
-        <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
+        <Toaster
+          position="top-center"
+          toastOptions={{ duration: 4000, removeDelay: 0 }}
+        />
         <Main />
         <Footer />
       </div>

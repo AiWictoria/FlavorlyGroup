@@ -30,6 +30,7 @@ export default function Checkout() {
     handleQuantityChange,
     createOrder,
     handleRemoveProduct,
+    cartId,
   } = useOrder();
 
   const getButtonLabel = () => {
@@ -88,7 +89,11 @@ export default function Checkout() {
       savedData={deliveryData}
     />,
     <Payment />,
-    <Confirmation products={products} deliveryData={deliveryData} />,
+    <Confirmation
+      products={products}
+      deliveryData={deliveryData}
+      cartId={cartId}
+    />,
   ];
 
   const totalSteps = stepsContent.length;
