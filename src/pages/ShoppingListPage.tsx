@@ -171,7 +171,7 @@ export default function ShoppingListPage() {
     <Box size="l" className="custom-class">
       <Row className="p-0">
         <Col className="mt-4 mx-xl-5">
-          <h2>Inköpslista</h2>
+          <h1>Inköpslista</h1>
 
           <Form onSubmit={addItem}>
             <Row className="mt-4">
@@ -293,7 +293,7 @@ export default function ShoppingListPage() {
               className="d-flex justify-content-center align-items-center mt-5 mb-5 extra-height"
               style={{ color: "#9b9d9eff" }}
             >
-              <h1>Inköpslistan är tom...</h1>
+              <h2 className="display-5 fw-bold">Inköpslistan är tom...</h2>{" "}
             </div>
           )}
         </Col>
