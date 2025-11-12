@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import type { Order } from "@models/order.types";
 import { useState } from "react";
 import { StatusBadge } from "./orders/StatusBadge";
-import Box from "../../../components/shared/Box";
 import "./OrderTable.css";
 
 interface OrderTableProps {
@@ -49,9 +48,8 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
   };
 
   function formatOrderNumber(orderNumber: string): string {
-    // Extract just the numerical index for the order
-    const index = orders.findIndex((o) => o.orderNumber === orderNumber) + 1;
-    return `#${String(index).padStart(4, "0")}`;
+    // Use the actual order number from backend
+    return `${String(orderNumber).padStart(4, "0")}`;
   }
 
   function formatDate(dateString: string) {
@@ -171,7 +169,6 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
                 className="name-column"
                 style={{
                   minWidth: "200px",
-                  paddingLeft: "8px",
                   backgroundColor: "#ededed",
                 }}
               >
