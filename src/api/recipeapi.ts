@@ -47,6 +47,7 @@ export async function updateRecipe(
 }
 
 export function normalizeRecipe(r: RecipeResponse) {
+    const items = Array.isArray((r as any).items) ? (r as any).items : [];
     return {
         id: r.id,
         title: r.title,
@@ -55,7 +56,7 @@ export function normalizeRecipe(r: RecipeResponse) {
         prep: r.prepTimeMinutes ?? null,
         cook: r.cookTimeMinutes ?? null,
         servings: r.servings ?? null,
-        ingredients: r.items
+        ingredients: items
             .filter(i => i.contentType === "RecipeItem")
             .map(i => ({
                 ingredientId: (i as any).ingredient?.id,
@@ -66,11 +67,11 @@ export function normalizeRecipe(r: RecipeResponse) {
                 quantity: (i as any).quantity ?? null,
                 unitTitle: (i as any).unit?.title ?? null,
             })),
-        instructions: r.items
+        instructions: items
             .filter(i => i.contentType === "Instruction")
             .sort((a: any, b: any) => (a.order ?? a.step ?? 0) - (b.order ?? b.step ?? 0))
             .map((i: any, idx: number) => i.text ?? i.content ?? `Steg ${idx + 1}`),
-        comments: r.items
+        comments: items
             .filter(i => i.contentType === "Comment")
             .map((i: any) => ({
                 text: i.content,
@@ -78,3 +79,7 @@ export function normalizeRecipe(r: RecipeResponse) {
             })),
     };
 }
+
+
+
+
