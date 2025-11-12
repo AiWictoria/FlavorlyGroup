@@ -236,5 +236,6 @@ export interface DeliveryData {
       handleDeliveryChange,
       createOrder,
       handleRemoveProduct,
+    cartId,
     };
   }

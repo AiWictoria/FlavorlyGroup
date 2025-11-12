@@ -3,6 +3,7 @@ import OrderTitle from "./OrderTitle";
 import OrderInfoSection from "./OrderInfoSection";
 import Divider from "../../shared/Divider";
 import ProductInfo from "./ProductInfo";
+import ClearCartButton from "./ClearCartButton";
 
 interface ConfirmationProps {
   products: { id: string; name: string; quantity: number; price: number }[];
@@ -13,11 +14,13 @@ interface ConfirmationProps {
     deliveryType: string;
     deliveryPrice: number;
   };
+  cartId?: string;
 }
 
 export default function Confirmation({
   products,
   deliveryData,
+  cartId,
 }: ConfirmationProps) {
   const totalProducts = products.reduce(
     (sum, p) => sum + p.price * (p.quantity ?? 1),
@@ -81,6 +84,13 @@ export default function Confirmation({
         <Col xs={10} className="d-flex justify-content-end">
           <h4 className="fw-bold">Totalt: {total} kr</h4>
         </Col>
+        {cartId && (
+          <Col xs={10} className="d-flex justify-content-center mx-4 mx-sm-5 mx-md-0">
+            <Col md={4} className="d-flex justify-content-center align-items-center px-sm-4 pe-md-3 mx-md-2 py-2">
+              <ClearCartButton cartId={cartId} />
+            </Col>
+          </Col>
+        )}
       </Row>
     </>
   );
