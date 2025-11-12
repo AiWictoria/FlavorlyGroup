@@ -22,6 +22,11 @@ export interface Order {
   customerName: string;
   address?: string;
   postalCode?: string;
+  city?: string;
+  deliverytype?: string;
+  deliveryPrice?: number;
+  deliveryType?: string;
+  deliveryprice?: number;
   sum: number;
   date: string;
   status: OrderStatus;

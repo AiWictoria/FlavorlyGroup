@@ -6,6 +6,7 @@ export interface Product {
   name: string;
   price: number;
   quantity: number;
+  unitId?: string;
 }
 
 export interface DeliveryData {
@@ -42,6 +43,7 @@ export function useOrder() {
             name: item.product.title,
             price: item.product.price,
             quantity: item.quantity,
+            unitId: item.unit?.id || undefined,
           });
         });
         setProducts(Array.from(uniqueProductsMap.values()));
@@ -154,11 +156,73 @@ export function useOrder() {
     setDeliveryData({ ...formData, deliveryType: type, deliveryPrice: price });
   };
 
+  const createOrder = async (savedProducts?: Product[], savedDeliveryData?: DeliveryData) => {
+    const productsToUse = savedProducts || products;
+    const deliveryToUse = savedDeliveryData || deliveryData;
+    if (!user || productsToUse.length === 0) {
+      throw new Error("No user or products available");
+    }
+    const orderItems = productsToUse.map((product: any) => ({
+      contentType: "OrderItem",
+      productId: product.id,
+      amount: product.quantity,
+      unitId: product.unitId,
+      price: product.price * product.quantity,
+      checked: false
+    }));
+
+    function generateOrderNumber() {
+      const now = new Date();
+      return (
+        "#" +
+        now.getFullYear().toString().slice(-2) +
+        (now.getMonth() + 1).toString().padStart(2, "0") +
+        now.getMinutes().toString().padStart(2, "0") +
+        now.getSeconds().toString().padStart(2, "0")
+      );
+    }
+    const orderBody = {
+      status: "pending",
+      totalSum: orderItems.reduce((sum, item) => sum + item.price, 0),
+      orderDate: new Date().toISOString(),
+      deliveryAddress: `${deliveryToUse.address}, ${deliveryToUse.postcode}, ${deliveryToUse.city}`,
+      deliveryType: deliveryToUse.deliveryType,
+      deliveryPrice: deliveryToUse.deliveryPrice,
+      user: [
+        {
+          id: user.id,
+          username: user.username
+        }
+      ],
+      items: orderItems
+    };
+
+    
+    const response = await fetch("/api/Order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(orderBody),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to create order");
+    }
+    const createdOrder = await response.json();
+    if (cartId) {
+      await updateCart(cartId, user.id, []);
+    }
+    return createdOrder;
+  };
+
   return {
     products,
-    updateCart,
+    cartId,
     deliveryData,
-    handleDeliveryChange,
+    setDeliveryData,
+    updateCart,
     handleQuantityChange,
+    handleDeliveryChange,
+    createOrder,
   };
 }

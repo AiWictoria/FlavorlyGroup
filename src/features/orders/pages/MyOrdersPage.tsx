@@ -31,9 +31,11 @@ export default function MyOrdersPage() {
             ) : (
               <div className="d-flex flex-column gap-3">
                 {orders.length > 0 ? (
-                  orders.map((order) => (
-                    <OrderCard key={order.id} order={order} />
-                  ))
+                  orders
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((order) => (
+                      <OrderCard key={order.id} order={order} />
+                    ))
                 ) : (
                   <p className="text-center text-muted">
                     Du har inte gjort några beställningar

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import type { Order } from "@models/order.types";
 import { useState } from "react";
 import { StatusBadge } from "./orders/StatusBadge";
-import Box from "../../../components/shared/Box";
 import "./OrderTable.css";
 
 interface OrderTableProps {
@@ -170,7 +169,6 @@ export function OrderTable({ orders, onDelete }: OrderTableProps) {
                 className="name-column"
                 style={{
                   minWidth: "200px",
-                  paddingLeft: "8px",
                   backgroundColor: "#ededed",
                 }}
               >

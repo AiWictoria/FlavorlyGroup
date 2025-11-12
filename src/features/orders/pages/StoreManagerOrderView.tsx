@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Container, Alert, Button, ButtonGroup } from "react-bootstrap";
 import { OrderTable } from "../components/OrderTable";
 import { OrderStats } from "../components/OrderStats";
-import type { Order } from "@models/order.types";
 import { useOrders } from "../hooks/useOrders";
 import toast from "react-hot-toast";
 import CancelConfirmationToast from "../../../components/shared/CancelConfirmationToast";
