@@ -97,7 +97,7 @@ export default function ShoppingListPage() {
           quantity: item.quantity,
         })) ?? [];
     } catch (err) {
-      console.error("Failed to fetch existing cart items", err);
+      console.error("Failed to fetch existing cart items");
     }
 
     // Merge quantities
@@ -124,7 +124,7 @@ export default function ShoppingListPage() {
 
       toast.success("Products added to cart!");
     } catch (err) {
-      console.error("Failed to update cart", err);
+      console.error("Failed to update cart");
     }
   };
 
