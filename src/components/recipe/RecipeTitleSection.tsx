@@ -75,9 +75,7 @@ export function RecipeTitleSection({
   return (
     <>
       <Form.Group controlId="recipeTitle">
-        <Form.Label htmlFor="recipeTitle" className="fs-1">
-          Titel
-        </Form.Label>
+        <Form.Label className="fs-1">Titel</Form.Label>
         <Form.Control
           required
           type="text"
