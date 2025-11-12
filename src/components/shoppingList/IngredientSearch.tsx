@@ -14,18 +14,20 @@ export default function IngredientSearch({ onIngredientChange, clearSearchText }
   const [show, setShow] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [searchedIngredients, setSearchedIngredients] = useState<Ingredient[]>([]);
+  const [active, setActive] = useState(false);
 
   useEffect(() => { setSearchText(""); }, [clearSearchText]);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchedIngredients([]);
     setSearchText(e.target.value);
+    setActive(true);
     setShow(true);
     onIngredientChange(undefined);
   }
 
   useEffect(() => {
-    if (!searchText) { setShow(false); setSearchedIngredients([]); return; }
+    if (!active || !searchText) { setShow(false); setSearchedIngredients([]); return; }
 
     const fetchIngredients = async () => {
       try {
@@ -37,11 +39,8 @@ export default function IngredientSearch({ onIngredientChange, clearSearchText }
         for (const d of data) {
           try { mapped.push(mapIngredient(d)); } catch { /* ignore this item */ }
         }
-
         setSearchedIngredients(mapped);
         setShow(mapped.length > 0);
-        setSearchedIngredients(data.map(mapIngredient));
-        setShow(true);
       } catch {
         toast.error("Nätverksfel, försök igen senare");
       }
@@ -65,8 +64,10 @@ export default function IngredientSearch({ onIngredientChange, clearSearchText }
             key={ingredient.id}
             onClick={() => {
               onIngredientChange(ingredient);
-              setSearchText(ingredient.title);
+              setActive(false);
               setShow(false);
+              setSearchedIngredients([]);
+              setSearchText(ingredient.title);
             }}
           >
             {ingredient.title}
