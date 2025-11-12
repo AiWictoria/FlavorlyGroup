@@ -13,7 +13,7 @@ export default function OrderDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { updateOrderStatus } = useOrders();
-  
+
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export default function OrderDetailsPage() {
   useEffect(() => {
     async function fetchOrder() {
       if (!id) return;
-      
+
       try {
         setLoading(true);
         const response = await fetch(`/api/expand/Order/${id}`, {
@@ -33,9 +33,7 @@ export default function OrderDetailsPage() {
         }
 
         const data = await response.json();
-        
-        console.log("Raw backend Order data:", JSON.stringify(data, null, 2));
-        
+
         // Map items first to calculate correct total
         const mappedItems = (data.items || []).map((item: any) => ({
           id: item.id || Math.random(),
@@ -45,13 +43,13 @@ export default function OrderDetailsPage() {
           cost: item.price || 0, // Total price from backend (already calculated)
           checked: item.checked || false,
         }));
-        
+
         // Calculate total sum from items
         const calculatedSum = mappedItems.reduce(
-          (sum: number, item: any) => sum + item.cost, 
+          (sum: number, item: any) => sum + item.cost,
           0
         );
-        
+
         // Map backend Order to frontend Order
         const mappedOrder: Order = {
           id: data.id,
@@ -69,10 +67,11 @@ export default function OrderDetailsPage() {
           postalCode: data.deliveryAddress?.split(",")[1]?.trim() || "",
           city: data.deliveryAddress?.split(",")[2]?.trim() || "",
           deliverytype: data.deliveryType || "",
-          deliveryprice: typeof data.deliveryPrice === "number" ? data.deliveryPrice : 0,
+          deliveryprice:
+            typeof data.deliveryPrice === "number" ? data.deliveryPrice : 0,
           ingredients: mappedItems,
         };
-        
+
         setOrder(mappedOrder);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Ett fel uppstod");
@@ -91,7 +90,7 @@ export default function OrderDetailsPage() {
 
   async function handleStatusClick() {
     if (!order || !id) return;
-    
+
     const now = order.status;
     let newStatus: OrderStatus | null = null;
 
@@ -111,7 +110,7 @@ export default function OrderDetailsPage() {
     // Update backend first
     if (newStatus) {
       const result = await updateOrderStatus(id, newStatus);
-      
+
       if (result.success) {
         // Only update local state after successful backend update
         if (newStatus === "processing") {
@@ -147,7 +146,7 @@ export default function OrderDetailsPage() {
 
   function handleToggleChecked(itemId: number, checked: boolean) {
     if (!order) return;
-    
+
     setOrder({
       ...order,
       ingredients: order.ingredients.map((item) =>
@@ -180,18 +179,27 @@ export default function OrderDetailsPage() {
             />
           </div>
           {/* Delivery info row in table */}
-          {(order.deliverytype || (typeof order.deliveryprice === "number" && order.deliveryprice > 0)) && (
+          {(order.deliverytype ||
+            (typeof order.deliveryprice === "number" &&
+              order.deliveryprice > 0)) && (
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center border-top px-3 py-2 bg-light">
               <div className="small text-muted">
                 {order.deliverytype && (
-                  <span>Leveranssätt: <span className="fw-semibold">{order.deliverytype}</span></span>
+                  <span>
+                    Leveranssätt:{" "}
+                    <span className="fw-semibold">{order.deliverytype}</span>
+                  </span>
                 )}
               </div>
-              {typeof order.deliveryprice === "number" && order.deliveryprice > 0 && (
-                <div className="small text-muted">
-                  Fraktkostnad: <span className="fw-semibold">{formatSek(order.deliveryprice)}</span>
-                </div>
-              )}
+              {typeof order.deliveryprice === "number" &&
+                order.deliveryprice > 0 && (
+                  <div className="small text-muted">
+                    Fraktkostnad:{" "}
+                    <span className="fw-semibold">
+                      {formatSek(order.deliveryprice)}
+                    </span>
+                  </div>
+                )}
             </div>
           )}
           <div className="text-black text-center fw-semibold p-2 border-bottom p-3">

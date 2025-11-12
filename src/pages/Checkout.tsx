@@ -23,7 +23,14 @@ export default function Checkout() {
   const [orderCreated, setOrderCreated] = useState(false);
   const orderCreationAttempted = useRef(false);
 
-  const { products, deliveryData, handleDeliveryChange, handleQuantityChange, createOrder, handleRemoveProduct } = useOrder();
+  const {
+    products,
+    deliveryData,
+    handleDeliveryChange,
+    handleQuantityChange,
+    createOrder,
+    handleRemoveProduct,
+  } = useOrder();
 
   const getButtonLabel = () => {
     if (activeStep === 0) return "Leverans";
@@ -35,8 +42,11 @@ export default function Checkout() {
   const handlePayNow = async () => {
     try {
       // Spara cart data OCH leveransinfo innan vi går till Stripe
-      sessionStorage.setItem('checkoutProducts', JSON.stringify(products));
-      sessionStorage.setItem('checkoutDeliveryData', JSON.stringify(deliveryData));
+      sessionStorage.setItem("checkoutProducts", JSON.stringify(products));
+      sessionStorage.setItem(
+        "checkoutDeliveryData",
+        JSON.stringify(deliveryData)
+      );
 
       const res = await fetch(
         "http://localhost:5001/api/stripe/create-checkout-session",
@@ -90,31 +100,35 @@ export default function Checkout() {
     const status = searchParams.get("status");
     const step = searchParams.get("step");
 
-    console.log("🔍 Checkout URL params:", { status, step, orderCreated });
-
-    if (status === "success" && step === "confirmation" && !orderCreated && !orderCreationAttempted.current) {
+    if (
+      status === "success" &&
+      step === "confirmation" &&
+      !orderCreated &&
+      !orderCreationAttempted.current
+    ) {
       // Create order when payment succeeds (only once)
-      console.log("💳 Betalning lyckades! Skapar order...");
       orderCreationAttempted.current = true;
       setOrderCreated(true);
       // Hämta sparade produkter OCH leveransinfo från sessionStorage
-      const savedProductsJson = sessionStorage.getItem('checkoutProducts');
-      const savedDeliveryJson = sessionStorage.getItem('checkoutDeliveryData');
-      const savedProducts = savedProductsJson ? JSON.parse(savedProductsJson) : products;
-      const savedDelivery = savedDeliveryJson ? JSON.parse(savedDeliveryJson) : deliveryData;
-      console.log("📦 Använder produkter:", savedProducts);
-      console.log("📍 Använder leveransinfo:", savedDelivery);
+      const savedProductsJson = sessionStorage.getItem("checkoutProducts");
+      const savedDeliveryJson = sessionStorage.getItem("checkoutDeliveryData");
+      const savedProducts = savedProductsJson
+        ? JSON.parse(savedProductsJson)
+        : products;
+      const savedDelivery = savedDeliveryJson
+        ? JSON.parse(savedDeliveryJson)
+        : deliveryData;
+
       createOrder(savedProducts, savedDelivery)
         .then((order) => {
-          console.log("✅ Order skapad från cart:", order);
           // Rensa sparade produkter och leveransinfo
-          sessionStorage.removeItem('checkoutProducts');
-          sessionStorage.removeItem('checkoutDeliveryData');
+          sessionStorage.removeItem("checkoutProducts");
+          sessionStorage.removeItem("checkoutDeliveryData");
           setCompletedSteps([0, 1, 2]);
           setActiveStep(3);
         })
         .catch((error) => {
-          console.error("❌ Kunde inte skapa order:", error);
+          console.error(error);
           orderCreationAttempted.current = false;
           setOrderCreated(false); // Reset så användaren kan försöka igen
         });
