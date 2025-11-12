@@ -122,8 +122,8 @@ export default function Checkout() {
             setCompletedSteps([0, 1, 2]);
             setActiveStep(3);
           })
-          .catch((err) => {
-            console.error(err);
+          .catch((error) => {
+            console.error(error);
             orderCreationAttempted.current = false;
           });
       } else if (status === "cancelled" && step === "payment") {
