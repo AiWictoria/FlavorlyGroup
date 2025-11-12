@@ -163,7 +163,7 @@ export default function ShoppingListPage() {
 
     setShoppingList((prev) => [...prev, newItem]);
     setSelectedIngredient(undefined);
-    setClearSearchText((prev) => prev + 1);
+    setClearSearchText(prev => prev + 1);
     setAmount("");
   };
 
