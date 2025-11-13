@@ -21,7 +21,9 @@ export function RecipeInstructions({
   useEffect(() => {
     const value: any = recipe?.instructions as any;
     if (Array.isArray(value)) {
-      setInstructionsList(value.map((instr: any) => instr?.text ?? String(instr ?? "")));
+      setInstructionsList(
+        value.map((instr: any) => instr?.text ?? String(instr ?? ""))
+      );
       return;
     }
     if (typeof value === "string") {
@@ -50,13 +52,13 @@ export function RecipeInstructions({
   };
 
   return (
-    <div className="py-4 text-lg-center">
-      <h2 className="py-4 text-lg-center">Instruktioner</h2>
+    <div className="py-4 text-lg-start">
+      <h2 className="py-4 text-lg-start">Instruktioner</h2>
 
       {isView && instructionsList.length > 0 && (
         <ul className="list-unstyled">
           {instructionsList.map((instr, i) => (
-            <li key={i} className="d-flex align-items-center unstyled">
+            <li key={i} className="d-flex align-items-center unstyled mb-3 p-1">
               <Form.Check
                 type="checkbox"
                 id={`step-${i}`}
