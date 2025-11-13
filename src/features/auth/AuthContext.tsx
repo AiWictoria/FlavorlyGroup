@@ -126,6 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     phoneNumber: string
   ) {
     try {
+      // Skapa användaren
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,6 +144,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         toast.error("Kunde inte skapa kontot, försök igen senare.");
         return { success: false };
       }
+
+      const newUser: User = await res.json();
+
+      await fetch("/api/Cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: [
+            {
+              id: newUser.id,
+              username: newUser.username,
+            },
+          ],
+        }),
+      });
 
       toast.success("Kontot har skapats");
       await login(email, password);
