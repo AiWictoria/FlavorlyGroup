@@ -32,9 +32,11 @@ export default function ProfileMenu() {
               Hej {user.firstName}
             </Dropdown.Header>
             <Dropdown.Divider />
-            <Dropdown.Item as={Link} to="/MyOrders" className="text-light">
-              Mina beställningar
-            </Dropdown.Item>
+            {!user.roles?.includes("Administrator") && (
+              <Dropdown.Item as={Link} to="/MyOrders" className="text-light">
+                Mina beställningar
+              </Dropdown.Item>
+            )}
             <Dropdown.Item className="text-light" onClick={handleLogout}>
               Logga ut
             </Dropdown.Item>

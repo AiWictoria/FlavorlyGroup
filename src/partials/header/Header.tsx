@@ -52,12 +52,18 @@ export default function Header() {
               {routes
                 .filter((x) => {
                   if (!x.menuLabel) return false;
+
                   if (x.protected && !user) return false;
+
                   if (
                     x.adminOnly &&
                     (!user || !user.roles.includes("Administrator"))
                   )
                     return false;
+
+                  if (x.customerOnly && user?.roles?.includes("Administrator"))
+                    return false;
+
                   return true;
                 })
                 .map(({ menuLabel, path }, i) => (

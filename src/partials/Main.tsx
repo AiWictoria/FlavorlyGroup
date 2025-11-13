@@ -3,21 +3,26 @@ import { useRoutes } from "react-router-dom";
 import routes from "../routes";
 import ProtectedRoute from "../features/auth/ProtectedRoute";
 import AdminRoute from "../features/auth/AdminRoute";
+import CustomerRoute from "../features/auth/CostumerRoute";
 
 export default function Main() {
   const element = useRoutes(
-    routes.map(({ element, path, protected: isProtected, adminOnly }) => ({
-      path,
-      element: isProtected ? (
-        adminOnly ? (
-          <AdminRoute>{element}</AdminRoute>
+    routes.map(
+      ({ element, path, protected: isProtected, adminOnly, customerOnly }) => ({
+        path,
+        element: isProtected ? (
+          adminOnly ? (
+            <AdminRoute>{element}</AdminRoute>
+          ) : customerOnly ? (
+            <CustomerRoute>{element}</CustomerRoute>
+          ) : (
+            <ProtectedRoute>{element}</ProtectedRoute>
+          )
         ) : (
-          <ProtectedRoute>{element}</ProtectedRoute>
-        )
-      ) : (
-        element
-      ),
-    }))
+          element
+        ),
+      })
+    )
   );
   return (
     <main>

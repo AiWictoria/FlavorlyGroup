@@ -32,7 +32,9 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
           <h3 className="mb-3 text-start">Kommentarer</h3>
 
           {comments.length === 0 && (
-            <p className="text-center text-muted">Inga kommentarer ännu.</p>
+            <p className="text-center text-muted py-5">
+              Inga kommentarer ännu.
+            </p>
           )}
 
           <div className="mb-3">

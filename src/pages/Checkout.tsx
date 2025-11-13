@@ -14,6 +14,7 @@ Checkout.route = {
   index: 6,
   adminOnly: false,
   protected: true,
+  customerOnly: true,
 };
 
 export default function Checkout() {
