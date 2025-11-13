@@ -22,8 +22,9 @@ export interface Instruction {
 }
 
 export interface Comment {
+  id: string;
   text: string;
-  authorUsername: string;
+  firstName: string;
 }
 
 export interface Recipe {
@@ -64,10 +65,15 @@ export function useRecipes() {
         const normalized: Recipe[] = Array.isArray(data)
           ? (data as any[]).map((r: any) => {
               const items = Array.isArray(r.items) ? r.items : [];
-              const imagePath: string | undefined = r?.recipeImage?.paths?.[0] ?? r?.image ?? undefined;
+              const imagePath: string | undefined =
+                r?.recipeImage?.paths?.[0] ?? r?.image ?? undefined;
               const comments = items
                 .filter((i: any) => i.contentType === "Comment")
-                .map((i: any) => ({ text: i.content ?? "", authorUsername: i.user?.username ?? "" }));
+                .map((i: any) => ({
+                  id: i.id,
+                  text: i.content ?? "",
+                  authorUsername: i.user?.firstName ?? "",
+                }));
               const n: any = {
                 id: r.id,
                 title: r.title,
@@ -77,8 +83,11 @@ export function useRecipes() {
                 // keep minimal list data; detail page fetch maps full items
                 ingredients: [],
                 comments,
-                userAuthor: r.user ? { userId: r.user.id, username: r.user.username } : undefined,
+                userAuthor: r.user
+                  ? { userId: r.user.id, username: r.user.username }
+                  : undefined,
               };
+
               return n as Recipe;
             })
           : [];
@@ -255,4 +264,3 @@ export function useRecipes() {
     deleteRecipe,
   };
 }
-

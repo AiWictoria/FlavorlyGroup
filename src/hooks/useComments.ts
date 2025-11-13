@@ -2,17 +2,17 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 export interface Comment {
-  id: number;
-  recipeId: number;
-  userId: number;
+  id: string;
+  recipeId: string;
+  userId: string;
   author: string;
   content: string;
 }
 
-export function useComments() {
-  const [comments, setComments] = useState<Comment[]>([]);
+export function useComments(initialComments: Comment[] = []) {
+  const [comments, setComments] = useState<Comment[]>(initialComments);
 
-  async function fetchComments(recipeId: number) {
+  async function fetchComments(recipeId: string) {
     try {
       const res = await fetch(`/api/commentsView?where=recipeId=${recipeId}`);
       const data = await res.json();
@@ -29,7 +29,7 @@ export function useComments() {
     }
   }
 
-  async function addComment(recipeId: number, content: string, userId: number) {
+  async function addComment(recipeId: string, content: string, userId: string) {
     try {
       const res = await fetch("/api/comments", {
         method: "POST",
@@ -45,11 +45,11 @@ export function useComments() {
         toast.error("Kunde inte spara kommentaren, försök igen senare.");
         return { success: false };
       }
-    } catch (err) {
+    } catch {
       toast.error("Nätverksfel, försök igen senare");
       return { success: false };
     }
   }
 
-  return { comments, fetchComments, addComment };
+  return { comments, setComments, fetchComments, addComment };
 }
