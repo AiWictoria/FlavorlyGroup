@@ -51,3 +51,28 @@ Examples of possible future enhancements:
 ```bash
 npm install
 npm start
+```
+
+## To use Flavourly, visit:
+```
+http://localhost:5173
+```
+Log in as customer: 
+```
+username: john@doe.com
+password: Password123!
+```
+Log in as admin:
+```
+username: thomas@nodehill.com
+password: Abcd1234!
+```
+## To use Orchard Core, visit:
+```
+http://localhost:5001/admin
+```
+Log in as admin:
+```
+username: thomas@nodehill.com
+passoword: Abcd1234!
+```
