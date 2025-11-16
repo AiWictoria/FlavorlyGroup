@@ -23,6 +23,7 @@ interface Route {
   parent?: string;
   adminOnly: boolean;
   protected: boolean;
+  customerOnly?: boolean;
 }
 
 export default [

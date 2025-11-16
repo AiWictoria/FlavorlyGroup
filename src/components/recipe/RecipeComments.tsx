@@ -1,27 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useComments } from "../../hooks/useComments";
 import { useAuth } from "../../features/auth/AuthContext";
 import StarsRating from "./StarsRating";
+import type { Recipe } from "../../hooks/useRecipes";
 
 interface RecipeCommentsProps {
-  recipeId: number;
+  recipe: Recipe;
 }
 
-export function RecipeComments({ recipeId }: RecipeCommentsProps) {
+export function RecipeComments({ recipe }: RecipeCommentsProps) {
   const { user } = useAuth();
-  const { comments, fetchComments, addComment } = useComments();
+  const { comments, setComments, addComment } = useComments(
+    recipe.comments?.map((c) => ({
+      id: c.id,
+      recipeId: recipe.id,
+      userId: recipe.userAuthor?.userId ?? "",
+      author: c.firstName,
+      content: c.text,
+    })) ?? []
+  );
   const [newComment, setNewComment] = useState("");
-
-  useEffect(() => {
-    if (recipeId) fetchComments(recipeId);
-  }, [recipeId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!newComment.trim() || !user) return;
 
-    await addComment(recipeId, newComment, user.id);
+    await addComment(recipe.id, newComment, user.id);
     setNewComment("");
   }
 
@@ -32,7 +37,9 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
           <h3 className="mb-3 text-start">Kommentarer</h3>
 
           {comments.length === 0 && (
-            <p className="text-center text-muted">Inga kommentarer ännu.</p>
+            <p className="text-center text-muted py-5">
+              Inga kommentarer ännu.
+            </p>
           )}
 
           <div className="mb-3">
@@ -47,7 +54,7 @@ export function RecipeComments({ recipeId }: RecipeCommentsProps) {
           {user && (
             <Form onSubmit={handleSubmit}>
               <Form.Group className="my-2 p-1">
-                <StarsRating recipeId={recipeId} size="fs-5" mode="rate" />
+                <StarsRating recipeId={recipe.id} size="fs-5" mode="rate" />
                 <Form.Control
                   as="textarea"
                   rows={2}

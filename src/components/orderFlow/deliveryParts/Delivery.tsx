@@ -14,13 +14,16 @@ interface DeliveryProps {
     city: string;
     deliveryType: string;
   };
+  onFormValidChange?: (isValid: boolean) => void;
 }
 
 export default function Delivery({
   onDeliveryChange,
   savedData,
+  onFormValidChange,
 }: DeliveryProps) {
   const [formData, setFormData] = useState(savedData);
+
   useEffect(() => {
     setFormData((prev) => {
       if (JSON.stringify(prev) !== JSON.stringify(savedData)) {
@@ -29,6 +32,16 @@ export default function Delivery({
       return prev;
     });
   }, [savedData]);
+
+  useEffect(() => {
+    const isValid =
+      formData.address?.trim() &&
+      formData.postcode?.trim() &&
+      formData.city?.trim() &&
+      formData.deliveryType?.trim();
+
+    onFormValidChange?.(Boolean(isValid));
+  }, [formData, onFormValidChange]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

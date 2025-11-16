@@ -14,13 +14,13 @@ Checkout.route = {
   index: 6,
   adminOnly: false,
   protected: true,
+  customerOnly: true,
 };
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [orderCreated, setOrderCreated] = useState(false);
   const orderCreationAttempted = useRef(false);
 
   const {
@@ -78,6 +78,8 @@ export default function Checkout() {
     }
   };
 
+  const [isDeliveryValid, setIsDeliveryValid] = useState(false);
+
   const stepsContent = [
     <Cart
       products={products}
@@ -87,17 +89,24 @@ export default function Checkout() {
     <Delivery
       onDeliveryChange={handleDeliveryChange}
       savedData={deliveryData}
+      onFormValidChange={setIsDeliveryValid}
     />,
     <Payment />,
     <Confirmation
       products={products}
       deliveryData={deliveryData}
-      cartId={cartId}
+      cartId={cartId || undefined}
     />,
   ];
 
   const totalSteps = stepsContent.length;
   const nextStep = () => {
+    setCompletedSteps((prev) => {
+      const newCompleted = new Set([...prev, activeStep]);
+      for (let i = 0; i <= activeStep; i++) newCompleted.add(i);
+      return Array.from(newCompleted);
+    });
+
     setActiveStep((prev) => Math.min(prev + 1, totalSteps - 1));
   };
 
@@ -122,8 +131,6 @@ export default function Checkout() {
 
         createOrder(savedProducts, savedDelivery)
           .then(() => {
-            sessionStorage.removeItem("checkoutProducts");
-            sessionStorage.removeItem("checkoutDeliveryData");
             setCompletedSteps([0, 1, 2]);
             setActiveStep(3);
           })
@@ -169,6 +176,10 @@ export default function Checkout() {
           }
           products={products}
           deliveryPrice={deliveryData.deliveryPrice}
+          isDisabled={
+            (activeStep === 0 && products.length === 0) ||
+            (activeStep === 1 && !isDeliveryValid)
+          }
         />
       )}
     </OrderBox>

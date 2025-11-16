@@ -5,6 +5,7 @@ import Divider from "../../shared/Divider";
 import ProductInfo from "./ProductInfo";
 import ClearCartButton from "./ClearCartButton";
 import { useAuth } from "../../../features/auth/AuthContext";
+import { useEffect } from "react";
 
 interface ConfirmationProps {
   products: { id: string; name: string; quantity: number; price: number }[];
@@ -31,6 +32,12 @@ export default function Confirmation({
   const { user } = useAuth();
 
   const total = (totalProducts + (deliveryData.deliveryPrice ?? 0)).toFixed(2);
+
+  useEffect(() => {
+    sessionStorage.removeItem("checkoutProducts");
+    sessionStorage.removeItem("deliveryData");
+    sessionStorage.removeItem("checkoutDeliveryData");
+  }, []);
 
   return (
     <>
@@ -84,21 +91,23 @@ export default function Confirmation({
           />
         </Col>
         <Divider color="orange" />
-        <Col xs={10} className="d-flex justify-content-end">
-          <h4 className="fw-bold">Totalt: {total} kr</h4>
-        </Col>
+
         {cartId && (
-          <Col
-            xs={10}
-            className="d-flex justify-content-center mx-4 mx-sm-5 mx-md-0"
-          >
-            <Col
-              md={4}
-              className="d-flex justify-content-center align-items-center px-sm-4 pe-md-3 mx-md-2 py-2"
-            >
-              <ClearCartButton cartId={cartId} />
-            </Col>
-          </Col>
+          <>
+            <Row className="justify-content-center align-items-center">
+              <Col xs={11} md={6} className="d-flex my-3 justify-content-start">
+                <h4 className="fw-bold">Totalt: {total} kr</h4>
+              </Col>
+
+              <Col
+                xs={11}
+                md={5}
+                className="my-2 d-flex justify-content-center"
+              >
+                <ClearCartButton cartId={cartId} />
+              </Col>
+            </Row>
+          </>
         )}
       </Row>
     </>

@@ -18,22 +18,22 @@ export function useOrders() {
       if (res.ok) {
         // Map backend Order structure to frontend Order type
         const mappedOrders = data.map((order: any) => {
-          const mappedItems = order.items?.map((item: any) => ({
-            id: item.id || Math.random(),
-            amount: item.amount || 0,
-            unit: item.unit?.code || item.unit?.title || "st",
-            ingredient: item.product?.title || "Okänd produkt",
-            cost: item.price || 0, // Total price from backend
-            checked: item.checked || false,
-          })) || [];
-          
+          const mappedItems =
+            order.items?.map((item: any) => ({
+              id: item.id || Math.random(),
+              amount: item.amount || 0,
+              unit: item.unit?.code || item.unit?.title || "st",
+              ingredient: item.product?.title || "Okänd produkt",
+              cost: item.price || 0, // Total price from backend
+              checked: item.checked || false,
+            })) || [];
+
           // Calculate total sum from items + delivery price
-          const deliveryPrice = order.orderPart?.DeliveryPrice?.Value || 0
-          const calculatedSum = mappedItems.reduce(
-            (sum: number, item: any) => sum + item.cost,
-            0
-          ) + deliveryPrice;
-          
+          const deliveryPrice = order.orderPart?.DeliveryPrice?.Value || 0;
+          const calculatedSum =
+            mappedItems.reduce((sum: number, item: any) => sum + item.cost, 0) +
+            deliveryPrice;
+
           return {
             id: order.id || order.contentItemId,
             orderNumber: order.orderNumber?.toString() || "",
@@ -48,7 +48,8 @@ export function useOrders() {
             deliveryType: order.orderPart?.DeliveryType?.Text || "",
             deliveryPrice: order.orderPart?.DeliveryPrice?.Value || 0,
             sum: calculatedSum,
-            date: order.orderDate || order.createdUtc || new Date().toISOString(),
+            date:
+              order.orderDate || order.createdUtc || new Date().toISOString(),
             status: order.status || "pending",
             createdAt: order.createdUtc || new Date().toISOString(),
             updatedAt: order.modifiedUtc || new Date().toISOString(),
@@ -84,26 +85,28 @@ export function useOrders() {
       const data = await res.json();
 
       if (res.ok) {
-        console.log("Raw backend orders for My Orders:", JSON.stringify(data, null, 2));
         const mappedOrders = data
           .filter((order: any) => order.user?.id === targetUserId)
           .map((order: any) => {
-            const mappedItems = order.items?.map((item: any) => ({
-              id: item.id || Math.random(),
-              amount: item.amount || 0,
-              unit: item.unit?.code || item.unit?.title || "st",
-              ingredient: item.product?.title || "Okänd produkt",
-              cost: item.price || 0, // Total price from backend
-              checked: item.checked || false,
-            })) || [];
+            const mappedItems =
+              order.items?.map((item: any) => ({
+                id: item.id || Math.random(),
+                amount: item.amount || 0,
+                unit: item.unit?.code || item.unit?.title || "st",
+                ingredient: item.product?.title || "Okänd produkt",
+                cost: item.price || 0, // Total price from backend
+                checked: item.checked || false,
+              })) || [];
 
             // Mappa deliveryType och deliveryPrice direkt från backend (top-level)
             const deliveryType = order.deliveryType || "";
-            const deliveryPrice = typeof order.deliveryPrice === "number" ? order.deliveryPrice : 0;
-            const calculatedSum = mappedItems.reduce(
-              (sum: number, item: any) => sum + item.cost,
-              0
-            ) + deliveryPrice;
+            const deliveryPrice =
+              typeof order.deliveryPrice === "number" ? order.deliveryPrice : 0;
+            const calculatedSum =
+              mappedItems.reduce(
+                (sum: number, item: any) => sum + item.cost,
+                0
+              ) + deliveryPrice;
 
             return {
               id: order.id || order.contentItemId,
@@ -119,7 +122,8 @@ export function useOrders() {
               deliveryType,
               deliveryPrice,
               sum: calculatedSum,
-              date: order.orderDate || order.createdUtc || new Date().toISOString(),
+              date:
+                order.orderDate || order.createdUtc || new Date().toISOString(),
               status: order.status || "pending",
               createdAt: order.createdUtc || new Date().toISOString(),
               updatedAt: order.modifiedUtc || new Date().toISOString(),

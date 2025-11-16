@@ -36,7 +36,10 @@ export default function ViewRecipeDetails() {
           description: r.description ?? "",
           instructions: items
             .filter((i: any) => i.contentType === "Instruction")
-            .map((i: any) => ({ order: i.order ?? i.step, text: i.text ?? i.content ?? "" })),
+            .map((i: any) => ({
+              order: i.order ?? i.step,
+              text: i.text ?? i.content ?? "",
+            })),
           categoryId: undefined,
           prepTimeMinutes: r.prepTimeMinutes,
           cookTimeMinutes: r.cookTimeMinutes,
@@ -45,15 +48,25 @@ export default function ViewRecipeDetails() {
             .filter((i: any) => i.contentType === "RecipeItem")
             .map((i: any) => ({
               ingredientId: i.ingredient?.id ?? "",
-              ingredient: { id: i.ingredient?.id ?? "", name: i.ingredient?.title ?? i.ingredient?.name ?? "" },
+              ingredient: {
+                id: i.ingredient?.id ?? "",
+                name: i.ingredient?.title ?? i.ingredient?.name ?? "",
+              },
               quantity: i.quantity ?? 0,
               unit: { id: i.unit?.id ?? "", name: i.unit?.title ?? "" },
             })),
           comments: items
             .filter((i: any) => i.contentType === "Comment")
-            .map((i: any) => ({ text: i.content ?? "", authorUsername: i.user?.username ?? "" })),
+            .map((i: any) => ({
+              text: i.content ?? "",
+              authorUsername: i.user?.username ?? "",
+            })),
           userAuthor: r.user
-            ? ({ userId: r.user.id, username: r.user.username, userIds: [r.user.username] } as unknown as any)
+            ? ({
+                userId: r.user.id,
+                username: r.user.username,
+                userIds: [r.user.username],
+              } as unknown as any)
             : undefined,
         } as unknown as Recipe;
         setRecipe(uiRecipe);
@@ -67,7 +80,9 @@ export default function ViewRecipeDetails() {
     if (!recipe) return;
     if (confirmOpenRef.current) return;
     confirmOpenRef.current = true;
-    const closePrompt = () => { confirmOpenRef.current = false; };
+    const closePrompt = () => {
+      confirmOpenRef.current = false;
+    };
 
     toast.custom((t) => (
       <Row className="bg-white p-3 rounded shadow d-flex flex-column gap-2">
@@ -77,7 +92,10 @@ export default function ViewRecipeDetails() {
             <Button
               variant="outline-primary"
               size="sm"
-              onClick={() => { toast.dismiss(t.id); closePrompt(); }}
+              onClick={() => {
+                toast.dismiss(t.id);
+                closePrompt();
+              }}
             >
               Cancel
             </Button>
@@ -96,7 +114,9 @@ export default function ViewRecipeDetails() {
                   }
                 } catch {
                   toast.error("Misslyckades med att ta bort receptet");
-                } finally { closePrompt(); }
+                } finally {
+                  closePrompt();
+                }
               }}
             >
               Delete
@@ -111,13 +131,13 @@ export default function ViewRecipeDetails() {
 
   const isOwner = Boolean(
     user &&
-    recipe.userAuthor &&
-    typeof recipe.userAuthor === "object" &&
-    "userIds" in (recipe.userAuthor as Record<string, unknown>) &&
-    Array.isArray((recipe.userAuthor as { userIds?: string[] }).userIds) &&
-    (
-      (recipe.userAuthor as { userIds?: string[] }).userIds as string[]
-    ).includes(user.username)
+      recipe.userAuthor &&
+      typeof recipe.userAuthor === "object" &&
+      "userIds" in (recipe.userAuthor as Record<string, unknown>) &&
+      Array.isArray((recipe.userAuthor as { userIds?: string[] }).userIds) &&
+      (
+        (recipe.userAuthor as { userIds?: string[] }).userIds as string[]
+      ).includes(user.username)
   );
   return (
     <>
@@ -136,7 +156,7 @@ export default function ViewRecipeDetails() {
         </div>
       )}
       <Row className="bg-secondary border-top border-primary">
-        <Col>{recipe && <RecipeComments recipeId={Number(recipe.id)} />}</Col>
+        <Col>{recipe && <RecipeComments recipe={recipe} />}</Col>
       </Row>
     </>
   );

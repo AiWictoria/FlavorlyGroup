@@ -25,31 +25,37 @@ export default function Cart({
           <h2>Varukorg</h2>
         </Col>
         <Col xs={10} className="mb-sm-4">
-          {products.map((p) => (
-            <CartItem
-              key={p.id}
-              name={p.name}
-              productImage="images/placeholder.png"
-              unitPrice={p.price}
-              quantity={p.quantity}
-              onQuantityChange={(newQuantity) =>
-                onQuantityChange(p.id, newQuantity)
-              }
-              onRemove={() =>
-                toast.custom((t) => (
-                  <CancelConfirmationToast
-                    message={`Ta bort "${p.name}" från varukorgen?`}
-                    onConfirm={async () => {
-                      onRemoveProduct(p.id);
-                      toast.dismiss(t.id);
-                    }}
-                    confirmText="Bekräfta"
-                    cancelText="Avbryt"
-                  />
-                ))
-              }
-            />
-          ))}
+          {products.length === 0 ? (
+            <div className="text-center py-5">
+              <p>Din varukorg är tom</p>
+            </div>
+          ) : (
+            products.map((p) => (
+              <CartItem
+                key={p.id}
+                name={p.name}
+                productImage="images/placeholder.png"
+                unitPrice={p.price}
+                quantity={p.quantity}
+                onQuantityChange={(newQuantity) =>
+                  onQuantityChange(p.id, newQuantity)
+                }
+                onRemove={() =>
+                  toast.custom((t) => (
+                    <CancelConfirmationToast
+                      message={`Ta bort "${p.name}" från varukorgen?`}
+                      onConfirm={async () => {
+                        onRemoveProduct(p.id);
+                        toast.dismiss(t.id);
+                      }}
+                      confirmText="Bekräfta"
+                      cancelText="Avbryt"
+                    />
+                  ))
+                }
+              />
+            ))
+          )}
         </Col>
       </Row>
     </>

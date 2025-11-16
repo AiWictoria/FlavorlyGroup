@@ -15,6 +15,7 @@ ShoppingListPage.route = {
   index: 4,
   adminOnly: false,
   protected: true,
+  customerOnly: true,
 };
 
 const sek = (v: number) =>
@@ -122,7 +123,7 @@ export default function ShoppingListPage() {
 
       setShoppingList((prev) => prev.filter((item) => !item.selectedProductId));
 
-      toast.success("Valda produkter blev tillagda i kassan!");
+      toast.success("Valda produkter blev tillagda i varukorgen!");
     } catch (err) {
       console.error("Failed to update cart");
     }
@@ -163,7 +164,7 @@ export default function ShoppingListPage() {
 
     setShoppingList((prev) => [...prev, newItem]);
     setSelectedIngredient(undefined);
-    setClearSearchText(prev => prev + 1);
+    setClearSearchText((prev) => prev + 1);
     setAmount("");
   };
 
@@ -281,7 +282,7 @@ export default function ShoppingListPage() {
                 >
                   <b className="me-1">Summa: </b> {totalCost.toFixed(2)} kr
                 </Col>
-                <Col xs={12} lg={3} className="d-flex justify-content-end">
+                <Col xs={12} lg={3} className="d-flex justify-content-end py-3">
                   <Button onClick={addToCart}>
                     Lägg till produkter i varukorg
                   </Button>
@@ -293,7 +294,7 @@ export default function ShoppingListPage() {
               className="d-flex justify-content-center align-items-center mt-5 mb-5 extra-height"
               style={{ color: "#9b9d9eff" }}
             >
-              <h2 className="display-5 fw-bold">Inköpslistan är tom...</h2>{" "}
+              <p>Inköpslistan är tom.</p>
             </div>
           )}
         </Col>

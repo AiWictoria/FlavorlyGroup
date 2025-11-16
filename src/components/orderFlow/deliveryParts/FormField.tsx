@@ -1,6 +1,7 @@
 import { FormControl, FormGroup, FormLabel } from "react-bootstrap";
 interface FormFieldProps {
   label: string;
+  placeholder: string;
   type?: string;
   name?: string;
   value?: string;
@@ -8,6 +9,7 @@ interface FormFieldProps {
 }
 export default function FormField({
   label,
+  placeholder,
   type = "text",
   name,
   value,
@@ -23,6 +25,8 @@ export default function FormField({
           value={value}
           onChange={onChange}
           className="flavorly-shadow-inset"
+          placeholder={placeholder}
+          required
         />
       </FormGroup>
     </>
