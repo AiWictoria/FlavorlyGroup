@@ -50,4 +50,4 @@ Examples of possible future enhancements:
 
 ```bash
 npm install
-npm atart
+npm start
