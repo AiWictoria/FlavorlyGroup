@@ -64,8 +64,8 @@ password: Password123!
 ```
 Log in as admin:
 ```
-username: thomas@nodehill.com
-password: Abcd1234!
+username: kalle@doe.com
+password: Password123!
 ```
 ## To use Orchard Core, visit:
 ```
@@ -73,6 +73,6 @@ http://localhost:5001/admin
 ```
 Log in as admin:
 ```
-username: thomas@nodehill.com
-passoword: Abcd1234!
+username: kalle@doe.com
+passoword: Password123!
 ```
